@@ -1,4 +1,4 @@
-import 'package:flame/game/embedded_game_widget.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
 
@@ -16,13 +16,11 @@ class MainMenu extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EmbeddedGameWidget(
-                      KiwiGame(),
-                    ),
-                  ),
-                );
+                    context,
+                    MaterialPageRoute(
+                      // No need to add a GameScreen in the screen folder.
+                      builder: (context) => GameWidget(game: KiwiGame()),
+                    ));
               },
               child: Text("New Game"),
             ),
