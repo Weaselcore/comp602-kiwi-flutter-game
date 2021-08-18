@@ -1,4 +1,6 @@
+import 'package:flame/game/embedded_game_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_game/game/kiwi_game.dart';
 
 class MainMenu extends StatelessWidget {
   const MainMenu({Key? key}) : super(key: key);
@@ -11,7 +13,19 @@ class MainMenu extends StatelessWidget {
         children: [
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
-            child: ElevatedButton(onPressed: null, child: Text("New Game")),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EmbeddedGameWidget(
+                      KiwiGame(),
+                    ),
+                  ),
+                );
+              },
+              child: Text("New Game"),
+            ),
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
