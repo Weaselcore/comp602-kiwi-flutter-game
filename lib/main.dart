@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_game/screens/main_menu.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,17 +12,7 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Kiwi Fall'),
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(onPressed: null, child: Text("New Game")),
-              ElevatedButton(onPressed: null, child: Text("Shop")),
-              ElevatedButton(onPressed: null, child: Text("Settings")),
-              ElevatedButton(onPressed: null, child: Text("Leaderboard")),
-            ],
-          ),
-        ),
+        body: const MainMenu(),
       ),
     );
   }
