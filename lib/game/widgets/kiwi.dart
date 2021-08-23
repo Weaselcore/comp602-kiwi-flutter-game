@@ -5,6 +5,7 @@ class Kiwi extends SpriteComponent with GameSizeAware {
   // The kiwi is initialised in the center with no motion.
   Vector2 _horizontalMoveDirection = Vector2.zero();
   double _horizontalSpeed = 200;
+  bool _spriteOrientationDefault = false;
 
   Kiwi({
     Sprite? sprite,
@@ -24,11 +25,12 @@ class Kiwi extends SpriteComponent with GameSizeAware {
     this.position +=
         _horizontalMoveDirection.normalized() * _horizontalSpeed * dt;
 
-    if (_horizontalMoveDirection.x < 0) {
-      this.renderFlipX = false;
-    } else {
+    if (_spriteOrientationDefault) {
       this.renderFlipX = true;
+    } else {
+      this.renderFlipX = false;
     }
+
     // This keeps the kiwi on the screen.
     this.position.clamp(
           Vector2.zero() + this.size / 3,
@@ -38,11 +40,13 @@ class Kiwi extends SpriteComponent with GameSizeAware {
 
   void goRight() {
     _horizontalMoveDirection = Vector2(1, 0);
+    _spriteOrientationDefault = true;
     print("Kiwi going right.");
   }
 
   void goLeft() {
     _horizontalMoveDirection = Vector2(-1, 0);
+    _spriteOrientationDefault = false;
     print("Kiwi going left.");
   }
 
