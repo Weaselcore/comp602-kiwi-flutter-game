@@ -3,7 +3,8 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
-import 'package:flutter_game/game/widgets/kiwi.dart';
+import 'package:flutter_game/game/components/enemy_manager.dart';
+import 'package:flutter_game/game/components/kiwi.dart';
 
 import 'game_size_aware.dart';
 
@@ -17,6 +18,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
   int _leftPointerId = -1;
 
   late Kiwi _kiwi;
+  late EnemyManager _enemyManager;
 
   @override
   Future<void> onLoad() async {
@@ -28,6 +30,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
       );
       _kiwi.anchor = Anchor.center;
       add(_kiwi);
+      _enemyManager = EnemyManager();
+      add(_enemyManager);
       _isAlreadyLoaded = true;
     }
   }
