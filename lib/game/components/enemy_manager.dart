@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:flutter_game/game/components/enemy.dart';
+import 'package:flutter_game/game/components/crate_enemy.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
 import '../kiwi_game.dart';
@@ -14,8 +14,8 @@ class EnemyManager extends BaseComponent
   Random random = Random();
 
   EnemyManager() : super() {
-    _timer = Timer(1, callback: _spawnEnemy, repeat: true);
-    _freezeTimer = Timer(5, callback: () {
+    _timer = Timer(0.5, callback: _spawnEnemy, repeat: true);
+    _freezeTimer = Timer(0.5, callback: () {
       _timer.start();
     });
   }
@@ -23,13 +23,11 @@ class EnemyManager extends BaseComponent
   void _spawnEnemy() {
     Vector2 initialSize = Vector2(64, 64);
 
-    Vector2 position = Vector2(random.nextDouble() * gameSize.x, 5000);
-
-    position.clamp(
-        Vector2.zero() + initialSize / 2, gameSize - initialSize / 2);
+    Vector2 position =
+        Vector2(random.nextDouble() * gameSize.x, gameSize.y + 100);
 
     if (gameRef.buildContext != null) {
-      Enemy enemy = Enemy(position);
+      CrateEnemy enemy = CrateEnemy(position);
       gameRef.add(enemy);
     }
   }
