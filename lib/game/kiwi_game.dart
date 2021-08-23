@@ -22,8 +22,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
   Future<void> onLoad() async {
     if (!_isAlreadyLoaded) {
       _kiwi = Kiwi(
-        sprite: await Sprite.load('kiwi_sprite.jpg'),
-        size: Vector2(100, 100),
+        sprite: await Sprite.load('kiwi_sprite.png'),
+        size: Vector2(122, 76),
         position: Vector2(viewport.canvasSize.x / 2, viewport.canvasSize.y / 3),
       );
       _kiwi.anchor = Anchor.center;

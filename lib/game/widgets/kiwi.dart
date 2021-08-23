@@ -1,11 +1,10 @@
 import 'package:flame/components.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
 class Kiwi extends SpriteComponent with GameSizeAware {
   // The kiwi is initialised in the center with no motion.
   Vector2 _horizontalMoveDirection = Vector2.zero();
-  double _horizontalSpeed = 100;
+  double _horizontalSpeed = 200;
 
   Kiwi({
     Sprite? sprite,
@@ -26,14 +25,14 @@ class Kiwi extends SpriteComponent with GameSizeAware {
         _horizontalMoveDirection.normalized() * _horizontalSpeed * dt;
 
     if (_horizontalMoveDirection.x < 0) {
-      this.renderFlipX = true;
-    } else {
       this.renderFlipX = false;
+    } else {
+      this.renderFlipX = true;
     }
     // This keeps the kiwi on the screen.
     this.position.clamp(
-          Vector2.zero() + this.size / 2,
-          gameSize - this.size / 2,
+          Vector2.zero() + this.size / 3,
+          gameSize - this.size / 3,
         );
   }
 
