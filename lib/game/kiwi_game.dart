@@ -58,13 +58,20 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
     super.update(dt);
     _kiwi.update(dt);
 
+    // If both left and right are pressed down.
     if (_isBothPressed()) {
       _kiwi.stop();
-    } else if (_rightDirectionPressed && !_leftDirectionPressed) {
+    }
+    // If right are pressed down.
+    else if (_rightDirectionPressed && !_leftDirectionPressed) {
       _kiwi.goRight();
-    } else if (_leftDirectionPressed && !_rightDirectionPressed) {
+    }
+    // If left are pressed down.
+    else if (_leftDirectionPressed && !_rightDirectionPressed) {
       _kiwi.goLeft();
-    } else {
+    }
+    // If no buttons are pressed.
+    else {
       _kiwi.stop();
     }
   }
@@ -87,16 +94,14 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
     if (_tapIsLeft(event) && _tapIsRight(event)) {
       _leftDirectionPressed = false;
       _rightDirectionPressed = false;
-      // If left has been lifted.
+      // If left tap has been lifted.
     } else if (_tapIsLeft(event) && !_tapIsRight(event)) {
       _leftDirectionPressed = false;
+      // If right tap has been lifted.
     } else if (_tapIsRight(event) && !_tapIsLeft(event)) {
       _rightDirectionPressed = false;
     }
   }
-
-  @override
-  void onTapCancel(int pointerId) {}
 
   double _getMiddlePoint() => viewport.canvasSize.x / 2;
 
