@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
 class Kiwi extends SpriteComponent with GameSizeAware {
@@ -12,6 +13,7 @@ class Kiwi extends SpriteComponent with GameSizeAware {
     Vector2? size,
   }) : super(sprite: sprite, position: position, size: size);
 
+  // TODO add hitbox component in this method to register collision.
   @override
   void onMount() {
     super.onMount();
@@ -23,13 +25,30 @@ class Kiwi extends SpriteComponent with GameSizeAware {
     this.position +=
         _horizontalMoveDirection.normalized() * _horizontalSpeed * dt;
 
+    if (_horizontalMoveDirection.x < 0) {
+      this.renderFlipX = true;
+    } else {
+      this.renderFlipX = false;
+    }
+    // This keeps the kiwi on the screen.
     this.position.clamp(
           Vector2.zero() + this.size / 2,
           gameSize - this.size / 2,
         );
   }
 
-  void setMoveDirection(Vector2 newMoveDirection) {
-    _horizontalMoveDirection = newMoveDirection;
+  void goRight() {
+    _horizontalMoveDirection = Vector2(1, 0);
+    print("Kiwi going right.");
+  }
+
+  void goLeft() {
+    _horizontalMoveDirection = Vector2(-1, 0);
+    print("Kiwi going left.");
+  }
+
+  void stop() {
+    _horizontalMoveDirection = Vector2.zero();
+    print("Kiwi is stopping.");
   }
 }
