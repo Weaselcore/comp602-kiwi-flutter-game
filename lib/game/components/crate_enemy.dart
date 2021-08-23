@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flame/palette.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
@@ -26,5 +25,10 @@ class CrateEnemy extends SpriteComponent with GameSizeAware {
     super.update(dt);
 
     this.position += Vector2(0, -1).normalized() * enemySpeed * dt;
+
+    // The crates get destroyed off screen.
+    if (this.position.y < -100) {
+      remove();
+    }
   }
 }
