@@ -11,6 +11,11 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
   bool _isAlreadyLoaded = false;
   bool _leftDirectionPressed = false;
   bool _rightDirectionPressed = false;
+
+  // These variables are to track multi-gesture taps.
+  int _rightPointerId = -1;
+  int _leftPointerId = -1;
+
   late Kiwi _kiwi;
 
   @override
@@ -32,6 +37,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
     super.onResize(canvasSize);
 
     // Loop over all the components of type KnowsGameSize and resize then as well.
+    // Will be useful when playing on web version.
     this.components.whereType<GameSizeAware>().forEach((component) {
       component.onResize(this.size);
     });
@@ -58,6 +64,9 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
     super.update(dt);
     _kiwi.update(dt);
 
+    print(_leftPointerId);
+    print(_rightPointerId);
+
     // If both left and right are pressed down.
     if (_isBothPressed()) {
       _kiwi.stop();
@@ -80,11 +89,15 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
   void onTapDown(int pointerId, TapDownInfo event) {
     if (_tapIsLeft(event) && !_tapIsRight(event)) {
       _leftDirectionPressed = true;
+      _leftPointerId = pointerId;
     } else if (_tapIsRight(event) && !_tapIsLeft(event)) {
       _rightDirectionPressed = true;
+      _rightPointerId = pointerId;
     } else if (!(_isBothPressed())) {
       _leftDirectionPressed = false;
+      _leftPointerId = -1;
       _rightDirectionPressed = false;
+      _rightPointerId = -1;
     }
   }
 
@@ -93,13 +106,30 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
     // If both left and right taps have been lifted.
     if (_tapIsLeft(event) && _tapIsRight(event)) {
       _leftDirectionPressed = false;
+      _leftPointerId = -1;
       _rightDirectionPressed = false;
+      _rightPointerId = -1;
       // If left tap has been lifted.
     } else if (_tapIsLeft(event) && !_tapIsRight(event)) {
       _leftDirectionPressed = false;
+      _leftPointerId = -1;
       // If right tap has been lifted.
     } else if (_tapIsRight(event) && !_tapIsLeft(event)) {
       _rightDirectionPressed = false;
+      _rightPointerId = -1;
+    }
+  }
+
+  // Since onTapCancel doesn't pass TapInfo, pointerId have to be tracked.
+  // So if the finger slides off the sides instead of lifting it up, it will not bug out.
+  @override
+  void onTapCancel(int pointerId) {
+    if (_rightPointerId == pointerId) {
+      _rightPointerId = -1;
+      _rightDirectionPressed = false;
+    } else if (_leftPointerId == pointerId) {
+      _leftPointerId = -1;
+      _leftDirectionPressed = false;
     }
   }
 
