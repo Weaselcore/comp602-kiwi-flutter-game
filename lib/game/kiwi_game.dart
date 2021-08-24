@@ -3,10 +3,13 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
+import 'package:flutter_game/game/components/crate_enemy.dart';
 import 'package:flutter_game/game/components/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 
 import 'game_size_aware.dart';
+import 'overlay/pause_button.dart';
+import 'overlay/pause_menu.dart';
 
 class KiwiGame extends BaseGame with MultiTouchTapDetector {
   bool _isAlreadyLoaded = false;
@@ -16,6 +19,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
   int _leftPointerId = -1;
+
+  int _score = 0;
 
   late Kiwi _kiwi;
   late EnemyManager _enemyManager;
@@ -146,4 +151,32 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector {
       event.eventPosition.game.x > _getMiddlePoint();
 
   bool _isBothPressed() => (_rightDirectionPressed && _leftDirectionPressed);
+
+  @override
+  void lifecycleStateChange(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        this.resumeEngine();
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        this.pauseEngine();
+        break;
+      case AppLifecycleState.detached:
+        if (this._score > 0) {
+          this.pauseEngine();
+          this.overlays.remove(PauseButton.ID);
+          this.overlays.add(PauseMenu.ID);
+        }
+        break;
+    }
+  }
+
+  void reset() {
+    _enemyManager.reset();
+
+    components.whereType<CrateEnemy>().forEach((enemy) {
+      enemy.remove();
+    });
+  }
 }
