@@ -6,18 +6,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_game/game/components/enemy.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
-class CrateEnemy extends Enemy
+class CloudEnemy extends Enemy
     with GameSizeAware, Hitbox, Collidable {
   static const double enemySpeed = 400;
   late Vector2 startingPosition;
 
   Random random = Random();
 
-  CrateEnemy();
+  CloudEnemy();
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('crate_sprite.png');
+    sprite = await Sprite.load('homelessman.png');
     size = Vector2(180, 104);
     position = this.getPosition() - size;
 

@@ -6,6 +6,8 @@ import 'package:flutter_game/game/kiwi_game.dart';
 import 'package:flutter_game/game/overlay/end_game_menu.dart';
 import 'package:flutter_game/game/overlay/pause_button.dart';
 
+import 'enemy.dart';
+
 class Kiwi extends SpriteComponent
     with GameSizeAware, Hitbox, Collidable, HasGameRef<KiwiGame> {
   // The kiwi is initialised in the center with no motion.
@@ -67,7 +69,7 @@ class Kiwi extends SpriteComponent
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
     super.onCollision(intersectionPoints, other);
 
-    if (other is CrateEnemy) {
+    if (other is Enemy) {
       gameRef.pauseEngine();
       gameRef.overlays.remove(PauseButton.ID);
       gameRef.overlays.add(EndGameMenu.ID);

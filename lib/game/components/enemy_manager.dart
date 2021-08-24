@@ -1,10 +1,11 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:flutter_game/game/components/crate_enemy.dart';
+import 'package:flutter_game/game/components/enemy_factory.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
 import '../kiwi_game.dart';
+import 'enemy.dart';
 
 class EnemyManager extends BaseComponent
     with GameSizeAware, HasGameRef<KiwiGame> {
@@ -12,6 +13,8 @@ class EnemyManager extends BaseComponent
   late Timer _freezeTimer;
 
   Random random = Random();
+
+  var enemyType = ['CRATE', 'CLOUD'];
 
   EnemyManager() : super() {
     _timer = Timer(0.5, callback: _spawnEnemy, repeat: true);
@@ -21,22 +24,14 @@ class EnemyManager extends BaseComponent
   }
 
   void _spawnEnemy() {
-    Vector2 initialSize = Vector2(64, 64);
-
-    random.nextDouble();
-    random.nextDouble();
-    random.nextDouble();
-
-    Vector2 position =
-        Vector2(random.nextDouble() * gameSize.x, gameSize.y + 100);
-
-    position.clamp(
-      Vector2.zero() + initialSize / 2,
-      gameSize + initialSize,
-    );
 
     if (gameRef.buildContext != null) {
-      CrateEnemy enemy = CrateEnemy(position);
+
+      int randomEnemy =  random.nextInt(enemyType.length);
+
+      EnemyFactory factory = new EnemyFactory();
+
+      Enemy enemy = factory.getEnemyType(enemyType[randomEnemy]);
       gameRef.add(enemy);
     }
   }
