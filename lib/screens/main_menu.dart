@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
+import 'package:flutter_game/screens/game_instance.dart';
 
 class MainMenu extends StatelessWidget {
   const MainMenu({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class MainMenu extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       // No need to add a GameScreen in the screen folder.
-                      builder: (context) => GameWidget(game: KiwiGame()),
+                      builder: (context) => GameInstance(),
                     ));
               },
               child: Text("New Game"),
