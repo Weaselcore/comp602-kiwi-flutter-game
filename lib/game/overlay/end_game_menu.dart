@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_game/game/overlay/pause_button.dart';
 
 import '../kiwi_game.dart';
 
@@ -11,50 +12,60 @@ class EndGameMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Pause menu title.
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50.0),
-            child: Text(
-              'GAME OVER',
-              style: TextStyle(
-                fontSize: 50.0,
-                color: Colors.black,
-                shadows: [
-                  Shadow(
-                    blurRadius: 20.0,
-                    color: Colors.white,
-                    offset: Offset(0, 0),
-                  )
-                ],
+      child: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 50.0),
+              child: Text(
+                'GAME OVER',
+                style: TextStyle(
+                  fontSize: 50.0,
+                  color: Colors.black,
+                  shadows: [
+                    Shadow(
+                      blurRadius: 20.0,
+                      color: Colors.white,
+                      offset: Offset(0, 0),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Restart button.
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 3,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      gameRef.overlays.remove(EndGameMenu.ID);
+                      gameRef.overlays.add(PauseButton.ID);
+                      gameRef.reset();
+                      gameRef.resumeEngine();
+                    },
+                    child: Text('Restart'),
+                  ),
+                ),
 
-          // Restart button.
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 3,
-            child: ElevatedButton(
-              onPressed: () {
-                gameRef.reset();
-              },
-              child: Text('Restart'),
+                // Exit button.
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 3,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      gameRef.overlays.remove(EndGameMenu.ID);
+                      gameRef.reset();
+                    },
+                    child: Text('Exit'),
+                  ),
+                ),
+              ],
             ),
-          ),
-
-          // Exit button.
-          SizedBox(
-            width: MediaQuery.of(context).size.width / 3,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Exit'),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
