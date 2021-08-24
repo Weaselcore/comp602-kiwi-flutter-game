@@ -1,8 +1,10 @@
 import 'package:flame/components.dart';
+import 'package:flame/geometry.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
-class CrateEnemy extends SpriteComponent with GameSizeAware {
+class CrateEnemy extends SpriteComponent
+    with GameSizeAware, Hitbox, Collidable {
   static const double enemySpeed = 400;
   late Vector2 startingPosition;
 
@@ -13,6 +15,9 @@ class CrateEnemy extends SpriteComponent with GameSizeAware {
     sprite = await Sprite.load('crate_sprite.png');
     size = Vector2(180, 104);
     position = startingPosition - size;
+
+    final hitboxShape = HitboxCircle(definition: 0.8);
+    addShape(hitboxShape);
   }
 
   @override

@@ -11,7 +11,7 @@ import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
 
-class KiwiGame extends BaseGame with MultiTouchTapDetector {
+class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   bool _isAlreadyLoaded = false;
   bool _leftDirectionPressed = false;
   bool _rightDirectionPressed = false;

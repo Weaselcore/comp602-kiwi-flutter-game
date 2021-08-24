@@ -1,8 +1,11 @@
 import 'package:flame/components.dart';
+import 'package:flame/geometry.dart';
 import 'package:flutter_game/game/components/crate_enemy.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
+import 'package:flutter_game/game/kiwi_game.dart';
 
-class Kiwi extends SpriteComponent with GameSizeAware, Hitbox, Collidable {
+class Kiwi extends SpriteComponent
+    with GameSizeAware, Hitbox, Collidable, HasGameRef<KiwiGame> {
   // The kiwi is initialised in the center with no motion.
   Vector2 _horizontalMoveDirection = Vector2.zero();
   double _horizontalSpeed = 200;
@@ -14,10 +17,12 @@ class Kiwi extends SpriteComponent with GameSizeAware, Hitbox, Collidable {
     Vector2? size,
   }) : super(sprite: sprite, position: position, size: size);
 
-  // TODO add hitbox component in this method to register collision.
   @override
   void onMount() {
     super.onMount();
+
+    final hitboxShape = HitboxCircle(definition: 0.8);
+    addShape(hitboxShape);
   }
 
   @override
@@ -60,6 +65,8 @@ class Kiwi extends SpriteComponent with GameSizeAware, Hitbox, Collidable {
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
     super.onCollision(intersectionPoints, other);
 
-    if (other is CrateEnemy) {}
+    if (other is CrateEnemy) {
+      gameRef.reset();
+    }
   }
 }
