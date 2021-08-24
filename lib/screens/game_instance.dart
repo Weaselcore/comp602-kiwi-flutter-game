@@ -3,6 +3,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
+import 'package:flutter_game/game/overlay/end_game_menu.dart';
 import 'package:flutter_game/game/overlay/pause_button.dart';
 import 'package:flutter_game/game/overlay/pause_menu.dart';
 
@@ -35,10 +36,10 @@ class GameInstance extends StatelessWidget {
             PauseMenu.ID: (BuildContext context, KiwiGame gameRef) => PauseMenu(
                   gameRef: gameRef,
                 ),
-            // GameOverMenu.ID: (BuildContext context, KiwiGame gameRef) =>
-            //     GameOverMenu(
-            //       gameRef: gameRef,
-            //     ),
+            EndGameMenu.ID: (BuildContext context, KiwiGame gameRef) =>
+                EndGameMenu(
+                  gameRef: gameRef,
+                ),
           },
         ),
       ),
