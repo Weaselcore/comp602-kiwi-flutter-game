@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
-import 'package:flutter_game/game/components/enemy_manager.dart';
+import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 
-import 'components/enemy.dart';
+import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';

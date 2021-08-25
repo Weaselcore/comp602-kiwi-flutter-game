@@ -1,11 +1,11 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:flutter_game/game/components/enemy_factory.dart';
+import 'package:flutter_game/game/components/enemy/enemy_factory.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
-import '../kiwi_game.dart';
-import 'enemy.dart';
+import '../../kiwi_game.dart';
+import 'package:flutter_game/game/components/enemy/enemy.dart';
 
 class EnemyManager extends BaseComponent
     with GameSizeAware, HasGameRef<KiwiGame> {
@@ -24,10 +24,8 @@ class EnemyManager extends BaseComponent
   }
 
   void _spawnEnemy() {
-
     if (gameRef.buildContext != null) {
-
-      int randomEnemy =  random.nextInt(enemyType.length);
+      int randomEnemy = random.nextInt(enemyType.length);
 
       EnemyFactory factory = new EnemyFactory();
 

@@ -3,11 +3,10 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_game/game/components/enemy.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
+import 'package:flutter_game/game/components/enemy/enemy.dart';
 
-class CloudEnemy extends Enemy
-    with GameSizeAware, Hitbox, Collidable {
+class CloudEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
   static const double enemySpeed = 400;
   late Vector2 startingPosition;
 
@@ -42,7 +41,7 @@ class CloudEnemy extends Enemy
     }
   }
 
-  Vector2 getPosition(){
+  Vector2 getPosition() {
     Vector2 initialSize = Vector2(64, 64);
 
     random.nextDouble();
