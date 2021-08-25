@@ -157,7 +157,19 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   void lifecycleStateChange(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
+        if (!gameEnded) {
+          this.pauseEngine();
+          this.overlays.remove(PauseButton.ID);
+          this.overlays.add(PauseMenu.ID);
+        }
+        break;
       case AppLifecycleState.inactive:
+        if (!gameEnded) {
+          this.pauseEngine();
+          this.overlays.remove(PauseButton.ID);
+          this.overlays.add(PauseMenu.ID);
+        }
+        break;
       case AppLifecycleState.paused:
         if (!gameEnded) {
           this.pauseEngine();
