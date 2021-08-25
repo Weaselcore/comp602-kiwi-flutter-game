@@ -17,7 +17,7 @@ class CrateEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load('crate_sprite.png');
-    size = Vector2(180, 104);
+    size = Vector2(160, 84);
     position = this.getPosition() - size;
 
     final hitboxShape = HitboxCircle(definition: 0.8);

@@ -16,8 +16,8 @@ class CloudEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('homelessman.png');
-    size = Vector2(180, 104);
+    sprite = await Sprite.load('thunder_cloud.png');
+    size = Vector2(150, 150);
     position = this.getPosition() - size;
 
     final hitboxShape = HitboxCircle(definition: 0.8);
