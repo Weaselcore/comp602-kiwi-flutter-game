@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
-import 'package:flutter_game/game/components/crate_enemy.dart';
-import 'package:flutter_game/game/components/enemy_manager.dart';
+import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 
+import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
@@ -183,7 +183,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   void reset() {
     _enemyManager.reset();
 
-    components.whereType<CrateEnemy>().forEach((enemy) {
+    components.whereType<Enemy>().forEach((enemy) {
       enemy.remove();
     });
   }
