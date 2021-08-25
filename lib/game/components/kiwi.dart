@@ -69,6 +69,7 @@ class Kiwi extends SpriteComponent
     super.onCollision(intersectionPoints, other);
 
     if (other is Enemy) {
+      gameRef.gameEnded = true;
       gameRef.pauseEngine();
       gameRef.overlays.remove(PauseButton.ID);
       gameRef.overlays.add(EndGameMenu.ID);
