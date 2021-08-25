@@ -4,6 +4,7 @@ import 'package:flutter_game/screens/main_menu.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
