@@ -11,6 +11,7 @@ class EnemyManager extends BaseComponent
     with GameSizeAware, HasGameRef<KiwiGame> {
   late Timer _timer;
   late Timer _freezeTimer;
+  int _idCount = 0;
 
   Random random = Random();
 
@@ -25,11 +26,13 @@ class EnemyManager extends BaseComponent
 
   void _spawnEnemy() {
     if (gameRef.buildContext != null) {
+      _idCount += 1;
       int randomEnemy = random.nextInt(enemyType.length);
 
       EnemyFactory factory = new EnemyFactory();
 
-      Enemy enemy = factory.getEnemyType(enemyType[randomEnemy]);
+      Enemy enemy = factory.getEnemyType(enemyType[randomEnemy], _idCount);
+      gameRef.scoreTracker.addEnemy(enemy);
       gameRef.add(enemy);
     }
   }
@@ -56,6 +59,7 @@ class EnemyManager extends BaseComponent
   void reset() {
     _timer.stop();
     _timer.start();
+    _idCount = 0;
   }
 
   void freeze() {

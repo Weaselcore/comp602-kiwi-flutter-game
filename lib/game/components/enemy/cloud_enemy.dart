@@ -7,12 +7,11 @@ import 'package:flutter_game/game/game_size_aware.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 
 class CloudEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
-  static const double enemySpeed = 400;
   late Vector2 startingPosition;
 
   Random random = Random();
 
-  CloudEnemy();
+  CloudEnemy(int idCount) : super(idCount);
 
   @override
   Future<void> onLoad() async {
@@ -27,18 +26,6 @@ class CloudEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-
-    this.position += Vector2(0, -1).normalized() * enemySpeed * dt;
-
-    // The crates get destroyed off screen.
-    if (this.position.y < -100) {
-      remove();
-    }
   }
 
   Vector2 getPosition() {

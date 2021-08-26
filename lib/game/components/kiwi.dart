@@ -50,18 +50,15 @@ class Kiwi extends SpriteComponent
   void goRight() {
     _horizontalMoveDirection = Vector2(1, 0);
     _spriteOrientationDefault = true;
-    print("Kiwi going right.");
   }
 
   void goLeft() {
     _horizontalMoveDirection = Vector2(-1, 0);
     _spriteOrientationDefault = false;
-    print("Kiwi going left.");
   }
 
   void stop() {
     _horizontalMoveDirection = Vector2.zero();
-    print("Kiwi is stopping.");
   }
 
   @override
@@ -75,4 +72,6 @@ class Kiwi extends SpriteComponent
       gameRef.overlays.add(EndGameMenu.ID);
     }
   }
+
+  double getYPosition() => this.position.y;
 }
