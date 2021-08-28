@@ -26,7 +26,7 @@ class ShopScreen extends StatelessWidget {
                   child: Column(children: <Widget>[
                     Container(
                         width: double.infinity,
-                        height: 341,
+                        height: 560,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20.0),
                             color: Colors.teal[100]),
@@ -73,3 +73,4 @@ class ShopScreen extends StatelessWidget {
   }
 }
 //TO DO: Add buttons to the Items and functions to buttons
+//Shop itemS: Kiwifruit, bugs
