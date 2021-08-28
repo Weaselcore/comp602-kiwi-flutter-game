@@ -15,7 +15,7 @@ class CrateEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('crate_sprite.png');
+    sprite = await Sprite.load('enemy_types/crate_sprite.png');
     size = Vector2(160, 84);
     position = this.getPosition() - size;
 
@@ -39,8 +39,10 @@ class CrateEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
     // TODO create a class attribute that uses this Vector.
     //Vector2 initialSize = Vector2(64, 64);
 
+    double randomPositionMultiplier = random.nextDouble();
+
     Vector2 position =
-        Vector2(random.nextDouble() * gameSize.x, gameSize.y + 100);
+        Vector2(randomPositionMultiplier * gameSize.x, gameSize.y + 100);
 
     position.clamp(
       Vector2.zero() + Vector2(150, 0),

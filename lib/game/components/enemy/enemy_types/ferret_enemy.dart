@@ -28,7 +28,7 @@ class FerretEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('ferret_sprite.png');
+    sprite = await Sprite.load('enemy_types/ferret_sprite.png');
     size = Vector2(60, 136);
     position = this.getPosition() - size;
 
@@ -52,8 +52,10 @@ class FerretEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
   Vector2 getPosition() {
     // Vector2 initialSize = Vector2(64, 64);
 
+    double randomPositionMultiplier = random.nextDouble();
+
     Vector2 position =
-        Vector2(random.nextDouble() * gameSize.x, gameSize.y + 100);
+        Vector2(randomPositionMultiplier * gameSize.x, gameSize.y + 100);
 
     position.clamp(
       Vector2.zero() + Vector2(150, 0),
