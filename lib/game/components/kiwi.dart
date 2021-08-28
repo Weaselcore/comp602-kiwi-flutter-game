@@ -24,7 +24,7 @@ class Kiwi extends SpriteComponent
   void onMount() {
     super.onMount();
 
-    final hitboxShape = HitboxCircle(definition: 0.8);
+    final hitboxShape = HitboxCircle(definition: 0.6);
     addShape(hitboxShape);
   }
 

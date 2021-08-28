@@ -38,17 +38,15 @@ class CrateEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
   Vector2 getPosition() {
     Vector2 initialSize = Vector2(64, 64);
 
-    random.nextDouble();
-    random.nextDouble();
-    random.nextDouble();
-
     Vector2 position =
         Vector2(random.nextDouble() * gameSize.x, gameSize.y + 100);
 
     position.clamp(
-      Vector2.zero() + initialSize / 2,
-      gameSize + initialSize,
+      Vector2.zero() + Vector2(200, 0),
+      gameSize + Vector2(200, 0),
     );
+
+    print("Spawning thundercloud at $position");
 
     return position;
   }
