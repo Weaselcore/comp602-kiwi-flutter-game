@@ -50,7 +50,7 @@ class FerretEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
   }
 
   Vector2 getPosition() {
-    Vector2 initialSize = Vector2(64, 64);
+    // Vector2 initialSize = Vector2(64, 64);
 
     Vector2 position =
         Vector2(random.nextDouble() * gameSize.x, gameSize.y + 100);
