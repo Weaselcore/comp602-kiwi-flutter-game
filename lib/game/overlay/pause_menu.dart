@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
 
-import '../../screens/main_menu.dart';
 import 'pause_button.dart';
 
 // This class represents the pause menu overlay.

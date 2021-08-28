@@ -1,6 +1,4 @@
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_game/game/kiwi_game.dart';
 import 'package:flutter_game/screens/game_instance.dart';
 
 class MainMenu extends StatelessWidget {

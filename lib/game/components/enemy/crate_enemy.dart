@@ -36,7 +36,8 @@ class CrateEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
   }
 
   Vector2 getPosition() {
-    Vector2 initialSize = Vector2(64, 64);
+    // TODO create a class attribute that uses this Vector.
+    //Vector2 initialSize = Vector2(64, 64);
 
     Vector2 position =
         Vector2(random.nextDouble() * gameSize.x, gameSize.y + 100);
