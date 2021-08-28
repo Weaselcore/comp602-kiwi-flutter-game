@@ -1,7 +1,8 @@
 import 'package:flame/components.dart';
-import 'package:flutter_game/game/components/enemy/crate_enemy.dart';
-import 'package:flutter_game/game/components/enemy/imaginary.dart';
-import 'cloud_enemy.dart';
+import 'package:flutter_game/game/components/enemy/enemy_types/crate_enemy.dart';
+import 'package:flutter_game/game/components/enemy/enemy_types/ferret_enemy.dart';
+import 'package:flutter_game/game/components/enemy/enemy_types/imaginary.dart';
+import 'enemy_types/cloud_enemy.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 
 class EnemyFactory extends BaseComponent {
@@ -12,6 +13,9 @@ class EnemyFactory extends BaseComponent {
     } else if (type == "CLOUD") {
       print("Making Cloud");
       return new CloudEnemy(idCount);
+    } else if (type == "FERRET") {
+      print("Making Ferret");
+      return new FerretEnemy(idCount);
     } else {
       print("Making Nothing");
       return new Imaginary(idCount);

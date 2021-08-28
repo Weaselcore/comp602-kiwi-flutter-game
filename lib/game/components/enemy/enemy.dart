@@ -6,7 +6,7 @@ import 'package:flutter_game/game/kiwi_game.dart';
 class Enemy extends SpriteComponent with HasGameRef<KiwiGame> {
   late int id;
   late bool passedKiwi = false;
-  static const double enemySpeed = 400;
+  static const double enemySpeed = 200;
 
   Enemy(this.id);
 
