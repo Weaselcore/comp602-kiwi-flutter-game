@@ -15,11 +15,12 @@ class EnemyManager extends BaseComponent
 
   Random random = Random();
 
-  var enemyType = ['CRATE', 'CLOUD'];
+  // 'CRATE', 'CLOUD', 'FERRET'
+  var enemyType = ['CRATE', 'CLOUD', 'FERRET'];
 
   EnemyManager() : super() {
-    _timer = Timer(0.5, callback: _spawnEnemy, repeat: true);
-    _freezeTimer = Timer(0.5, callback: () {
+    _timer = Timer(1.0, callback: _spawnEnemy, repeat: true);
+    _freezeTimer = Timer(1.0, callback: () {
       _timer.start();
     });
   }
