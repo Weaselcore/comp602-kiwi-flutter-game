@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter_game/game/components/enemy/enemy_factory.dart';
+import 'package:flutter_game/game/components/powerups/powerup.dart';
+import 'package:flutter_game/game/components/powerups/powerup_factory.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
 import '../../kiwi_game.dart';
@@ -15,11 +17,12 @@ class PowerUpManager extends BaseComponent
 
   Random random = Random();
 
-  var powerUpType = ['SHIELD', 'LASER', 'SLOWMO'];
+  //, 'LASER', 'SLOWMO'
+  var powerUpType = ['SHIELD'];
 
   PowerUpManager() : super() {
-    _timer = Timer(15.0, callback: _spawnPowerUp, repeat: true);
-    _freezeTimer = Timer(5.0, callback: () {
+    _timer = Timer(1.0, callback: _spawnPowerUp, repeat: true);
+    _freezeTimer = Timer(1.0, callback: () {
       _timer.start();
     });
   }
@@ -29,10 +32,11 @@ class PowerUpManager extends BaseComponent
       _idCount += 1;
       int randomPowerUp = random.nextInt(powerUpType.length);
 
-      EnemyFactory factory = new EnemyFactory();
+      PowerUpFactory factory = new PowerUpFactory();
 
-      Enemy enemy = factory.getEnemyType(powerUpType[randomPowerUp], _idCount);
-      gameRef.add(enemy);
+      PowerUp powerup =
+          factory.getPowerUpType(powerUpType[randomPowerUp], _idCount);
+      gameRef.add(powerup);
     }
   }
 

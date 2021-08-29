@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
-class FerretEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
+class FerretEnemy extends Enemy with GameSizeAware {
   late Vector2 startingPosition;
   bool _movingLeft = false;
 
   Random random = Random();
   double enemySpeed = 50;
 
-  late Vector2 _leftMove = Vector2(1, 0);
-  late Vector2 _rightMove = Vector2(-1, 0);
+  late Vector2 _leftMove = Vector2(-1, 0);
+  late Vector2 _rightMove = Vector2(1, 0);
   late Vector2 _toMove;
 
   late Timer _swayTimer;
@@ -28,7 +28,7 @@ class FerretEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('enemy_types/ferret_sprite.png');
+    sprite = await Sprite.load('ferret_sprite.png');
     size = Vector2(60, 136);
     position = this.getPosition() - size;
 

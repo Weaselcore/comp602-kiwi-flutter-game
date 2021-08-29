@@ -1,40 +1,36 @@
-import 'dart:collection';
-
 import 'package:flame/components.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 
 import 'kiwi.dart';
 
 class ScoreTracker extends BaseComponent {
-  late Queue _enemyQueue;
+  late List _enemyList;
   int _score = 0;
   late Kiwi _kiwi;
 
   ScoreTracker(Kiwi _kiwi) {
     this._kiwi = _kiwi;
-    _enemyQueue = Queue<Enemy>();
+    _enemyList = <Enemy>[];
   }
 
-  void addEnemy(
-    Enemy enemy,
-  ) {
-    _enemyQueue.addFirst(enemy);
+  void addEnemy(Enemy enemy) {
+    _enemyList.add(enemy);
   }
 
-  void removeEnemy() {
-    _enemyQueue.removeLast();
+  void removeEnemy(int id) {
+    _enemyList.remove(id);
   }
 
   void reset() {
-    _enemyQueue.clear();
+    _enemyList.clear();
     _score = 0;
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-    if (!_enemyQueue.isEmpty) {
-      for (Enemy enemy in _enemyQueue) {
+    if (!_enemyList.isEmpty) {
+      for (Enemy enemy in _enemyList) {
         if (!enemy.passedKiwi) {
           if (_kiwi.getYPosition() > enemy.getYPosition()) {
             enemy.passedKiwi = true;
