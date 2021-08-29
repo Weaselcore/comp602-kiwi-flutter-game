@@ -67,17 +67,17 @@ class ShopScreen extends StatelessWidget {
                           padding: EdgeInsets.all(20.0),
                           crossAxisSpacing: 20,
                           mainAxisSpacing: 20,
-                          children: [
+                          children: [//Add on click functions
                             Image.asset(//Caterpillar
                                 'assets/images/Caterpillar.png',
                             ),
                             Image.asset(//Cockroach
                                 'assets/images/Cockroach.png'
                             ),
-                            Image.asset(
+                            Image.asset(//Weta
                               'assets/images/Weta.png'
                             ),
-                            Image.asset(
+                            Image.asset(//Worm
                               'assets/images/Worm.png'
                             )
                             ]
