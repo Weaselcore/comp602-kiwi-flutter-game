@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_game/main.dart';
 
 class ShopScreen extends StatelessWidget {
    const ShopScreen({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
+    var assetsImage = new AssetImage('assets/images/');
+    var image = new Image(image: assetsImage, width:48.0, height: 48.0);
     return MaterialApp(
         home: Scaffold(
             backgroundColor: Colors.grey[400],
@@ -17,16 +19,13 @@ class ShopScreen extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-
-            //Put the user credits before grid
-
-            body: SafeArea(
-              child: SingleChildScrollView(
+            body: Center(
+              child: Container(
                   padding: EdgeInsets.all(20.0),
                   child: Column(children: <Widget>[
                     Container(
                         width: double.infinity,
-                        height: 560,
+                        height: 200,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20.0),
                             color: Colors.teal[100]),
@@ -49,28 +48,50 @@ class ShopScreen extends StatelessWidget {
                                     color: Colors.teal[500]),
                                 child: Center(
                                     child: Text(
-                                  "Buy More Coins",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ))),
+                                      "Buy More Coins",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ))),
                             SizedBox(
                               height: 30,
                             ),
-                            GridView.count(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              crossAxisCount: 2,
-                              padding: EdgeInsets.all(20.0),
-                              crossAxisSpacing: 20,
-                              mainAxisSpacing: 20,
-                            )
                           ],
-                        ))
-                  ])),
-            )));
+                        )),
+                    Expanded(
+                      child: GridView.count(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          crossAxisCount: 2,
+                          padding: EdgeInsets.all(20.0),
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20,
+                          children: [
+                            Image.asset(//Caterpillar
+                                'assets/images/Caterpillar.png',
+                            ),
+                            Image.asset(//Cockroach
+                                'assets/images/Cockroach.png'
+                            ),
+                            Image.asset(
+                              'assets/images/Weta.png'
+                            ),
+                            Image.asset(
+                              'assets/images/Worm.png'
+                            )
+                            ]
+                      ),
+                    )
+                  ]
+                  )
+              ),
+
+                )
+            )
+        );
   }
 }
+
 //TO DO: Add buttons to the Items and functions to buttons
 //Shop itemS: Kiwifruit, bugs
