@@ -3,12 +3,13 @@ import 'package:flutter_game/game/components/enemy/enemy.dart';
 
 import 'kiwi.dart';
 
-class ScoreTracker extends BaseComponent {
+class EnemyTracker extends BaseComponent {
   late List _enemyList;
   int _score = 0;
   late Kiwi _kiwi;
+  bool _isSlowed = false;
 
-  ScoreTracker(Kiwi _kiwi) {
+  EnemyTracker(Kiwi _kiwi) {
     this._kiwi = _kiwi;
     _enemyList = <Enemy>[];
   }
@@ -37,7 +38,31 @@ class ScoreTracker extends BaseComponent {
             _score += 1;
             print("Score: $_score");
           }
+        } else if (_isSlowed) {
+          for (Enemy enemy in _enemyList) {
+            if (!enemy.isSlowed() && _isSlowed) {
+              enemy.halfSpeed();
+            }
+          }
         }
+      }
+    }
+  }
+
+  void slowEnemies() {
+    for (Enemy enemy in _enemyList) {
+      if (!enemy.isSlowed()) {
+        enemy.halfSpeed();
+        _isSlowed = true;
+      }
+    }
+  }
+
+  void restoreEnemy() {
+    for (Enemy enemy in _enemyList) {
+      if (enemy.isSlowed()) {
+        enemy.restoreSpeed();
+        _isSlowed = false;
       }
     }
   }

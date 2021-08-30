@@ -11,7 +11,7 @@ import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/game/components/powerup_tracker.dart';
 import 'package:flutter_game/game/components/powerups/powerup.dart';
 import 'package:flutter_game/game/components/powerups/powerup_manager.dart';
-import 'package:flutter_game/game/components/score_tracker.dart';
+import 'package:flutter_game/game/components/enemy_tracker.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
@@ -21,19 +21,27 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   bool _leftDirectionPressed = false;
   bool _rightDirectionPressed = false;
   bool gameEnded = false;
+  bool _isSlowed = false;
 
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
   int _leftPointerId = -1;
 
   late Kiwi _kiwi;
-  late ScoreTracker scoreTracker;
+  late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
-  late TextComponent _scoreTicker;
   late PowerUpTracker powerUpTracker;
   late PowerUpManager _powerUpManager;
 
+  late TextComponent _scoreTicker;
   late TextComponent _shieldTicker;
+  late TextComponent _slowTicker;
+
+  late Timer _slowTimer;
+
+  KiwiGame() {
+    _slowTimer = Timer(5, callback: _restoreEnemySpeed, repeat: false);
+  }
 
   @override
   Future<void> onLoad() async {
@@ -48,8 +56,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
       _enemyManager = EnemyManager();
       add(_enemyManager);
-      scoreTracker = ScoreTracker(_kiwi);
-      add(scoreTracker);
+      enemyTracker = EnemyTracker(_kiwi);
+      add(enemyTracker);
       powerUpTracker = PowerUpTracker();
       add(powerUpTracker);
       _powerUpManager = PowerUpManager();
@@ -79,11 +87,24 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         ),
       );
 
+      _slowTicker = TextComponent(
+        'SlowTimer: 0',
+        position: Vector2(10, 40),
+        textRenderer: TextPaint(
+          config: TextPaintConfig(
+            color: Colors.white,
+            fontSize: 12,
+            fontFamily: 'BungeeInline',
+          ),
+        ),
+      );
+
       _scoreTicker.isHud = true;
       add(_scoreTicker);
       _shieldTicker.isHud = true;
       add(_shieldTicker);
-
+      _slowTicker.isHud = true;
+      add(_slowTicker);
       _isAlreadyLoaded = true;
     }
   }
@@ -119,6 +140,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   void update(double dt) {
     super.update(dt);
     _kiwi.update(dt);
+    _slowTimer.update(dt);
 
     // If both left and right are pressed down.
     if (_isBothPressed()) {
@@ -137,8 +159,9 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _kiwi.stop();
     }
 
-    _scoreTicker.text = 'Score: ' + scoreTracker.getScore().toString();
+    _scoreTicker.text = 'Score: ' + enemyTracker.getScore().toString();
     _shieldTicker.text = 'Shield: ' + _kiwi.getShieldCount().toString();
+    _slowTicker.text = 'Slow Timer: ' + _slowTimer.current.toString();
   }
 
   @override
@@ -199,6 +222,19 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
   bool _isBothPressed() => (_rightDirectionPressed && _leftDirectionPressed);
 
+  void halfEnemySpeed() {
+    if (!_isSlowed) {
+      _slowTimer.start();
+      enemyTracker.slowEnemies();
+      _isSlowed = true;
+    }
+  }
+
+  void _restoreEnemySpeed() {
+    enemyTracker.restoreEnemy();
+    _isSlowed = false;
+  }
+
   @override
   void lifecycleStateChange(AppLifecycleState state) {
     switch (state) {
@@ -224,7 +260,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         }
         break;
       case AppLifecycleState.detached:
-        if (scoreTracker.getScore() > 0) {
+        if (enemyTracker.getScore() > 0) {
           this.pauseEngine();
           this.overlays.remove(PauseButton.ID);
           this.overlays.add(PauseMenu.ID);
@@ -235,7 +271,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
   void reset() {
     _enemyManager.reset();
-    scoreTracker.reset();
+    enemyTracker.reset();
     powerUpTracker.reset();
 
     components.whereType<Enemy>().forEach((enemy) {

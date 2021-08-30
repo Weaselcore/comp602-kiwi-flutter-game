@@ -12,7 +12,6 @@ class FerretEnemy extends Enemy with GameSizeAware {
   bool _movingLeft = false;
 
   Random random = Random();
-  double enemySpeed = 50;
 
   late Vector2 _leftMove = Vector2(-1, 0);
   late Vector2 _rightMove = Vector2(1, 0);
@@ -20,8 +19,8 @@ class FerretEnemy extends Enemy with GameSizeAware {
 
   late Timer _swayTimer;
 
-  FerretEnemy(int idCount) : super(idCount) {
-    _swayTimer = Timer(1, callback: _switchHorizontalDirection, repeat: true);
+  FerretEnemy(int idCount) : super(idCount, 70) {
+    _swayTimer = Timer(3, callback: _switchHorizontalDirection, repeat: true);
     _swayTimer.start();
     _toMove = _rightMove;
   }

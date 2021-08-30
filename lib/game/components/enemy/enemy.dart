@@ -7,10 +7,17 @@ class Enemy extends SpriteComponent
     with HasGameRef<KiwiGame>, Hitbox, Collidable {
   late int id;
   late bool passedKiwi = false;
-  static const double enemySpeed = 200;
+  late final double originalSpeed;
+  late final double slowSpeed;
+  late double enemySpeed;
   bool _canDamage = true;
+  bool _isSlowed = false;
 
-  Enemy(this.id);
+  Enemy(this.id, double enemySpeed) {
+    this.enemySpeed = enemySpeed;
+    this.originalSpeed = enemySpeed;
+    slowSpeed = enemySpeed * 0.50;
+  }
 
   void render(Canvas canvas);
 
@@ -22,7 +29,7 @@ class Enemy extends SpriteComponent
 
     // The enemies get destroyed off screen.
     if (this.position.y < -100) {
-      gameRef.scoreTracker.removeEnemy(id);
+      gameRef.enemyTracker.removeEnemy(id);
       print("Removing enemy with ID($id)");
       remove();
     }
@@ -35,4 +42,16 @@ class Enemy extends SpriteComponent
   bool canDamage() => _canDamage;
 
   double getYPosition() => this.position.y;
+
+  void halfSpeed() {
+    enemySpeed = slowSpeed;
+    _isSlowed = true;
+  }
+
+  void restoreSpeed() {
+    enemySpeed = originalSpeed;
+    _isSlowed = false;
+  }
+
+  bool isSlowed() => _isSlowed;
 }

@@ -19,7 +19,7 @@ class EnemyManager extends BaseComponent
   var enemyType = ['CRATE', 'CLOUD', 'FERRET'];
 
   EnemyManager() : super() {
-    _timer = Timer(1.0, callback: _spawnEnemy, repeat: true);
+    _timer = Timer(3.5, callback: _spawnEnemy, repeat: true);
     _freezeTimer = Timer(1.0, callback: () {
       _timer.start();
     });
@@ -33,7 +33,7 @@ class EnemyManager extends BaseComponent
       EnemyFactory factory = new EnemyFactory();
 
       Enemy enemy = factory.getEnemyType(enemyType[randomEnemy], _idCount);
-      gameRef.scoreTracker.addEnemy(enemy);
+      gameRef.enemyTracker.addEnemy(enemy);
       gameRef.add(enemy);
     }
   }

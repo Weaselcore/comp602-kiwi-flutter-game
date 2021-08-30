@@ -4,6 +4,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter_game/game/components/powerups/powerup_types/shield_powerup.dart';
+import 'package:flutter_game/game/components/powerups/powerup_types/slomo_powerup.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
 import 'package:flutter_game/game/overlay/end_game_menu.dart';
@@ -18,6 +19,7 @@ class Kiwi extends SpriteComponent
   double _horizontalSpeed = 200;
   bool _spriteOrientationDefault = false;
   int _shieldCount = 0;
+  bool godMode = true;
 
   late Sprite _kiwiSprite;
   late Sprite _kiwiWeakShieldSprite;
@@ -49,8 +51,8 @@ class Kiwi extends SpriteComponent
     _kiwiMediumShieldSprite = Sprite(_mediumShieldImage);
     _kiwiStrongShieldSprite = Sprite(_strongShieldImage);
 
-    final hitboxShape = HitboxCircle(definition: 0.6);
-    addShape(hitboxShape);
+    final hitBoxShape = HitboxCircle(definition: 0.6);
+    addShape(hitBoxShape);
   }
 
   @override
@@ -106,7 +108,7 @@ class Kiwi extends SpriteComponent
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
     super.onCollision(intersectionPoints, other);
 
-    if (other is Enemy) {
+    if (other is Enemy && !godMode) {
       // If enemy has not been nullified by shield.
       if (other.canDamage()) {
         if (_shieldCount == 0 && other.canDamage()) {
@@ -119,6 +121,9 @@ class Kiwi extends SpriteComponent
     } else if (other is ShieldPowerUp) {
       other.remove();
       addShield();
+    } else if (other is SlomoPowerUp) {
+      other.remove();
+      gameRef.halfEnemySpeed();
     }
   }
 
