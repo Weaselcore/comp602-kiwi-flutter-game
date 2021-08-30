@@ -85,6 +85,7 @@ class Enemy extends SpriteComponent
 
   void die() {
     this.remove();
+    print("Removing enemy with ID($id)");
     gameRef.camera.shake(intensity: 20);
 
     // Generate 25 white circle particles with random speed and acceleration,

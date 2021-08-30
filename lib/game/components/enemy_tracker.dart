@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flame/particles.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 
 import 'kiwi.dart';
