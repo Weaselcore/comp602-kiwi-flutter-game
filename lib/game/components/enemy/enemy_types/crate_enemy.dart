@@ -11,7 +11,7 @@ class CrateEnemy extends Enemy with GameSizeAware {
 
   Random random = Random();
 
-  CrateEnemy(int idCount) : super(idCount, 200);
+  CrateEnemy(int idCount) : super(id: idCount, enemySpeed: 200);
 
   @override
   Future<void> onLoad() async {

@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flutter_game/game/components/enemy/enemy_factory.dart';
-import 'package:flutter_game/game/components/powerups/powerup.dart';
-import 'package:flutter_game/game/components/powerups/powerup_factory.dart';
+import 'package:flutter_game/game/components/powerup/powerup.dart';
+import 'package:flutter_game/game/components/powerup/powerup_factory.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
 import '../../kiwi_game.dart';

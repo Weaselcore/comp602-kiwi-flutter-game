@@ -1,12 +1,15 @@
 import 'package:flame/components.dart';
+import 'package:flame/particles.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 
 import 'kiwi.dart';
 
 class EnemyTracker extends BaseComponent {
   late List _enemyList;
-  int _score = 0;
   late Kiwi _kiwi;
+
+  int _score = 0;
+
   bool _isSlowed = false;
 
   EnemyTracker(Kiwi _kiwi) {

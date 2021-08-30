@@ -19,7 +19,7 @@ class EnemyManager extends BaseComponent
   var enemyType = ['CRATE', 'CLOUD', 'FERRET'];
 
   EnemyManager() : super() {
-    _timer = Timer(3.5, callback: _spawnEnemy, repeat: true);
+    _timer = Timer(2, callback: _spawnEnemy, repeat: true);
     _freezeTimer = Timer(1.0, callback: () {
       _timer.start();
     });

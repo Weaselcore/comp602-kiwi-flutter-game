@@ -9,8 +9,8 @@ import 'package:flutter_game/game/components/kiwi.dart';
 
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/game/components/powerup_tracker.dart';
-import 'package:flutter_game/game/components/powerups/powerup.dart';
-import 'package:flutter_game/game/components/powerups/powerup_manager.dart';
+import 'package:flutter_game/game/components/powerup/powerup.dart';
+import 'package:flutter_game/game/components/powerup/powerup_manager.dart';
 import 'package:flutter_game/game/components/enemy_tracker.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';

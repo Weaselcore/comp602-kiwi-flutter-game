@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_game/game/components/powerups/powerup.dart';
+import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
 class SlomoPowerUp extends PowerUp with GameSizeAware {

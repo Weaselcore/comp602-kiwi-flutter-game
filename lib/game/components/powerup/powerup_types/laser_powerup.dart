@@ -3,15 +3,15 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_game/game/components/powerups/powerup.dart';
+import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
-class ShieldPowerUp extends PowerUp with GameSizeAware {
+class LaserPowerUp extends PowerUp with GameSizeAware {
   late Vector2 startingPosition;
 
   Random random = Random();
 
-  ShieldPowerUp(int idCount) : super(idCount);
+  LaserPowerUp(int idCount) : super(idCount);
 
   @override
   Future<void> onLoad() async {
@@ -41,7 +41,7 @@ class ShieldPowerUp extends PowerUp with GameSizeAware {
       gameSize + Vector2(150, 0),
     );
 
-    print("Spawning shield power up at $position");
+    print("Spawning laser power up at $position");
 
     return position;
   }

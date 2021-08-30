@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import 'package:flutter_game/game/components/powerups/powerup.dart';
+import 'package:flutter_game/game/components/powerup/powerup.dart';
 
 class PowerUpTracker extends BaseComponent {
   late List _powerUpList;
