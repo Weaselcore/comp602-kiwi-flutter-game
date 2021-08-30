@@ -19,7 +19,7 @@ class CloudEnemy extends Enemy with GameSizeAware {
     size = Vector2(150, 150);
     position = this.getPosition() - size;
 
-    final hitboxShape = HitboxCircle(definition: 0.8);
+    final hitboxShape = HitboxCircle(definition: 0.6);
     addShape(hitboxShape);
   }
 
