@@ -85,6 +85,7 @@ class Enemy extends SpriteComponent
 
   void die() {
     this.remove();
+    gameRef.camera.shake(intensity: 20);
 
     // Generate 25 white circle particles with random speed and acceleration,
     // at current position of this enemy. Each particles lives for exactly
