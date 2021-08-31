@@ -6,20 +6,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 
-class CloudEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
+class CloudEnemy extends Enemy with GameSizeAware {
   late Vector2 startingPosition;
 
   Random random = Random();
 
-  CloudEnemy(int idCount) : super(idCount);
+  CloudEnemy(int idCount) : super(id: idCount, enemySpeed: 150);
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('enemy_types/thunder_cloud_sprite.png');
+    sprite = await Sprite.load('thunder_cloud_sprite.png');
     size = Vector2(150, 150);
     position = this.getPosition() - size;
 
-    final hitboxShape = HitboxCircle(definition: 0.8);
+    final hitboxShape = HitboxCircle(definition: 0.6);
     addShape(hitboxShape);
   }
 

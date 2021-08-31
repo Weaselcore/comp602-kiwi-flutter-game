@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:flutter_game/game/components/enemy/enemy_factory.dart';
+import 'package:flutter_game/game/components/powerup/powerup.dart';
+import 'package:flutter_game/game/components/powerup/powerup_factory.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
 import '../../kiwi_game.dart';
-import 'package:flutter_game/game/components/enemy/enemy.dart';
 
-class EnemyManager extends BaseComponent
+class PowerUpManager extends BaseComponent
     with GameSizeAware, HasGameRef<KiwiGame> {
   late Timer _timer;
   late Timer _freezeTimer;
@@ -15,26 +15,26 @@ class EnemyManager extends BaseComponent
 
   Random random = Random();
 
-  // 'CRATE', 'CLOUD', 'FERRET'
-  var enemyType = ['CRATE', 'CLOUD', 'FERRET'];
+  //, 'LASER', 'SLOMO', 'SHIELD'
+  var powerUpType = ['LASER', 'SLOMO', 'SHIELD'];
 
-  EnemyManager() : super() {
-    _timer = Timer(2, callback: _spawnEnemy, repeat: true);
+  PowerUpManager() : super() {
+    _timer = Timer(10.0, callback: _spawnPowerUp, repeat: true);
     _freezeTimer = Timer(1.0, callback: () {
       _timer.start();
     });
   }
 
-  void _spawnEnemy() {
+  void _spawnPowerUp() {
     if (gameRef.buildContext != null) {
       _idCount += 1;
-      int randomEnemy = random.nextInt(enemyType.length);
+      int randomPowerUp = random.nextInt(powerUpType.length);
 
-      EnemyFactory factory = new EnemyFactory();
+      PowerUpFactory factory = new PowerUpFactory();
 
-      Enemy enemy = factory.getEnemyType(enemyType[randomEnemy], _idCount);
-      gameRef.enemyTracker.addEnemy(enemy);
-      gameRef.add(enemy);
+      PowerUp powerup =
+          factory.getPowerUpType(powerUpType[randomPowerUp], _idCount);
+      gameRef.add(powerup);
     }
   }
 

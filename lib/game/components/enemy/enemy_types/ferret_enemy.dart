@@ -7,28 +7,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
-class FerretEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
+class FerretEnemy extends Enemy with GameSizeAware {
   late Vector2 startingPosition;
   bool _movingLeft = false;
 
   Random random = Random();
-  double enemySpeed = 50;
 
-  late Vector2 _leftMove = Vector2(1, 0);
-  late Vector2 _rightMove = Vector2(-1, 0);
+  late Vector2 _leftMove = Vector2(-1, 0);
+  late Vector2 _rightMove = Vector2(1, 0);
   late Vector2 _toMove;
 
   late Timer _swayTimer;
 
-  FerretEnemy(int idCount) : super(idCount) {
-    _swayTimer = Timer(1, callback: _switchHorizontalDirection, repeat: true);
+  FerretEnemy(int idCount) : super(id: idCount, enemySpeed: 70) {
+    _swayTimer = Timer(3, callback: _switchHorizontalDirection, repeat: true);
     _swayTimer.start();
     _toMove = _rightMove;
   }
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('enemy_types/ferret_sprite.png');
+    sprite = await Sprite.load('ferret_sprite.png');
     size = Vector2(60, 136);
     position = this.getPosition() - size;
 
@@ -44,6 +43,13 @@ class FerretEnemy extends Enemy with GameSizeAware, Hitbox, Collidable {
   @override
   void update(double dt) {
     super.update(dt);
+
+    if (_movingLeft) {
+      this.renderFlipX = true;
+    } else {
+      this.renderFlipX = false;
+    }
+
     _swayTimer.update(dt);
     _toMove = !_movingLeft ? _rightMove : _leftMove;
     this.position += (Vector2(0, 0) + _toMove) * enemySpeed * dt;

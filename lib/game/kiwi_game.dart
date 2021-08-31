@@ -8,7 +8,11 @@ import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 
 import 'package:flutter_game/game/components/enemy/enemy.dart';
-import 'package:flutter_game/game/components/score_tracker.dart';
+import 'package:flutter_game/game/components/powerup/component/laser_beam.dart';
+import 'package:flutter_game/game/components/powerup_tracker.dart';
+import 'package:flutter_game/game/components/powerup/powerup.dart';
+import 'package:flutter_game/game/components/powerup/powerup_manager.dart';
+import 'package:flutter_game/game/components/enemy_tracker.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
@@ -18,15 +22,32 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   bool _leftDirectionPressed = false;
   bool _rightDirectionPressed = false;
   bool gameEnded = false;
+  bool _isSlowed = false;
 
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
   int _leftPointerId = -1;
 
   late Kiwi _kiwi;
-  late ScoreTracker scoreTracker;
+  late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
+  late PowerUpTracker powerUpTracker;
+  late PowerUpManager _powerUpManager;
+
   late TextComponent _scoreTicker;
+  late TextComponent _shieldTicker;
+  late TextComponent _slowTicker;
+  late TextComponent _laserTicker;
+
+  late Timer _slowTimer;
+  late Timer _laserTimer;
+
+  late LaserBeam _laserBeam;
+
+  KiwiGame() {
+    _slowTimer = Timer(5, callback: _restoreEnemySpeed, repeat: false);
+    _laserTimer = Timer(5, callback: removeLaser, repeat: false);
+  }
 
   @override
   Future<void> onLoad() async {
@@ -38,10 +59,15 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       );
       _kiwi.anchor = Anchor.center;
       add(_kiwi);
+
       _enemyManager = EnemyManager();
       add(_enemyManager);
-      scoreTracker = ScoreTracker(_kiwi);
-      add(scoreTracker);
+      enemyTracker = EnemyTracker(_kiwi);
+      add(enemyTracker);
+      powerUpTracker = PowerUpTracker();
+      add(powerUpTracker);
+      _powerUpManager = PowerUpManager();
+      add(_powerUpManager);
 
       _scoreTicker = TextComponent(
         'Score: 0',
@@ -55,8 +81,50 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         ),
       );
 
+      _shieldTicker = TextComponent(
+        'Shield: 0',
+        position: Vector2(10, 25),
+        textRenderer: TextPaint(
+          config: TextPaintConfig(
+            color: Colors.white,
+            fontSize: 12,
+            fontFamily: 'BungeeInline',
+          ),
+        ),
+      );
+
+      _slowTicker = TextComponent(
+        'SlowTimer: 0',
+        position: Vector2(10, 40),
+        textRenderer: TextPaint(
+          config: TextPaintConfig(
+            color: Colors.white,
+            fontSize: 12,
+            fontFamily: 'BungeeInline',
+          ),
+        ),
+      );
+
+      _laserTicker = TextComponent(
+        'SlowTimer: 0',
+        position: Vector2(10, 55),
+        textRenderer: TextPaint(
+          config: TextPaintConfig(
+            color: Colors.white,
+            fontSize: 12,
+            fontFamily: 'BungeeInline',
+          ),
+        ),
+      );
+
       _scoreTicker.isHud = true;
       add(_scoreTicker);
+      _shieldTicker.isHud = true;
+      add(_shieldTicker);
+      _slowTicker.isHud = true;
+      add(_slowTicker);
+      _laserTicker.isHud = true;
+      add(_laserTicker);
 
       _isAlreadyLoaded = true;
     }
@@ -93,6 +161,12 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   void update(double dt) {
     super.update(dt);
     _kiwi.update(dt);
+    _slowTimer.update(dt);
+    _laserTimer.update(dt);
+
+    if (_kiwi.hasLaser) {
+      _laserBeam.position = _kiwi.position;
+    }
 
     // If both left and right are pressed down.
     if (_isBothPressed()) {
@@ -111,7 +185,10 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _kiwi.stop();
     }
 
-    _scoreTicker.text = 'Score: ' + scoreTracker.getScore().toString();
+    _scoreTicker.text = 'Score: ' + enemyTracker.getScore().toString();
+    _shieldTicker.text = 'Shield: ' + _kiwi.getShieldCount().toString();
+    _slowTicker.text = 'Slow Timer: ' + _slowTimer.current.toString();
+    _laserTicker.text = 'Laser Timer: ' + _laserTimer.current.toString();
   }
 
   @override
@@ -172,6 +249,35 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
   bool _isBothPressed() => (_rightDirectionPressed && _leftDirectionPressed);
 
+  void halfEnemySpeed() {
+    if (!_isSlowed) {
+      _slowTimer.start();
+      enemyTracker.slowEnemies();
+      _isSlowed = true;
+    }
+  }
+
+  void _restoreEnemySpeed() {
+    enemyTracker.restoreEnemy();
+    _isSlowed = false;
+  }
+
+  void fireLaser() {
+    _laserBeam = LaserBeam();
+    add(_laserBeam);
+    _laserBeam.anchor = Anchor.topCenter;
+    _laserBeam.position = Vector2(55, 50);
+    _kiwi.hasLaser = true;
+    _laserTimer.start();
+  }
+
+  void removeLaser() {
+    _kiwi.hasLaser = false;
+    _laserBeam.remove();
+  }
+
+  Kiwi getKiwi() => _kiwi;
+
   @override
   void lifecycleStateChange(AppLifecycleState state) {
     switch (state) {
@@ -197,7 +303,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         }
         break;
       case AppLifecycleState.detached:
-        if (scoreTracker.getScore() > 0) {
+        if (enemyTracker.getScore() > 0) {
           this.pauseEngine();
           this.overlays.remove(PauseButton.ID);
           this.overlays.add(PauseMenu.ID);
@@ -208,10 +314,17 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
   void reset() {
     _enemyManager.reset();
-    scoreTracker.reset();
+    enemyTracker.reset();
+    powerUpTracker.reset();
+    _laserTimer.stop();
+    _slowTimer.stop();
 
     components.whereType<Enemy>().forEach((enemy) {
       enemy.remove();
+    });
+
+    components.whereType<PowerUp>().forEach((powerUp) {
+      powerUp.remove();
     });
   }
 }
