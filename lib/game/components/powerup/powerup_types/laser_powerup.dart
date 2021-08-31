@@ -15,7 +15,7 @@ class LaserPowerUp extends PowerUp with GameSizeAware {
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('shield_powerup_sprite.png');
+    sprite = await Sprite.load('laser_powerup_sprite.png');
     size = Vector2(150, 150);
     position = this.getPosition() - size;
 

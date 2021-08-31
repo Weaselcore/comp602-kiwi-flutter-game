@@ -5,7 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
-import 'package:flutter_game/game/components/powerup/powerup_types/laser_powerup.dart';
+import 'package:flutter_game/game/components/powerup/component/laser_beam.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
 
 class Enemy extends SpriteComponent
@@ -59,6 +59,8 @@ class Enemy extends SpriteComponent
       if (other.hasShield()) {
         die();
       }
+    } else if (other is LaserBeam) {
+      die();
     }
   }
 

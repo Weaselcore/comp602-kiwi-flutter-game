@@ -15,8 +15,8 @@ class PowerUpManager extends BaseComponent
 
   Random random = Random();
 
-  //, 'LASER',
-  var powerUpType = ['SLOMO', 'SHIELD'];
+  //, 'LASER', 'SLOMO', 'SHIELD'
+  var powerUpType = ['LASER', 'SLOMO', 'SHIELD'];
 
   PowerUpManager() : super() {
     _timer = Timer(10.0, callback: _spawnPowerUp, repeat: true);

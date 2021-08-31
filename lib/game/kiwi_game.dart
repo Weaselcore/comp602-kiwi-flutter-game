@@ -8,6 +8,7 @@ import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 
 import 'package:flutter_game/game/components/enemy/enemy.dart';
+import 'package:flutter_game/game/components/powerup/component/laser_beam.dart';
 import 'package:flutter_game/game/components/powerup_tracker.dart';
 import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_manager.dart';
@@ -36,11 +37,16 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   late TextComponent _scoreTicker;
   late TextComponent _shieldTicker;
   late TextComponent _slowTicker;
+  late TextComponent _laserTicker;
 
   late Timer _slowTimer;
+  late Timer _laserTimer;
+
+  late LaserBeam _laserBeam;
 
   KiwiGame() {
     _slowTimer = Timer(5, callback: _restoreEnemySpeed, repeat: false);
+    _laserTimer = Timer(5, callback: removeLaser, repeat: false);
   }
 
   @override
@@ -99,12 +105,27 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         ),
       );
 
+      _laserTicker = TextComponent(
+        'SlowTimer: 0',
+        position: Vector2(10, 55),
+        textRenderer: TextPaint(
+          config: TextPaintConfig(
+            color: Colors.white,
+            fontSize: 12,
+            fontFamily: 'BungeeInline',
+          ),
+        ),
+      );
+
       _scoreTicker.isHud = true;
       add(_scoreTicker);
       _shieldTicker.isHud = true;
       add(_shieldTicker);
       _slowTicker.isHud = true;
       add(_slowTicker);
+      _laserTicker.isHud = true;
+      add(_laserTicker);
+
       _isAlreadyLoaded = true;
     }
   }
@@ -141,6 +162,11 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     super.update(dt);
     _kiwi.update(dt);
     _slowTimer.update(dt);
+    _laserTimer.update(dt);
+
+    if (_kiwi.hasLaser) {
+      _laserBeam.position = _kiwi.position;
+    }
 
     // If both left and right are pressed down.
     if (_isBothPressed()) {
@@ -162,6 +188,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     _scoreTicker.text = 'Score: ' + enemyTracker.getScore().toString();
     _shieldTicker.text = 'Shield: ' + _kiwi.getShieldCount().toString();
     _slowTicker.text = 'Slow Timer: ' + _slowTimer.current.toString();
+    _laserTicker.text = 'Laser Timer: ' + _laserTimer.current.toString();
   }
 
   @override
@@ -234,6 +261,22 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     enemyTracker.restoreEnemy();
     _isSlowed = false;
   }
+
+  void fireLaser() {
+    _laserBeam = LaserBeam();
+    add(_laserBeam);
+    _laserBeam.anchor = Anchor.topCenter;
+    _laserBeam.position = Vector2(55, 50);
+    _kiwi.hasLaser = true;
+    _laserTimer.start();
+  }
+
+  void removeLaser() {
+    _kiwi.hasLaser = false;
+    _laserBeam.remove();
+  }
+
+  Kiwi getKiwi() => _kiwi;
 
   @override
   void lifecycleStateChange(AppLifecycleState state) {

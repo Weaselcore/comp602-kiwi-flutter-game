@@ -3,6 +3,7 @@ import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/image_composition.dart';
+import 'package:flutter_game/game/components/powerup/powerup_types/laser_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/shield_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/slomo_powerup.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
@@ -19,6 +20,8 @@ class Kiwi extends SpriteComponent
   double _horizontalSpeed = 200;
   bool _spriteOrientationDefault = false;
   int _shieldCount = 0;
+  bool hasLaser = false;
+
   bool godMode = false;
 
   late Sprite _kiwiSprite;
@@ -124,6 +127,11 @@ class Kiwi extends SpriteComponent
     } else if (other is SlomoPowerUp) {
       other.remove();
       gameRef.halfEnemySpeed();
+    } else if (other is LaserPowerUp) {
+      other.remove();
+      if (!hasLaser) {
+        fireLaser();
+      }
     }
   }
 
@@ -139,6 +147,18 @@ class Kiwi extends SpriteComponent
     if (_shieldCount > 0) {
       _shieldCount -= 1;
     }
+  }
+
+  void fireLaser() {
+    if (!hasLaser) {
+      hasLaser = true;
+      gameRef.fireLaser();
+    }
+  }
+
+  void removeLaser() {
+    hasLaser = false;
+    gameRef.removeLaser();
   }
 
   void die() {
