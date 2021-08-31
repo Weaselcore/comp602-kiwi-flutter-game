@@ -316,6 +316,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     _enemyManager.reset();
     enemyTracker.reset();
     powerUpTracker.reset();
+    _laserTimer.stop();
+    _slowTimer.stop();
 
     components.whereType<Enemy>().forEach((enemy) {
       enemy.remove();
