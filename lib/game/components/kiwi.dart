@@ -20,7 +20,6 @@ class Kiwi extends SpriteComponent
   double _horizontalSpeed = 200;
   bool _spriteOrientationDefault = false;
   int _shieldCount = 0;
-  int _score = 0;
 
   bool hasLaser = false;
   bool godMode = false;
