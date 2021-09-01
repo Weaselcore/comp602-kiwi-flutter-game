@@ -4,15 +4,18 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_game/game/components/coin/coin.dart';
+import 'package:flutter_game/game/components/coin/coin_manager.dart';
+import 'package:flutter_game/game/components/coin/coin_tracker.dart';
 import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/game/components/powerup/component/laser_beam.dart';
-import 'package:flutter_game/game/components/powerup_tracker.dart';
+import 'package:flutter_game/game/components/powerup/powerup_tracker.dart';
 import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_manager.dart';
-import 'package:flutter_game/game/components/enemy_tracker.dart';
+import 'package:flutter_game/game/components/enemy/enemy_tracker.dart';
 import 'package:flutter_game/game/components/ticker/info_ticker.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
@@ -34,6 +37,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   late EnemyManager _enemyManager;
   late PowerUpTracker powerUpTracker;
   late PowerUpManager _powerUpManager;
+  late CoinManager _coinManager;
+  late CoinTracker coinTracker;
 
   late TextComponent _scoreTicker;
   late TextComponent _shieldTicker;
@@ -65,10 +70,14 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       add(_enemyManager);
       enemyTracker = EnemyTracker(_kiwi);
       add(enemyTracker);
-      powerUpTracker = PowerUpTracker();
-      add(powerUpTracker);
       _powerUpManager = PowerUpManager();
       add(_powerUpManager);
+      powerUpTracker = PowerUpTracker();
+      add(powerUpTracker);
+      _coinManager = CoinManager();
+      add(_coinManager);
+      coinTracker = CoinTracker();
+      add(coinTracker);
 
       _scoreTicker =
           InfoTicker(initialText: 'Score: 0', initialPos: Vector2(10, 10));
@@ -278,9 +287,16 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   }
 
   void reset() {
+    // Resetting id counts.
     _enemyManager.reset();
+    _powerUpManager.reset();
+    _coinManager.reset();
+
+    // Clearing the entity list.
     enemyTracker.reset();
     powerUpTracker.reset();
+    coinTracker.reset();
+
     _laserTimer.stop();
     _slowTimer.stop();
 
@@ -290,6 +306,10 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
     components.whereType<PowerUp>().forEach((powerUp) {
       powerUp.remove();
+    });
+
+    components.whereType<Coin>().forEach((coin) {
+      coin.remove();
     });
   }
 }

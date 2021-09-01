@@ -1,7 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 
-import 'kiwi.dart';
+import '../kiwi.dart';
 
 class EnemyTracker extends BaseComponent {
   late List _enemyList;
