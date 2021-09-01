@@ -11,6 +11,7 @@ class Coin extends SpriteAnimationComponent
     with HasGameRef<KiwiGame>, Hitbox, Collidable, GameSizeAware {
   late int id;
   double coinSpeed = 75;
+  int _scoreWorth = 5;
   Random _random = Random();
 
   Coin(this.id) : super();
@@ -63,6 +64,8 @@ class Coin extends SpriteAnimationComponent
     super.onCollision(intersectionPoints, other);
 
     if (other is Kiwi) {
+      gameRef.incrementScore(_scoreWorth);
+      gameRef.coin += 1;
       gameRef.coinTracker.removeCoin(id);
       this.remove();
     }

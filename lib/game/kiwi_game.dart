@@ -31,8 +31,11 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
   int _leftPointerId = -1;
+  int score = 0;
+  int coin = 0;
 
   late Kiwi _kiwi;
+
   late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
   late PowerUpTracker powerUpTracker;
@@ -41,6 +44,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   late CoinTracker coinTracker;
 
   late TextComponent _scoreTicker;
+  late TextComponent _coinTicker;
   late TextComponent _shieldTicker;
   late TextComponent _slowTicker;
   late TextComponent _laserTicker;
@@ -82,17 +86,22 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _scoreTicker =
           InfoTicker(initialText: 'Score: 0', initialPos: Vector2(10, 10));
 
+      _coinTicker =
+          InfoTicker(initialText: 'Coins: 0', initialPos: Vector2(10, 25));
+
       _shieldTicker =
-          InfoTicker(initialText: 'Shield: 0', initialPos: Vector2(10, 25));
+          InfoTicker(initialText: 'Shield: 0', initialPos: Vector2(10, 40));
 
       _slowTicker =
-          InfoTicker(initialText: 'SlowTimer: 0', initialPos: Vector2(10, 40));
+          InfoTicker(initialText: 'SlowTimer: 0', initialPos: Vector2(10, 55));
 
       _laserTicker =
-          InfoTicker(initialText: 'LaserTimer: 0', initialPos: Vector2(10, 55));
+          InfoTicker(initialText: 'LaserTimer: 0', initialPos: Vector2(10, 70));
 
       _scoreTicker.isHud = true;
       add(_scoreTicker);
+      _coinTicker.isHud = true;
+      add(_coinTicker);
       _shieldTicker.isHud = true;
       add(_shieldTicker);
       _slowTicker.isHud = true;
@@ -159,7 +168,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _kiwi.stop();
     }
 
-    _scoreTicker.text = 'Score: ' + enemyTracker.getScore().toString();
+    _scoreTicker.text = 'Score: ' + score.toString();
+    _coinTicker.text = 'Coins: ' + coin.toString();
     _shieldTicker.text = 'Shield: ' + _kiwi.getShieldCount().toString();
     _slowTicker.text = 'Slow Timer: ' + _slowTimer.current.toString();
     _laserTicker.text = 'Laser Timer: ' + _laserTimer.current.toString();
@@ -250,6 +260,10 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     _laserBeam.remove();
   }
 
+  void incrementScore(int scoreToAdd) {
+    score += scoreToAdd;
+  }
+
   Kiwi getKiwi() => _kiwi;
 
   @override
@@ -277,7 +291,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         }
         break;
       case AppLifecycleState.detached:
-        if (enemyTracker.getScore() > 0) {
+        if (score > 0) {
           this.pauseEngine();
           this.overlays.remove(PauseButton.ID);
           this.overlays.add(PauseMenu.ID);
@@ -299,6 +313,9 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
     _laserTimer.stop();
     _slowTimer.stop();
+
+    score = 0;
+    coin = 0;
 
     components.whereType<Enemy>().forEach((enemy) {
       enemy.remove();

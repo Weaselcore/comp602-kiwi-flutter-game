@@ -1,13 +1,12 @@
 import 'package:flame/components.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
+import 'package:flutter_game/game/kiwi_game.dart';
 
 import '../kiwi.dart';
 
-class EnemyTracker extends BaseComponent {
+class EnemyTracker extends BaseComponent with HasGameRef<KiwiGame> {
   late List _enemyList;
   late Kiwi _kiwi;
-
-  int _score = 0;
 
   bool _isSlowed = false;
 
@@ -26,7 +25,6 @@ class EnemyTracker extends BaseComponent {
 
   void reset() {
     _enemyList.clear();
-    _score = 0;
   }
 
   @override
@@ -37,8 +35,8 @@ class EnemyTracker extends BaseComponent {
         if (!enemy.passedKiwi) {
           if (_kiwi.getYPosition() > enemy.getYPosition()) {
             enemy.passedKiwi = true;
-            _score += 1;
-            print("Score: $_score");
+            gameRef.score += 1;
+            print("Score: $gameRef.score");
           }
         } else if (_isSlowed) {
           for (Enemy enemy in _enemyList) {
@@ -68,6 +66,4 @@ class EnemyTracker extends BaseComponent {
       }
     }
   }
-
-  int getScore() => _score;
 }
