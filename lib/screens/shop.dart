@@ -5,14 +5,19 @@ import 'package:flutter_game/main.dart';
 class ShopScreen extends StatelessWidget {
    const ShopScreen({Key? key}) : super(key: key);
 
+  get coins => 1000;
+  get item => 100;
+
+
   @override
   Widget build(BuildContext context) {
     var assetsImage = new AssetImage('assets/images/');
     var image = new Image(image: assetsImage, width:48.0, height: 48.0);
     return MaterialApp(
         home: Scaffold(
-            backgroundColor: Colors.grey[400],
+            backgroundColor: Colors.brown[500],
             appBar: AppBar(
+              backgroundColor: Colors.brown,
               leading: Icon(Icons.store_rounded),
               title: const Text(
                 'Shop',
@@ -28,11 +33,11 @@ class ShopScreen extends StatelessWidget {
                         height: 200,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20.0),
-                            color: Colors.teal[100]),
+                            color: Colors.brown[200]),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Text("Kiwi Coins = 1000",
+                            Text("Kiwi Coins = $coins",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 30,
@@ -45,29 +50,50 @@ class ShopScreen extends StatelessWidget {
                                 margin: EdgeInsets.symmetric(horizontal: 40.0),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10.0),
-                                    color: Colors.teal[500]),
-                                child: Center(
+                                    color: Colors.brown[500]),
+                                child: GestureDetector(child: Center(
                                     child: Text(
                                       "Buy More Coins",
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                    ))),
+                                    )),onTap:(){print('button clicked');} //Should open a page for coins
+                                    )
+                            ),
                             SizedBox(
                               height: 30,
                             ),
                           ],
                         )),
                     Expanded(
-                      child: GridView.count(
+                      child: GestureDetector(child: GridView.count(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           crossAxisCount: 2,
                           padding: EdgeInsets.all(20.0),
                           crossAxisSpacing: 20,
                           mainAxisSpacing: 20,
-                          children: [//Add on click functions
+                          children: [
+                            Container( //put this in the middle
+                              width: double.infinity,
+                              child: Center(child:Text('Kiwi Skins')),
+                            ),
+                            Image.asset(//grey
+                              'assets/images/kiwi_sprite_grey.png',
+                            ),
+                            Image.asset(//purple
+                              'assets/images/kiwi_sprite_purple.png',
+                            ),
+                            Image.asset(//red
+                              'assets/images/kiwi_sprite_red.png',
+                            ),
+                            Image.asset(//yellow
+                              'assets/images/kiwi_sprite_yellow.png',
+                            ),
+                            Image.asset(//heart
+                              'assets/images/heart.png',
+                            ),
                             Image.asset(//Caterpillar
                                 'assets/images/Caterpillar.png',
                             ),
@@ -82,16 +108,20 @@ class ShopScreen extends StatelessWidget {
                             )
                             ]
                       ),
-                    )
-                  ]
+                    onTap:(){
+                        "$coins - $item";
+                        print('I clicked it');
+                        },)
+                    )]
                   )
               ),
-
                 )
             )
         );
   }
 }
-
+ void main() {
+  int coins = 1000;
+ }
 //TO DO: Add buttons to the Items and functions to buttons
 //Shop itemS: Kiwifruit, bugs
