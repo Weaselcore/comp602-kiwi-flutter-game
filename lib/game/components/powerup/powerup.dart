@@ -44,7 +44,7 @@ class PowerUp extends SpriteComponent
 
     this.position += (Vector2(0, -1) + _toMove) * powerupSpeed * dt;
 
-    // The crates get destroyed off screen.
+    // The powerup get destroyed off screen.
     if (this.position.y < -100) {
       gameRef.powerUpTracker.removePowerUp(id);
     }

@@ -34,6 +34,8 @@ class PowerUpManager extends BaseComponent
 
       PowerUp powerup =
           factory.getPowerUpType(powerUpType[randomPowerUp], _idCount);
+
+      gameRef.powerUpTracker.addPowerUp(powerup);
       gameRef.add(powerup);
     }
   }
