@@ -13,6 +13,7 @@ import 'package:flutter_game/game/components/powerup_tracker.dart';
 import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_manager.dart';
 import 'package:flutter_game/game/components/enemy_tracker.dart';
+import 'package:flutter_game/game/components/ticker/info_ticker.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
@@ -69,53 +70,17 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _powerUpManager = PowerUpManager();
       add(_powerUpManager);
 
-      _scoreTicker = TextComponent(
-        'Score: 0',
-        position: Vector2(10, 10),
-        textRenderer: TextPaint(
-          config: TextPaintConfig(
-            color: Colors.white,
-            fontSize: 12,
-            fontFamily: 'BungeeInline',
-          ),
-        ),
-      );
+      _scoreTicker =
+          InfoTicker(initialText: 'Score: 0', initialPos: Vector2(10, 10));
 
-      _shieldTicker = TextComponent(
-        'Shield: 0',
-        position: Vector2(10, 25),
-        textRenderer: TextPaint(
-          config: TextPaintConfig(
-            color: Colors.white,
-            fontSize: 12,
-            fontFamily: 'BungeeInline',
-          ),
-        ),
-      );
+      _shieldTicker =
+          InfoTicker(initialText: 'Shield: 0', initialPos: Vector2(10, 25));
 
-      _slowTicker = TextComponent(
-        'SlowTimer: 0',
-        position: Vector2(10, 40),
-        textRenderer: TextPaint(
-          config: TextPaintConfig(
-            color: Colors.white,
-            fontSize: 12,
-            fontFamily: 'BungeeInline',
-          ),
-        ),
-      );
+      _slowTicker =
+          InfoTicker(initialText: 'SlowTimer: 0', initialPos: Vector2(10, 40));
 
-      _laserTicker = TextComponent(
-        'SlowTimer: 0',
-        position: Vector2(10, 55),
-        textRenderer: TextPaint(
-          config: TextPaintConfig(
-            color: Colors.white,
-            fontSize: 12,
-            fontFamily: 'BungeeInline',
-          ),
-        ),
-      );
+      _laserTicker =
+          InfoTicker(initialText: 'LaserTimer: 0', initialPos: Vector2(10, 55));
 
       _scoreTicker.isHud = true;
       add(_scoreTicker);
