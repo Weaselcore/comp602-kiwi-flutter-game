@@ -12,6 +12,8 @@ import 'package:flutter_game/game/components/kiwi.dart';
 
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/game/components/powerup/component/laser_beam.dart';
+import 'package:flutter_game/game/components/scrolling_sprite.dart';
+import 'package:flutter_game/game/components/scrolling_sprite_component.dart';
 import 'package:flutter_game/game/components/powerup/powerup_tracker.dart';
 import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_manager.dart';
@@ -35,6 +37,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   int coin = 0;
 
   late Kiwi _kiwi;
+
+  late ScrollingSpriteComponent _scrollingBackground;
 
   late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
@@ -69,6 +73,13 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       );
       _kiwi.anchor = Anchor.center;
       add(_kiwi);
+
+      _scrollingBackground = ScrollingSpriteComponent(
+        x: 0.0,
+        y: 0.0,
+        canvasSize: canvasSize,
+      );
+      add(_scrollingBackground);
 
       _enemyManager = EnemyManager();
       add(_enemyManager);
@@ -144,6 +155,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   void update(double dt) {
     super.update(dt);
     _kiwi.update(dt);
+    _scrollingBackground.update(dt);
     _slowTimer.update(dt);
     _laserTimer.update(dt);
 
