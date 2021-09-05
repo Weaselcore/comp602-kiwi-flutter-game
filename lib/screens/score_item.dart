@@ -6,8 +6,6 @@ part "score_item.g.dart";
 // model class for score
 @HiveType(typeId: 0)
 class ScoreItem extends HiveObject{
-  @HiveField(0)
-  int rank;
 
   @HiveField(1)
   String userNm;
@@ -15,5 +13,5 @@ class ScoreItem extends HiveObject{
   @HiveField(2)
   int score;
 
-  ScoreItem(this.rank, this.userNm, this.score);
+  ScoreItem(this.userNm, this.score);
 }

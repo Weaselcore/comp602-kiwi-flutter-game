@@ -17,7 +17,6 @@ class ScoreItemAdapter extends TypeAdapter<ScoreItem> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ScoreItem(
-      fields[0] as int,
       fields[1] as String,
       fields[2] as int,
     );
@@ -26,9 +25,7 @@ class ScoreItemAdapter extends TypeAdapter<ScoreItem> {
   @override
   void write(BinaryWriter writer, ScoreItem obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.rank)
+      ..writeByte(2)
       ..writeByte(1)
       ..write(obj.userNm)
       ..writeByte(2)
