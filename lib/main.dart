@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/screens/main_menu.dart';
@@ -15,6 +17,17 @@ void main() async {
 
   Hive.registerAdapter(ScoreItemAdapter());
   Hive.openBox<ScoreItem>("leaderboard");
+
+  await Firebase.initializeApp();
+  //need to save documentID for a user to register his/her game score to firebase.
+  if (!(await Hive.boxExists("documentID"))) {
+    //if there is not documentID registered.
+    //cretate new documentID and register it to Hive(local)
+    var box = await Hive.openBox("documentID");
+    var document = FirebaseFirestore.instance
+        .collection('leaderboards').doc();
+    box.put('documentID', document.id);
+  }
 
   runApp(MyApp());
 }
