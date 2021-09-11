@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
+import 'package:flutter_game/screens/dao/remote_score_dao.dart';
 import 'package:flutter_game/screens/score_item.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -37,12 +38,14 @@ class _LeaderScreenState extends State<LeaderScreen> {
       print("populate");
       for (int i = 1; i <= 10; i++) {
         print("$i times");
-        ScoreItem item = new ScoreItem("user$i", (10-i)*1000);
+        ScoreItem item = new ScoreItem("user", (10-i)*1000);
         scoreDao.register(item);
       }
 
       //test data registeration
-      scoreDao.register(new ScoreItem("new user", 9999999));
+      scoreDao.register(new ScoreItem("user", 9999999));
+      var remoteDao = new RemoteScoreDao();
+      remoteDao.register();
     }
   }
 

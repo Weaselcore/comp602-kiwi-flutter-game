@@ -21,12 +21,16 @@ void main() async {
   await Firebase.initializeApp();
   //need to save documentID for a user to register his/her game score to firebase.
   if (!(await Hive.boxExists("documentID"))) {
-    //if there is not documentID registered.
+    print("No docID registered");
+    //there is not documentID registered.
     //cretate new documentID and register it to Hive(local)
     var box = await Hive.openBox("documentID");
     var document = FirebaseFirestore.instance
         .collection('leaderboards').doc();
     box.put('documentID', document.id);
+  } else {
+    // documentID already registered. just open a box.
+    await Hive.openBox("documentID");
   }
 
   runApp(MyApp());
