@@ -12,13 +12,11 @@ import '../score_item.dart';
 
 class RemoteScoreDao {
 
-  late Box<ScoreItem>  _scoreBox;
   late String _documentID;
   final String _BOXNAME = "documentID";
   late LocalScoreDao _localDao;
 
   RemoteScoreDao() {
-    // _scoreBox = Hive.box<ScoreItem>(BOXNAME);
     _localDao = new LocalScoreDao();
     _documentID = Hive.box(_BOXNAME).get(_BOXNAME);
   }
@@ -31,11 +29,11 @@ class RemoteScoreDao {
       //fetch local data
       List<ScoreItem> scores = _localDao.getAll();
       var data = [];
-      //convert the list to object that firestore accept.
+      //convert the list to object that firestore accepts.
       scores.forEach((ScoreItem item) {
         data.add({item.userNm : item.score});
       });
-
+      //register local data to firestore
       await FirebaseFirestore.instance
           .collection('leaderboards').doc(_documentID).set({'ranking': data}, SetOptions(merge: true));
     } else {
