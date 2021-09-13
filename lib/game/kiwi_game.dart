@@ -10,6 +10,8 @@ import 'package:flutter_game/game/components/coin/coin_tracker.dart';
 import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 
+import 'package:sensors_plus/sensors_plus.dart';
+
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/game/components/powerup/component/laser_beam.dart';
 import 'package:flutter_game/game/components/powerup/powerup_tracker.dart';
@@ -33,6 +35,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   int _leftPointerId = -1;
   int score = 0;
   int coin = 0;
+
+  double tiltVelocity = 0.0;
 
   late Kiwi _kiwi;
 
@@ -151,22 +155,40 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _laserBeam.position = _kiwi.position;
     }
 
-    // If both left and right are pressed down.
-    if (_isBothPressed()) {
-      _kiwi.stop();
-    }
-    // If right are pressed down.
-    else if (_rightDirectionPressed && !_leftDirectionPressed) {
-      _kiwi.goRight();
-    }
-    // If left are pressed down.
-    else if (_leftDirectionPressed && !_rightDirectionPressed) {
+    // // If both left and right are pressed down.
+    // if (_isBothPressed()) {
+    //   _kiwi.stop();
+    // }
+    // // If right are pressed down.
+    // else if (_rightDirectionPressed && !_leftDirectionPressed) {
+    //   _kiwi.goRight();
+    // }
+    // // If left are pressed down.
+    // else if (_leftDirectionPressed && !_rightDirectionPressed) {
+    //   _kiwi.goLeft();
+    // }
+    // // If no buttons are pressed.
+    // else {
+    //   _kiwi.stop();
+    // }
+
+    accelerometerEvents.listen((AccelerometerEvent event) {
+      this.tiltVelocity = event.x;
+    });
+
+    _kiwi.setHorizontalSpeed(tiltVelocity);
+
+    if (tiltVelocity > 0.0){
       _kiwi.goLeft();
     }
-    // If no buttons are pressed.
-    else {
-      _kiwi.stop();
+
+    if (tiltVelocity < 0.0){
+      _kiwi.goRight();
     }
+
+    // if (tiltVelocity > -1.0 && tiltVelocity < 1.0){
+    //   _kiwi.stop();
+    // }
 
     _scoreTicker.text = 'Score: ' + score.toString();
     _coinTicker.text = 'Coins: ' + coin.toString();

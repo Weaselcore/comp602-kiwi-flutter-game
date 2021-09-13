@@ -17,7 +17,7 @@ class Kiwi extends SpriteComponent
     with GameSizeAware, Hitbox, Collidable, HasGameRef<KiwiGame> {
   // The kiwi is initialised in the center with no motion.
   Vector2 _horizontalMoveDirection = Vector2.zero();
-  double _horizontalSpeed = 200;
+  double _horizontalSpeed = 1;
   bool _spriteOrientationDefault = false;
   int _shieldCount = 0;
 
@@ -174,6 +174,20 @@ class Kiwi extends SpriteComponent
   }
 
   int getShieldCount() => _shieldCount;
+
+  void setHorizontalSpeed(double speed){
+    if (speed < 0){
+      speed = speed * -1;
+    }
+    
+    speed = speed * 100;
+
+    if (speed > 200){
+      speed = 200;
+    }
+
+    _horizontalSpeed = speed;
+  }
 
   bool hasShield() {
     if (_shieldCount > 0) {
