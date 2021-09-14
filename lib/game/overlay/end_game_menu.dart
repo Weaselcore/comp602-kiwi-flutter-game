@@ -45,6 +45,7 @@ class EndGameMenu extends StatelessWidget {
                       gameRef.overlays.add(PauseButton.ID);
                       gameRef.reset();
                       gameRef.resumeEngine();
+                      gameRef.resetMusic();
                     },
                     child: Text('Restart'),
                   ),
@@ -58,6 +59,7 @@ class EndGameMenu extends StatelessWidget {
                       Navigator.of(context).pop();
                       gameRef.overlays.remove(EndGameMenu.ID);
                       gameRef.reset();
+                      gameRef.stopMusic();
                     },
                     child: Text('Exit'),
                   ),

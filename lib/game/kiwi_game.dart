@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/coin/coin.dart';
 import 'package:flutter_game/game/components/coin/coin_manager.dart';
@@ -69,6 +70,9 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       );
       _kiwi.anchor = Anchor.center;
       add(_kiwi);
+
+      FlameAudio.bgm.initialize();
+      FlameAudio.bgm.play('background.mp3', volume: .25);
 
       _enemyManager = EnemyManager();
       add(_enemyManager);
@@ -328,5 +332,22 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     components.whereType<Coin>().forEach((coin) {
       coin.remove();
     });
+  }
+
+  void pauseMusic(){
+    FlameAudio.bgm.pause();
+  }
+
+  void resumeMusic(){
+    FlameAudio.bgm.resume();
+  }
+
+  void stopMusic(){
+    FlameAudio.bgm.stop();
+  }
+
+  void resetMusic(){
+    FlameAudio.bgm.stop();
+    FlameAudio.bgm.play('background.mp3', volume: .25);
   }
 }

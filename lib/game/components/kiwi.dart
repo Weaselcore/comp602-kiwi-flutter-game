@@ -10,6 +10,7 @@ import 'package:flutter_game/game/game_size_aware.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
 import 'package:flutter_game/game/overlay/end_game_menu.dart';
 import 'package:flutter_game/game/overlay/pause_button.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 
@@ -123,14 +124,17 @@ class Kiwi extends SpriteComponent
       }
     } else if (other is ShieldPowerUp) {
       other.remove();
+      FlameAudio.play("armour.wav");
       addShield();
     } else if (other is SlomoPowerUp) {
       other.remove();
+      FlameAudio.play("slow_time.wav");
       gameRef.halfEnemySpeed();
     } else if (other is LaserPowerUp) {
       other.remove();
       if (!hasLaser) {
         fireLaser();
+        FlameAudio.play("laser.mp3");
       }
     }
   }
@@ -163,6 +167,8 @@ class Kiwi extends SpriteComponent
 
   void die() {
     gameRef.gameEnded = true;
+    FlameAudio.play("death.mp3");
+    gameRef.stopMusic();
     gameRef.pauseEngine();
     gameRef.overlays.remove(PauseButton.ID);
     gameRef.overlays.add(EndGameMenu.ID);

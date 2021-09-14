@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_game/screens/game_instance.dart';
 
 class MainMenu extends StatelessWidget {
+
   const MainMenu({Key? key}) : super(key: key);
 
   @override
