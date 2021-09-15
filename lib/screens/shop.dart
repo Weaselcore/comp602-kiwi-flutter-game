@@ -136,7 +136,7 @@ class ShopScreen extends StatelessWidget {
                       ),
                     onTap:(){
                         const snackBar = SnackBar(content: Text('Item bought'));
-                        
+
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         "$coins - $item";
                         print('I clicked it, Coin value update');
