@@ -6,9 +6,9 @@ import 'dart:ui';
 /// Describes a Sprite image that will animate on a axis resembling scroll moviment
 class ScrollingSprite extends SpriteComponent {
   late Sprite _sprite;
-  late double _width = 400;
+  late double _width = 450;
   late double _height = 800;
-  late double _spriteWidth = 400.0;
+  late double _spriteWidth = 450.0;
   late double _spriteHeight = 800.0;
   final double verticalSpeed;
   final double horizontalSpeed;

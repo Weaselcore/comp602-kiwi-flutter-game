@@ -19,7 +19,7 @@ class ScrollingSpriteComponent extends BaseComponent {
   Future<void> onLoad() async {
     scrollingSprite = ScrollingSprite(
       spritePath: 'front_screen_1.png',
-      spriteWidth: 400.0,
+      spriteWidth: 450.0,
       spriteHeight: 800.0,
       spriteDestWidth: this.canvasSize.x,
       spriteDestHeight: this.canvasSize.y,
