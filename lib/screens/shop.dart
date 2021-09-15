@@ -5,8 +5,10 @@ import 'package:flutter_game/main.dart';
 class ShopScreen extends StatelessWidget {
    const ShopScreen({Key? key}) : super(key: key);
 
-  get coins => 1000;
+  get coins => 1000; //Local get and must be update when after each user game.
   get item => 100;
+
+
 
 
   @override
@@ -53,19 +55,19 @@ class ShopScreen extends StatelessWidget {
                                     color: Colors.brown[500]),
                                 child: GestureDetector(child: Center(
                                     child: Text(
-                                      "Buy More Coins",
+                                      "Watch ADS for Free Coins",
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                    )),onTap:(){print('button clicked');} //Should open a page for coins
+                                    )),onTap:(){print('button clicked Ads to play  in queue');} //Should open a page for coins
                                     )
-                            ),
-                            SizedBox(
-                              height: 30,
                             ),
                           ],
                         )),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Expanded(
                       child: GestureDetector(child: GridView.count(
                           scrollDirection: Axis.vertical,
@@ -76,8 +78,18 @@ class ShopScreen extends StatelessWidget {
                           mainAxisSpacing: 20,
                           children: [
                             Container( //put this in the middle
-                              width: double.infinity,
-                              child: Center(child:Text('Kiwi Skins')),
+                                width: double.infinity,
+                                height: 50,
+                                padding: EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    color: Colors.brown[200]),
+                              child:Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text("Kiwi Skins"),
+                                ],
+                              )
                             ),
                             Image.asset(//grey
                               'assets/images/kiwi_sprite_grey.png',
@@ -90,6 +102,20 @@ class ShopScreen extends StatelessWidget {
                             ),
                             Image.asset(//yellow
                               'assets/images/kiwi_sprite_yellow.png',
+                            ),
+                            Container( //put this in the middle
+                                width: double.infinity,
+                                height: 50,
+                                padding: EdgeInsets.all(10.0),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    color: Colors.brown[200]),
+                                child:Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text("Power Ups"),
+                                  ],
+                                )
                             ),
                             Image.asset(//heart
                               'assets/images/heart.png',
@@ -109,8 +135,12 @@ class ShopScreen extends StatelessWidget {
                             ]
                       ),
                     onTap:(){
+                        const snackBar = SnackBar(content: Text('Item bought'));
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         "$coins - $item";
-                        print('I clicked it');
+                        print('I clicked it, Coin value update');
+                        return coins;
                         },)
                     )]
                   )
@@ -122,6 +152,8 @@ class ShopScreen extends StatelessWidget {
 }
  void main() {
   int coins = 1000;
+
+
  }
 //TO DO: Add buttons to the Items and functions to buttons
 //Shop itemS: Kiwifruit, bugs
