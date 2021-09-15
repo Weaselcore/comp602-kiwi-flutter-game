@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_game/screens/Auth/auth_inf.dart';
+import 'package:flutter_game/screens/Auth/google_auth.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
@@ -24,19 +26,11 @@ class RemoteScoreDao {
     if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
       // have internet access
       //authentication check
-      //signInSilently() tries to get previous login info without a dialog.
-      final user = await GoogleSignIn().signInSilently();
-
-      if (user != null) {
-        final GoogleSignInAuthentication googleAuth = await user.authentication;
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-        FirebaseAuth.instance.signInWithCredential(credential);
-      } else {
-        //user who does not have google account.
-        FirebaseAuth.instance.signInAnonymously();
+      AuthInf auth = new GoogleAuth();
+      bool isAnonymous = false;
+      if (auth.isSignedIn() == false) {
+        await auth.anonymousSignIn();
+        isAnonymous = true;
       }
 
       //fetch local data
@@ -49,6 +43,12 @@ class RemoteScoreDao {
       //register local data to firestore
       await FirebaseFirestore.instance
           .collection('leaderboards').doc(_documentID).set({'ranking': data}, SetOptions(merge: true));
+
+      //if a user sign in as anonymous. Don't forget to sign out. Otherwise, user will be treated as sign in user on the setting screen.
+      if (isAnonymous) {
+        auth.anonymousSignOut();
+      }
+
     } else {
       // no internet access
       return;

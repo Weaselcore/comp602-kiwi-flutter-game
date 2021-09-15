@@ -26,7 +26,7 @@ class _LeaderScreenState extends State<LeaderScreen> {
     scoreDao = new LocalScoreDao();
 
     //TODO remove this data population before launching the app
-    bool debug = true;
+    bool debug = false;
     if (debug) {
       print("isEmptyCheck");
 
@@ -43,7 +43,7 @@ class _LeaderScreenState extends State<LeaderScreen> {
       }
 
       //test data registeration
-      scoreDao.register(new ScoreItem("user", 9999999));
+      scoreDao.register(new ScoreItem("try5 user", 29999999));
       var remoteDao = new RemoteScoreDao();
       remoteDao.register();
     }
@@ -52,42 +52,45 @@ class _LeaderScreenState extends State<LeaderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ValueListenableBuilder(
-          valueListenable: scoreDao.box.listenable(),
-          builder: (BuildContext context, value, Widget? child) {
-            var scores = scoreDao.getAll();
+      appBar: AppBar(
+        title: Text("Ranking"),
+      ),
+      body: ValueListenableBuilder(
+        valueListenable: scoreDao.box.listenable(),
+        builder: (BuildContext context, value, Widget? child) {
+          var scores = scoreDao.getAll();
 
-            return
-              Column(
+          return
+            Column(
+              children: [
+                Flexible(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(10),
+                    itemCount: scores.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      var entry = scores[index];
+                      return ListTile(
+                        leading: index <= 2 ? Icon(Icons.emoji_events, color: _iconColors[index],) : Text((index + 1).toString()),
+                        title: Text(entry.userNm),
+                        trailing: Text(entry.score.toString()),
+                      );
+                      },
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Flexible(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(10),
-                        itemCount: scores.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          var entry = scores[index];
-                          return ListTile(
-                            leading: index <= 2 ? Icon(Icons.emoji_events, color: _iconColors[index],) : Text((index + 1).toString()),
-                            title: Text(entry.userNm),
-                            trailing: Text(entry.score.toString()),
-                          );
-                        },
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                            onPressed: () => {Navigator.of(context).pop()},
-                            child: Text("Go back")
-                        ),
-                      ],
+                    ElevatedButton(
+                        onPressed: () => {Navigator.of(context).pop()},
+                        child: Text("Go back")
                     ),
                   ],
-                );
+                ),
+              ],
+            );
           },
-        ),
-      );
+      ),
+    );
   }
 
 }
