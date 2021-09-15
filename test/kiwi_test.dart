@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:flame/components.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -87,7 +84,7 @@ void main() {
     test(
         'Kiwi should stay still when stop() is invoked before 0.1 second update.',
         () async {
-      Vector2 startingPostition = Vector2(50, 50);
+      Vector2 startingPosition = Vector2(50, 50);
       Kiwi kiwi = await Kiwi(
         godMode: true,
         sprite: await Sprite.load('kiwi_sprite.png'),
@@ -100,13 +97,13 @@ void main() {
       kiwi.stop();
       kiwi.update(0.1);
 
-      expect(kiwi.position, startingPostition);
+      expect(kiwi.position, startingPosition);
     });
 
     test(
         'Kiwi should fail to stay still when goRight() is invoked before 0.1 second update.',
         () async {
-      Vector2 startingPostition = Vector2(50, 50);
+      Vector2 startingPosition = Vector2(50, 50);
       Kiwi kiwi = await Kiwi(
         godMode: true,
         sprite: await Sprite.load('kiwi_sprite.png'),
@@ -119,7 +116,7 @@ void main() {
       kiwi.goRight();
       kiwi.update(0.1);
 
-      expect(kiwi.position.x == startingPostition.x, false);
+      expect(kiwi.position.x == startingPosition.x, false);
     });
   });
 }

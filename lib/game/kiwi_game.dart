@@ -286,6 +286,9 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         break;
       case AppLifecycleState.inactive:
         if (!gameEnded) {
+          _enemyManager.freeze();
+          _coinManager.freeze();
+          _powerUpManager.freeze();
           this.pauseEngine();
           this.overlays.remove(PauseButton.ID);
           this.overlays.add(PauseMenu.ID);
@@ -293,6 +296,9 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         break;
       case AppLifecycleState.paused:
         if (!gameEnded) {
+          _enemyManager.freeze();
+          _coinManager.freeze();
+          _powerUpManager.freeze();
           this.pauseEngine();
           this.overlays.remove(PauseButton.ID);
           this.overlays.add(PauseMenu.ID);
@@ -300,6 +306,9 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         break;
       case AppLifecycleState.detached:
         if (score > 0) {
+          _enemyManager.freeze();
+          _coinManager.freeze();
+          _powerUpManager.freeze();
           this.pauseEngine();
           this.overlays.remove(PauseButton.ID);
           this.overlays.add(PauseMenu.ID);
