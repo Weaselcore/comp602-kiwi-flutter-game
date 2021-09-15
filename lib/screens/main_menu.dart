@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_game/screens/leaderboard.dart';
+import 'package:flutter_game/screens/setting.dart';
+import 'package:flutter_game/screens/shop.dart';
 import 'package:flutter_game/screens/game_instance.dart';
 
 class MainMenu extends StatelessWidget {
@@ -26,15 +29,36 @@ class MainMenu extends StatelessWidget {
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
-            child: ElevatedButton(onPressed: null, child: Text("Shop")),
+            child: ElevatedButton(onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ShopScreen()
+                  ));
+            },
+                child: Text("Shop")),
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
-            child: ElevatedButton(onPressed: null, child: Text("Settings")),
+            child: ElevatedButton(onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SettingScreen()
+                  ));
+            },
+                child: Text("Settings")),
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
-            child: ElevatedButton(onPressed: null, child: Text("Leaderboard")),
+            child: ElevatedButton(onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => LeaderScreen()
+                  ));
+            },
+                child: Text("Leaderboard")),
           ),
         ],
       ),
