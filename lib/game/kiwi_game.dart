@@ -22,11 +22,12 @@ import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
 
 class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
-  bool _isAlreadyLoaded = false;
+  bool isAlreadyLoaded = false;
   bool _leftDirectionPressed = false;
   bool _rightDirectionPressed = false;
   bool gameEnded = false;
   bool _isSlowed = false;
+  bool _isGodMode = false;
 
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
@@ -54,26 +55,21 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
   late LaserBeam _laserBeam;
 
-  KiwiGame() {
+  KiwiGame({isGodmode}) {
+    this._isGodMode = _isGodMode;
     _slowTimer = Timer(5, callback: _restoreEnemySpeed, repeat: false);
     _laserTimer = Timer(5, callback: removeLaser, repeat: false);
   }
 
   @override
   Future<void> onLoad() async {
-    if (!_isAlreadyLoaded) {
-      _kiwi = Kiwi(
-        sprite: await Sprite.load('kiwi_sprite.png'),
-        size: Vector2(122, 76),
-        position: Vector2(viewport.canvasSize.x / 2, viewport.canvasSize.y / 3),
-      );
-      _kiwi.anchor = Anchor.center;
-      add(_kiwi);
-
+    if (!isAlreadyLoaded) {
       _enemyManager = EnemyManager();
       add(_enemyManager);
-      enemyTracker = EnemyTracker(_kiwi);
+
+      enemyTracker = EnemyTracker();
       add(enemyTracker);
+
       _powerUpManager = PowerUpManager();
       add(_powerUpManager);
       powerUpTracker = PowerUpTracker();
@@ -82,6 +78,18 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       add(_coinManager);
       coinTracker = CoinTracker();
       add(coinTracker);
+
+      _kiwi = Kiwi(
+        godMode: _isGodMode,
+        sprite: await Sprite.load('kiwi_sprite.png'),
+        size: Vector2(122, 76),
+        position: Vector2(viewport.canvasSize.x / 2, viewport.canvasSize.y / 3),
+      );
+      _kiwi.anchor = Anchor.center;
+      add(_kiwi);
+
+      // Register reference of Kiwi once to improve performance.
+      enemyTracker.registerKiwi(_kiwi);
 
       _scoreTicker =
           InfoTicker(initialText: 'Score: 0', initialPos: Vector2(10, 10));
@@ -109,7 +117,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _laserTicker.isHud = true;
       add(_laserTicker);
 
-      _isAlreadyLoaded = true;
+      isAlreadyLoaded = true;
     }
   }
 
@@ -305,6 +313,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     _enemyManager.reset();
     _powerUpManager.reset();
     _coinManager.reset();
+    _kiwi.reset();
 
     // Clearing the entity list.
     enemyTracker.reset();

@@ -10,8 +10,7 @@ class EnemyTracker extends BaseComponent with HasGameRef<KiwiGame> {
 
   bool _isSlowed = false;
 
-  EnemyTracker(Kiwi _kiwi) {
-    this._kiwi = _kiwi;
+  EnemyTracker() {
     _enemyList = <Enemy>[];
   }
 
@@ -65,5 +64,9 @@ class EnemyTracker extends BaseComponent with HasGameRef<KiwiGame> {
         _isSlowed = false;
       }
     }
+  }
+
+  void registerKiwi(Kiwi kiwi) {
+    _kiwi = kiwi;
   }
 }
