@@ -5,6 +5,7 @@ import 'package:flutter_game/game/components/enemy/enemy_types/imaginary.dart';
 import 'enemy_types/cloud_enemy.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 
+/// A class that returns enemy objects or a dummy Imaginary object.
 class EnemyFactory extends BaseComponent {
   Enemy getEnemyType(String type, int idCount) {
     if (type == "CRATE") {
@@ -16,9 +17,11 @@ class EnemyFactory extends BaseComponent {
     } else if (type == "FERRET") {
       print("Making Ferret");
       return new FerretEnemy(idCount);
-    } else {
+    } else if (type == "IMAGINARY") {
       print("Making Nothing");
       return new Imaginary(idCount);
+    } else {
+      throw Error();
     }
   }
 }
