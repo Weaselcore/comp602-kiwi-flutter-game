@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flame: 1.0.0-releasecandidate.13
   sensors_plus: ^1.1.0
+  sensors_plus_web: ^1.1.0
 
 dev_dependencies:
   flutter_test:

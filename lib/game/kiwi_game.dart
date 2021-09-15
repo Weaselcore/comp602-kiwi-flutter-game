@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -36,6 +37,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   int score = 0;
   int coin = 0;
 
+  //use for now
   double tiltVelocity = 0.0;
 
   late Kiwi _kiwi;
@@ -155,6 +157,11 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _laserBeam.position = _kiwi.position;
     }
 
+    tiltMovement();
+
+    
+    print(tiltVelocity);
+
     // // If both left and right are pressed down.
     // if (_isBothPressed()) {
     //   _kiwi.stop();
@@ -171,20 +178,6 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     // else {
     //   _kiwi.stop();
     // }
-
-    accelerometerEvents.listen((AccelerometerEvent event) {
-      this.tiltVelocity = event.x;
-    });
-
-    _kiwi.setHorizontalSpeed(tiltVelocity);
-
-    if (tiltVelocity > 0.0){
-      _kiwi.goLeft();
-    }
-
-    if (tiltVelocity < 0.0){
-      _kiwi.goRight();
-    }
 
     // if (tiltVelocity > -1.0 && tiltVelocity < 1.0){
     //   _kiwi.stop();
@@ -350,5 +343,27 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     components.whereType<Coin>().forEach((coin) {
       coin.remove();
     });
+  }
+
+  
+  void tiltMovement(){
+    
+    accelerometerEvents.listen((AccelerometerEvent event) {
+      this.tiltVelocity = event.x;
+    });
+
+    if (tiltVelocity > 1.0){
+      _kiwi.setHorizontalSpeed(200);
+      _kiwi.goLeft();
+    }
+
+    if (tiltVelocity < -1.0){
+      _kiwi.setHorizontalSpeed(200);
+      _kiwi.goRight();
+    }
+
+    if (tiltVelocity < 1.0 && tiltVelocity > -1.0){
+      _kiwi.stop();
+    }
   }
 }
