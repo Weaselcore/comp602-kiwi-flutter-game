@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
+import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/coin/coin.dart';
 import 'package:flutter_game/game/components/coin/coin_manager.dart';
@@ -65,7 +66,24 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   /// Loads everything asynchronously before the game starts.
   @override
   Future<void> onLoad() async {
-    if (!isAlreadyLoaded) {
+    if (!_isAlreadyLoaded) {
+      _kiwi = Kiwi(
+        sprite: await Sprite.load('kiwi_sprite.png'),
+        size: Vector2(122, 76),
+        position: Vector2(viewport.canvasSize.x / 2, viewport.canvasSize.y / 3),
+      );
+      _kiwi.anchor = Anchor.center;
+      add(_kiwi);
+
+      final parallaxComponent = await loadParallaxComponent([
+        ParallaxImageData('cliff_parallax_1.png'),
+      ],
+          baseVelocity: Vector2(0, 50),
+          velocityMultiplierDelta: Vector2(1.8, 1.0),
+          repeat: ImageRepeat.repeatY,
+          fill: LayerFill.width);
+      add(parallaxComponent);
+
       _enemyManager = EnemyManager();
       add(_enemyManager);
 

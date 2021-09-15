@@ -30,6 +30,7 @@ class EnemyTracker extends BaseComponent with HasGameRef<KiwiGame> {
 
   /// Clears the enemy list ready for a new game.
   void reset() {
+    _isSlowed = false;
     _enemyList.clear();
   }
 

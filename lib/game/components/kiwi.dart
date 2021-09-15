@@ -170,6 +170,8 @@ class Kiwi extends SpriteComponent
     gameRef.pauseEngine();
     gameRef.overlays.remove(PauseButton.ID);
     gameRef.overlays.add(EndGameMenu.ID);
+    _shieldCount = 0;
+    hasLaser = false;
   }
 
   @override
