@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+
+import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/screens/main_menu.dart';
 import 'package:flutter_game/screens/score_item.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+
 
 void main() async {
 
@@ -32,7 +35,8 @@ void main() async {
     // documentID already registered. just open a box.
     await Hive.openBox("documentID");
   }
-
+  
+  Flame.device.fullScreen();
   runApp(MyApp());
 }
 
