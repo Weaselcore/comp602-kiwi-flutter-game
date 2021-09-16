@@ -34,6 +34,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   bool _isSlowed = false;
   bool _isGodMode = false;
 
+  bool isLocalScoreDaoLoaded = false;
+  bool isRemoteScoreDaoLoaded = false;
   late LocalScoreDao localScoreDao;
   late RemoteScoreDao remoteScoreDao;
 
@@ -73,6 +75,16 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   /// Loads everything asynchronously before the game starts.
   @override
   Future<void> onLoad() async {
+    if (!isLocalScoreDaoLoaded) {
+      localScoreDao = LocalScoreDao();
+      isLocalScoreDaoLoaded = true;
+    }
+
+    if (!isRemoteScoreDaoLoaded) {
+      remoteScoreDao = RemoteScoreDao();
+      isRemoteScoreDaoLoaded = true;
+    }
+
     if (!isAlreadyLoaded) {
       _kiwi = Kiwi(
         sprite: await Sprite.load('kiwi_sprite.png'),
@@ -81,14 +93,6 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       );
       _kiwi.anchor = Anchor.center;
       add(_kiwi);
-
-      if (!Hive.isBoxOpen("leaderboard")) {
-        localScoreDao = (await Hive.openBox("leaderboard")) as LocalScoreDao;
-      }
-
-      if (!Hive.isBoxOpen("documentID")) {
-        remoteScoreDao = (await Hive.openBox("documentID")) as RemoteScoreDao;
-      }
 
       final parallaxComponent = await loadParallaxComponent([
         ParallaxImageData('cliff_parallax_1.png'),
@@ -343,7 +347,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         }
         break;
       case AppLifecycleState.detached:
-        if (score > 0) {
+        if (gameEnded && score > 0) {
           localScoreDao.register(ScoreItem('user', score));
           remoteScoreDao.register();
           this.pauseEngine();

@@ -12,6 +12,7 @@ import 'package:flutter_game/game/overlay/end_game_menu.dart';
 import 'package:flutter_game/game/overlay/pause_button.dart';
 
 import 'package:flutter_game/game/components/enemy/enemy.dart';
+import 'package:flutter_game/screens/score_item.dart';
 
 class Kiwi extends SpriteComponent
     with GameSizeAware, Hitbox, Collidable, HasGameRef<KiwiGame> {
@@ -172,6 +173,8 @@ class Kiwi extends SpriteComponent
     gameRef.overlays.add(EndGameMenu.ID);
     _shieldCount = 0;
     hasLaser = false;
+    gameRef.localScoreDao.register(ScoreItem('user', gameRef.score));
+    gameRef.remoteScoreDao.register();
   }
 
   @override
