@@ -19,6 +19,9 @@ import 'package:flutter_game/game/components/powerup/powerup_manager.dart';
 import 'package:flutter_game/game/components/enemy/enemy_tracker.dart';
 import 'package:flutter_game/game/components/ticker/info_ticker.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
+import 'package:flutter_game/screens/dao/remote_score_dao.dart';
+import 'package:flutter_game/screens/score_item.dart';
+import 'package:hive/hive.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
@@ -29,8 +32,10 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   bool _rightDirectionPressed = false;
   bool gameEnded = false;
   bool _isSlowed = false;
-  // bool _isGodMode = false;
-  // late LocalScoreDao localScoreDao;
+  bool _isGodMode = false;
+
+  late LocalScoreDao localScoreDao;
+  late RemoteScoreDao remoteScoreDao;
 
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
@@ -59,6 +64,12 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
   late LaserBeam _laserBeam;
 
+  KiwiGame({isGodmode}) {
+    this._isGodMode = _isGodMode;
+    _slowTimer = Timer(5, callback: _restoreEnemySpeed, repeat: false);
+    _laserTimer = Timer(5, callback: removeLaser, repeat: false);
+  }
+
   /// Loads everything asynchronously before the game starts.
   @override
   Future<void> onLoad() async {
@@ -70,6 +81,14 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       );
       _kiwi.anchor = Anchor.center;
       add(_kiwi);
+
+      if (!Hive.isBoxOpen("leaderboard")) {
+        localScoreDao = (await Hive.openBox("leaderboard")) as LocalScoreDao;
+      }
+
+      if (!Hive.isBoxOpen("documentID")) {
+        remoteScoreDao = (await Hive.openBox("documentID")) as RemoteScoreDao;
+      }
 
       final parallaxComponent = await loadParallaxComponent([
         ParallaxImageData('cliff_parallax_1.png'),
@@ -325,6 +344,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         break;
       case AppLifecycleState.detached:
         if (score > 0) {
+          localScoreDao.register(ScoreItem('user', score));
+          remoteScoreDao.register();
           this.pauseEngine();
           this.overlays.remove(PauseButton.ID);
           this.overlays.add(PauseMenu.ID);
