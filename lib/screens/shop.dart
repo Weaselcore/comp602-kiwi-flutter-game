@@ -54,10 +54,27 @@ class ShopScreen extends StatelessWidget {
                           ],
                         )),
                     SizedBox(
-                      height: 0,
+                      height:20,
+                    ),
+                    Container(
+                        width: double.infinity,
+                        height: 40,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.brown[300]),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Skins",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.black))
+                        ]
+                      )
                     ),
                     Expanded(
-                      child: GridView.count(
+                        child: GestureDetector(child: GridView.count(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           crossAxisCount: 2,
@@ -79,13 +96,25 @@ class ShopScreen extends StatelessWidget {
                             ),
                             ]
                           ),
-                      )
+                        onTap:(){
+                          print('tapped');
+                        }
+                        )
+                      ),
+                  Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                        onPressed: () => {Navigator.of(context).pop()},
+                        child: Text("Go back")),
                     ]
+
                   )
-              ),
+              ]),
+
             )
             )
-        );
+        ));
   }
 }
  void main() {
