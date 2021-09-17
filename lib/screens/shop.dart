@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/main.dart';
+import 'package:hive/hive.dart';
 
 class ShopScreen extends StatelessWidget {
    const ShopScreen({Key? key}) : super(key: key);
@@ -9,6 +10,8 @@ class ShopScreen extends StatelessWidget {
 
   get coins => 2000; //Local get and must be update when after each user game.
   get item => 100;
+
+  get configBox => null;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +78,7 @@ class ShopScreen extends StatelessWidget {
                     ),
                     Expanded(
                         child: GestureDetector(child: GridView.count(
-                          scrollDirection: Axis.vertical,
+                          //scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           crossAxisCount: 2,
                           padding: EdgeInsets.all(20.0),
@@ -96,11 +99,14 @@ class ShopScreen extends StatelessWidget {
                             ),
                             ]
                           ),
-                        onTap:(){
+                        onTap:() async {
+                          await configBox.put("coin", coins - item);
+                          //await configBox.put("skin", actual value);
                           print('tapped');
                         }
                         )
                       ),
+                    //Back Button
                   Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -108,17 +114,20 @@ class ShopScreen extends StatelessWidget {
                         onPressed: () => {Navigator.of(context).pop()},
                         child: Text("Go back")),
                     ]
-
                   )
               ]),
-
             )
             )
         ));
   }
 }
  void main() {
-  int coins = 2000;
+
+  Box configBox = Hive.box("config");
+
+  int coin = configBox .get("coin");
+  String skin = configBox .get("skin");
+
 
 
  }
