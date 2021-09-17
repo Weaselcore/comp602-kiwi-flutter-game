@@ -25,16 +25,7 @@ class ShopScreen extends StatelessWidget {
                 'Shop',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              //Add an icon for ads
-              /*
-              actions: [
-                Container(
-                  margin: EdgeInsets.only(right:0 ),
-                  //padding: EdgeInsets.all(10),
-                    child: Image.asset('assets/images/ads.png')
-
-                )
-              ],*/
+              //Possibly input an ads button that can rewards user 100 coins
             ),
             //End of AppBar
 
@@ -60,7 +51,6 @@ class ShopScreen extends StatelessWidget {
                             SizedBox(
                               height: 0,
                             ),
-                            //Possibly input an ads button that can rewards user 100 coins
                           ],
                         )),
                     SizedBox(
