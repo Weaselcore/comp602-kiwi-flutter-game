@@ -190,6 +190,10 @@ class Kiwi extends SpriteComponent
 
   int getShieldCount() => _shieldCount;
 
+  void setHorizontalSpeed(double speed) {
+    _horizontalSpeed = speed;
+  }
+
   bool hasShield() {
     if (_shieldCount > 0) {
       return true;
