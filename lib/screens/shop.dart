@@ -60,22 +60,7 @@ class ShopScreen extends StatelessWidget {
                             SizedBox(
                               height: 0,
                             ),
-                            /*Container(
-                                height: 50,
-                                margin: EdgeInsets.symmetric(horizontal: 40.0),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color: Colors.brown[500]),
-                                child: GestureDetector(child: Center(
-                                    child: Text(
-                                      "Watch ADS for Free Coins",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )),onTap:(){print('button clicked Ads to play  in queue');} //Should open a page for coins
-                                    )
-                            ),*/
+                            //Possibly input an ads button that can rewards user 100 coins
                           ],
                         )),
                     SizedBox(
@@ -90,21 +75,6 @@ class ShopScreen extends StatelessWidget {
                           crossAxisSpacing: 20,
                           mainAxisSpacing: 20,
                           children: [
-                            //Get rid of Box Header
-                            /*Container( //put this in the middle
-                                width: double.infinity,
-                                height: 50,
-                                padding: EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    color: Colors.brown[200]),
-                              child:Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text("Kiwi Skins"),
-                                ],
-                              )
-                            ),*/
                             Image.asset(//grey
                               'assets/images/kiwi_sprite_grey.png',
                             ),
@@ -117,38 +87,9 @@ class ShopScreen extends StatelessWidget {
                             Image.asset(//yellow
                               'assets/images/kiwi_sprite_yellow.png',
                             ),
-                              /*Container( //put this in the middle          [optional items]
-                                width: double.infinity,
-                                height: 50,
-                                padding: EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    color: Colors.brown[200]),
-                                child:Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text("Power Ups"),
-                                  ],
-                                )
-                            ),
-                           Image.asset(//heart        [optional items]
-                              'assets/images/heart.png',
-                            ),
-                            Image.asset(//Caterpillar
-                                'assets/images/Caterpillar.png',
-                            ),
-                            Image.asset(//Cockroach
-                                'assets/images/Cockroach.png'
-                            ),
-                            Image.asset(//Weta
-                              'assets/images/Weta.png'
-                            ),
-                            Image.asset(//Worm
-                              'assets/images/Worm.png'
-                            )*/
                             ]
                           ),
-                        )
+                      )
                     ]
                   )
               ),
