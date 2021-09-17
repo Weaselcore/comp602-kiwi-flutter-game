@@ -32,17 +32,25 @@ void main() async {
     "isBgmMute": false,
     "isSfxMute": false,
     "documentID": document.id,
-    "coin": 0,
+    "coin": 10,
     "skin": "kiwi_sprite.png",
   };
-  boxManager.initBox("config", configMap);
+
+  // TODO add an update function for BoxManager
+  if (!(await Hive.boxExists("config"))) {
+    await boxManager.initBox("config", configMap);
+  } else if ((await Hive.openBox("config")
+        ..length) !=
+      configMap.length) {
+    await Hive.deleteBoxFromDisk("config");
+    await boxManager.initBox("config", configMap);
+  }
 
   Flame.device.fullScreen();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

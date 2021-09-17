@@ -12,6 +12,7 @@ import 'package:flutter_game/game/components/coin/coin_manager.dart';
 import 'package:flutter_game/game/components/coin/coin_tracker.dart';
 import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
+import 'package:hive/hive.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
 
@@ -59,6 +60,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   late Kiwi _kiwi;
 
   late AudioManagerComponent audioManager;
+  late Box configBox;
 
   late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
@@ -77,6 +79,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   late Timer _laserTimer;
 
   late LaserBeam _laserBeam;
+
+  String kiwiSkin = "kiwi_sprite.png";
 
   KiwiGame({isGodmode}) {
     this._isGodMode = _isGodMode;
@@ -103,18 +107,21 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       isAudioManagerLoaded = true;
     }
 
+    configBox = await Hive.openBox("config");
+    kiwiSkin = configBox.get("skin");
+
+    _kiwi = Kiwi(
+      sprite: await Sprite.load(kiwiSkin),
+      size: Vector2(122, 76),
+      position: Vector2(viewport.canvasSize.x / 2, viewport.canvasSize.y / 3),
+    );
+    _kiwi.anchor = Anchor.center;
+    add(_kiwi);
+
     audioManager.fetchSettings();
     audioManager.playBgm('background.mp3');
 
     if (!isAlreadyLoaded) {
-      _kiwi = Kiwi(
-        sprite: await Sprite.load('kiwi_sprite.png'),
-        size: Vector2(122, 76),
-        position: Vector2(viewport.canvasSize.x / 2, viewport.canvasSize.y / 3),
-      );
-      _kiwi.anchor = Anchor.center;
-      add(_kiwi);
-
       final parallaxComponent = await loadParallaxComponent([
         ParallaxImageData('cliff_parallax_1.png'),
       ],
@@ -216,8 +223,6 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
     if (isTiltControls) {
       tiltMovement();
-
-      print(tiltVelocity);
     } else {
       tapMovement();
     }
@@ -365,6 +370,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
           this.pauseEngine();
           this.overlays.remove(PauseButton.ID);
           this.overlays.add(PauseMenu.ID);
+          _kiwi.remove();
         }
         break;
     }
