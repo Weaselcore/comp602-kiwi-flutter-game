@@ -13,6 +13,7 @@ import 'package:flutter_game/game/overlay/pause_button.dart';
 import 'package:flame_audio/flame_audio.dart';
 
 import 'package:flutter_game/game/components/enemy/enemy.dart';
+import 'package:flutter_game/screens/score_item.dart';
 
 class Kiwi extends SpriteComponent
     with GameSizeAware, Hitbox, Collidable, HasGameRef<KiwiGame> {
@@ -20,6 +21,7 @@ class Kiwi extends SpriteComponent
   Vector2 _horizontalMoveDirection = Vector2.zero();
   double _horizontalSpeed = 200;
   bool _spriteOrientationDefault = false;
+  bool isLoaded = false;
   int _shieldCount = 0;
 
   bool hasLaser = false;
@@ -30,12 +32,9 @@ class Kiwi extends SpriteComponent
   late Sprite _kiwiMediumShieldSprite;
   late Sprite _kiwiStrongShieldSprite;
 
-  Kiwi({
-    sprite,
-    Vector2? position,
-    Vector2? size,
-  }) : super(sprite: sprite, position: position, size: size) {
-    _kiwiSprite = sprite;
+  Kiwi({Sprite? sprite, Vector2? position, Vector2? size, bool godMode = false})
+      : super(sprite: sprite, position: position, size: size) {
+    _kiwiSprite = sprite!;
   }
 
   @override
@@ -57,6 +56,8 @@ class Kiwi extends SpriteComponent
 
     final hitBoxShape = HitboxCircle(definition: 0.6);
     addShape(hitBoxShape);
+
+    isLoaded = true;
   }
 
   @override
@@ -106,6 +107,10 @@ class Kiwi extends SpriteComponent
 
   void stop() {
     _horizontalMoveDirection = Vector2.zero();
+  }
+
+  void reset() {
+    this.position = Vector2(gameSize.x / 2, gameSize.y / 3);
   }
 
   @override
@@ -172,6 +177,10 @@ class Kiwi extends SpriteComponent
     gameRef.pauseEngine();
     gameRef.overlays.remove(PauseButton.ID);
     gameRef.overlays.add(EndGameMenu.ID);
+    _shieldCount = 0;
+    hasLaser = false;
+    gameRef.localScoreDao.register(ScoreItem('user', gameRef.score));
+    gameRef.remoteScoreDao.register();
   }
 
   @override
