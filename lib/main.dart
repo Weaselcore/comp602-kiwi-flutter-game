@@ -32,6 +32,8 @@ void main() async {
     "isBgmMute": false,
     "isSfxMute": false,
     "documentID": document.id,
+    "coin": 0,
+    "skin": "kiwi_sprite.png",
   };
   boxManager.initBox("config", configMap);
 
