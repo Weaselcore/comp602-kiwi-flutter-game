@@ -37,6 +37,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   int score = 0;
   int coin = 0;
 
+  bool isTiltControls = true;
+
   //use for now
   double tiltVelocity = 0.0;
 
@@ -157,31 +159,13 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _laserBeam.position = _kiwi.position;
     }
 
-    tiltMovement();
+    if (isTiltControls) {
+      tiltMovement();
 
-    
-    print(tiltVelocity);
-
-    // // If both left and right are pressed down.
-    // if (_isBothPressed()) {
-    //   _kiwi.stop();
-    // }
-    // // If right are pressed down.
-    // else if (_rightDirectionPressed && !_leftDirectionPressed) {
-    //   _kiwi.goRight();
-    // }
-    // // If left are pressed down.
-    // else if (_leftDirectionPressed && !_rightDirectionPressed) {
-    //   _kiwi.goLeft();
-    // }
-    // // If no buttons are pressed.
-    // else {
-    //   _kiwi.stop();
-    // }
-
-    // if (tiltVelocity > -1.0 && tiltVelocity < 1.0){
-    //   _kiwi.stop();
-    // }
+      print(tiltVelocity);
+    } else {
+      tapMovement();
+    }
 
     _scoreTicker.text = 'Score: ' + score.toString();
     _coinTicker.text = 'Coins: ' + coin.toString();
@@ -345,24 +329,39 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     });
   }
 
-  
-  void tiltMovement(){
-    
+  void tiltMovement() {
     accelerometerEvents.listen((AccelerometerEvent event) {
       this.tiltVelocity = event.x;
     });
 
-    if (tiltVelocity > 1.0){
-      _kiwi.setHorizontalSpeed(200);
+    if (tiltVelocity > 1.0) {
       _kiwi.goLeft();
     }
 
-    if (tiltVelocity < -1.0){
-      _kiwi.setHorizontalSpeed(200);
+    if (tiltVelocity < -1.0) {
       _kiwi.goRight();
     }
 
-    if (tiltVelocity < 1.0 && tiltVelocity > -1.0){
+    if (tiltVelocity < 1.0 && tiltVelocity > -1.0) {
+      _kiwi.stop();
+    }
+  }
+
+  void tapMovement() {
+    // If both left and right are pressed down.
+    if (_isBothPressed()) {
+      _kiwi.stop();
+    }
+    // If right are pressed down.
+    else if (_rightDirectionPressed && !_leftDirectionPressed) {
+      _kiwi.goRight();
+    }
+    // If left are pressed down.
+    else if (_leftDirectionPressed && !_rightDirectionPressed) {
+      _kiwi.goLeft();
+    }
+    // If no buttons are pressed.
+    else {
       _kiwi.stop();
     }
   }
