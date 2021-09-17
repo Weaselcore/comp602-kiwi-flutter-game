@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 import '../kiwi.dart';
 
@@ -83,6 +84,7 @@ class Coin extends SpriteAnimationComponent
       gameRef.coinTracker.removeCoin(id);
       // Remove from the game.
       this.remove();
+      gameRef.audioManager.playSfx('coin.wav');
     }
   }
 }

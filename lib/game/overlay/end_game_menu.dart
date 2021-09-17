@@ -45,6 +45,7 @@ class EndGameMenu extends StatelessWidget {
                       gameRef.overlays.add(PauseButton.ID);
                       gameRef.reset();
                       gameRef.resumeEngine();
+                      gameRef.audioManager.playBgm('background.mp3');
                     },
                     child: Text('Restart'),
                   ),

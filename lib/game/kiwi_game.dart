@@ -3,8 +3,10 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_game/game/components/audio_manager_component.dart';
 import 'package:flutter_game/game/components/coin/coin.dart';
 import 'package:flutter_game/game/components/coin/coin_manager.dart';
 import 'package:flutter_game/game/components/coin/coin_tracker.dart';
@@ -47,6 +49,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   int coin = 0;
 
   late Kiwi _kiwi;
+
+  late AudioManagerComponent audioManager;
 
   late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
@@ -94,6 +98,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _kiwi.anchor = Anchor.center;
       add(_kiwi);
 
+      audioManager = AudioManagerComponent();
+      add(audioManager);
       final parallaxComponent = await loadParallaxComponent([
         ParallaxImageData('cliff_parallax_1.png'),
       ],
@@ -151,6 +157,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
       isAlreadyLoaded = true;
     }
+
+    audioManager.playBgm('background.mp3');
   }
 
   @override
