@@ -58,6 +58,7 @@ class EndGameMenu extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop();
                       gameRef.overlays.remove(EndGameMenu.ID);
+                      gameRef.getKiwi().remove();
                       gameRef.reset();
                     },
                     child: Text('Exit'),
