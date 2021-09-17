@@ -4,7 +4,9 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/gestures.dart';
+import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_game/game/components/audio_manager_component.dart';
 import 'package:flutter_game/game/components/coin/coin.dart';
 import 'package:flutter_game/game/components/coin/coin_manager.dart';
 import 'package:flutter_game/game/components/coin/coin_tracker.dart';
@@ -20,20 +22,33 @@ import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_manager.dart';
 import 'package:flutter_game/game/components/enemy/enemy_tracker.dart';
 import 'package:flutter_game/game/components/ticker/info_ticker.dart';
+import 'package:flutter_game/screens/dao/local_score_dao.dart';
+import 'package:flutter_game/screens/dao/remote_score_dao.dart';
+import 'package:flutter_game/screens/score_item.dart';
+import 'package:hive/hive.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
 
 class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
-  bool _isAlreadyLoaded = false;
+  bool isAlreadyLoaded = false;
   bool _leftDirectionPressed = false;
   bool _rightDirectionPressed = false;
   bool gameEnded = false;
   bool _isSlowed = false;
+  bool _isGodMode = false;
+
+  bool isLocalScoreDaoLoaded = false;
+  bool isRemoteScoreDaoLoaded = false;
+  late LocalScoreDao localScoreDao;
+  late RemoteScoreDao remoteScoreDao;
+
+  bool isAudioManagerLoaded = false;
 
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
   int _leftPointerId = -1;
+
   int score = 0;
   int coin = 0;
 
@@ -43,6 +58,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   double tiltVelocity = 0.0;
 
   late Kiwi _kiwi;
+
+  late AudioManagerComponent audioManager;
 
   late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
@@ -62,14 +79,35 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
   late LaserBeam _laserBeam;
 
-  KiwiGame() {
+  KiwiGame({isGodmode}) {
+    this._isGodMode = _isGodMode;
     _slowTimer = Timer(5, callback: _restoreEnemySpeed, repeat: false);
     _laserTimer = Timer(5, callback: removeLaser, repeat: false);
   }
 
+  /// Loads everything asynchronously before the game starts.
   @override
   Future<void> onLoad() async {
-    if (!_isAlreadyLoaded) {
+    if (!isLocalScoreDaoLoaded) {
+      localScoreDao = LocalScoreDao();
+      isLocalScoreDaoLoaded = true;
+    }
+
+    if (!isRemoteScoreDaoLoaded) {
+      remoteScoreDao = RemoteScoreDao();
+      isRemoteScoreDaoLoaded = true;
+    }
+
+    if (!isAudioManagerLoaded) {
+      audioManager = AudioManagerComponent();
+      add(audioManager);
+      isAudioManagerLoaded = true;
+    }
+
+    audioManager.fetchSettings();
+    audioManager.playBgm('background.mp3');
+
+    if (!isAlreadyLoaded) {
       _kiwi = Kiwi(
         sprite: await Sprite.load('kiwi_sprite.png'),
         size: Vector2(122, 76),
@@ -78,10 +116,21 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _kiwi.anchor = Anchor.center;
       add(_kiwi);
 
+      final parallaxComponent = await loadParallaxComponent([
+        ParallaxImageData('cliff_parallax_1.png'),
+      ],
+          baseVelocity: Vector2(0, 50),
+          velocityMultiplierDelta: Vector2(1.8, 1.0),
+          repeat: ImageRepeat.repeatY,
+          fill: LayerFill.width);
+      add(parallaxComponent);
+
       _enemyManager = EnemyManager();
       add(_enemyManager);
-      enemyTracker = EnemyTracker(_kiwi);
+
+      enemyTracker = EnemyTracker();
       add(enemyTracker);
+
       _powerUpManager = PowerUpManager();
       add(_powerUpManager);
       powerUpTracker = PowerUpTracker();
@@ -91,6 +140,10 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       coinTracker = CoinTracker();
       add(coinTracker);
 
+      // Register reference of Kiwi once to improve performance.
+      enemyTracker.registerKiwi(_kiwi);
+
+      // Below are tickers that display information.
       _scoreTicker =
           InfoTicker(initialText: 'Score: 0', initialPos: Vector2(10, 10));
 
@@ -106,6 +159,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _laserTicker =
           InfoTicker(initialText: 'LaserTimer: 0', initialPos: Vector2(10, 70));
 
+      // Set the tickers to HUD components.
       _scoreTicker.isHud = true;
       add(_scoreTicker);
       _coinTicker.isHud = true;
@@ -117,7 +171,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _laserTicker.isHud = true;
       add(_laserTicker);
 
-      _isAlreadyLoaded = true;
+      isAlreadyLoaded = true;
     }
   }
 
@@ -148,6 +202,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     super.render(canvas);
   }
 
+  /// Controls are being detected here and propogates the updates to child
+  /// components. Also tickers are being updated as the game progresses.
   @override
   void update(double dt) {
     super.update(dt);
@@ -174,6 +230,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     _laserTicker.text = 'Laser Timer: ' + _laserTimer.current.toString();
   }
 
+  /// Alters the control state when touch is detected.
   @override
   void onTapDown(int pointerId, TapDownInfo event) {
     if (_tapIsLeft(event) && !_tapIsRight(event)) {
@@ -190,6 +247,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     }
   }
 
+  /// Alters the control state when touch release has been detected.
   @override
   void onTapUp(int pointerId, TapUpInfo event) {
     // If both left and right taps have been lifted.
@@ -209,8 +267,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     }
   }
 
-  // Since onTapCancel doesn't pass TapInfo, pointerId have to be tracked.
-  // So if the finger slides off the sides instead of lifting it up, it will not bug out.
+  /// Since onTapCancel doesn't pass TapInfo, pointerId have to be tracked.
+  /// So if the finger slides off the sides instead of lifting it up, it will not bug out.
   @override
   void onTapCancel(int pointerId) {
     if (_rightPointerId == pointerId) {
@@ -222,16 +280,21 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     }
   }
 
+  /// Returns middle point of the screen.
   double _getMiddlePoint() => viewport.canvasSize.x / 2;
 
+  /// Left touch is true when it happens on the left side of the screen.
   bool _tapIsLeft(PositionInfo event) =>
       event.eventPosition.game.x < _getMiddlePoint();
 
+  /// Right touch is true when it happens on the right side of the screen.
   bool _tapIsRight(PositionInfo event) =>
       event.eventPosition.game.x > _getMiddlePoint();
 
+  /// Is true when a finger is detected on the ledt and right side of the screen.
   bool _isBothPressed() => (_rightDirectionPressed && _leftDirectionPressed);
 
+  /// Slows the enemies speed as long as [_slowTimer] is running.
   void halfEnemySpeed() {
     if (!_isSlowed) {
       _slowTimer.start();
@@ -240,11 +303,14 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     }
   }
 
+  /// Restores the enemies speed when [_slowTimer] has stopped running.
   void _restoreEnemySpeed() {
     enemyTracker.restoreEnemy();
     _isSlowed = false;
   }
 
+  /// Fires a laser beam when the powerup has been collected and [_laserTimer]
+  /// is still running.
   void fireLaser() {
     _laserBeam = LaserBeam();
     add(_laserBeam);
@@ -254,17 +320,21 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     _laserTimer.start();
   }
 
+  /// Remove the laser beam when [_laserTimer] has stopped.
   void removeLaser() {
     _kiwi.hasLaser = false;
     _laserBeam.remove();
   }
 
+  /// Increment [score] by [scoreToAdd].
   void incrementScore(int scoreToAdd) {
     score += scoreToAdd;
   }
 
+  /// Returns a reference to the kiwi.
   Kiwi getKiwi() => _kiwi;
 
+  /// Controls what happens when the app state changes.
   @override
   void lifecycleStateChange(AppLifecycleState state) {
     switch (state) {
@@ -290,7 +360,9 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
         }
         break;
       case AppLifecycleState.detached:
-        if (score > 0) {
+        if (gameEnded && score > 0) {
+          localScoreDao.register(ScoreItem('user', score));
+          remoteScoreDao.register();
           this.pauseEngine();
           this.overlays.remove(PauseButton.ID);
           this.overlays.add(PauseMenu.ID);
@@ -299,11 +371,13 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     }
   }
 
+  /// When restarting, it resets managers, timers and position of the kiwi.
   void reset() {
     // Resetting id counts.
     _enemyManager.reset();
     _powerUpManager.reset();
     _coinManager.reset();
+    _kiwi.reset();
 
     // Clearing the entity list.
     enemyTracker.reset();

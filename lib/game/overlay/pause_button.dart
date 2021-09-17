@@ -22,6 +22,7 @@ class PauseButton extends StatelessWidget {
           gameRef.pauseEngine();
           gameRef.overlays.add(PauseMenu.ID);
           gameRef.overlays.remove(PauseButton.ID);
+          gameRef.audioManager.pauseBgm();
         },
       ),
     );

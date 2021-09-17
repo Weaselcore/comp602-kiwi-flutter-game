@@ -43,6 +43,7 @@ class PauseMenu extends StatelessWidget {
                 gameRef.resumeEngine();
                 gameRef.overlays.remove(PauseMenu.ID);
                 gameRef.overlays.add(PauseButton.ID);
+                gameRef.audioManager.resmueBgm();
               },
               child: Text('Resume'),
             ),
@@ -57,6 +58,7 @@ class PauseMenu extends StatelessWidget {
                 gameRef.overlays.add(PauseButton.ID);
                 gameRef.reset();
                 gameRef.resumeEngine();
+                gameRef.audioManager.resetBgm('background.mp3');
               },
               child: Text('Restart'),
             ),
@@ -69,6 +71,7 @@ class PauseMenu extends StatelessWidget {
               onPressed: () {
                 gameRef.overlays.remove(PauseMenu.ID);
                 gameRef.reset();
+                gameRef.audioManager.stopBgm();
 
                 Navigator.of(context).pop();
               },
