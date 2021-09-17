@@ -98,3 +98,14 @@ class _LeaderScreenState extends State<LeaderScreen> {
     );
   }
 }
+
+class listItem {
+  String _userNm;
+  int _score;
+
+  listItem(this._userNm, this._score);
+
+  //getter
+  String get name => _userNm;
+  int get score => _score;
+}
