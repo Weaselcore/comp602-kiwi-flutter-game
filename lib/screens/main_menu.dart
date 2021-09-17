@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_game/screens/leaderboard.dart';
 import 'package:flutter_game/screens/setting.dart';
 import 'package:flutter_game/screens/shop.dart';
+import 'package:flutter_game/screens/game_instance.dart';
 
 class MainMenu extends StatelessWidget {
+
   const MainMenu({Key? key}) : super(key: key);
 
   @override
@@ -14,7 +16,17 @@ class MainMenu extends StatelessWidget {
         children: [
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
-            child: ElevatedButton(onPressed: null, child: Text("New Game")),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      // No need to add a GameScreen in the screen folder.
+                      builder: (context) => GameInstance(),
+                    ));
+              },
+              child: Text("New Game"),
+            ),
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
@@ -22,7 +34,7 @@ class MainMenu extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ShopScreen()
+                      builder: (context) => ShopScreen()
                   ));
             },
                 child: Text("Shop")),
