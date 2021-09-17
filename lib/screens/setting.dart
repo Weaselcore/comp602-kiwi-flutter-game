@@ -40,7 +40,7 @@ class _settingState extends State<SettingScreen> {
 
   void _updateTiltConfig() async {
     //update Tilt config in hive
-    await _configBox.put("isTiltOn", !_isBgmMute);
+    await _configBox.put("isTiltOn", !_isTiltOn);
     _changeTiltState();
   }
 
