@@ -25,7 +25,7 @@ import 'package:flutter_game/game/components/ticker/info_ticker.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
 import 'package:flutter_game/screens/dao/remote_score_dao.dart';
 import 'package:flutter_game/screens/score_item.dart';
-import 'components/tilt_controller.dart';
+import 'components/tilt_config_component.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
