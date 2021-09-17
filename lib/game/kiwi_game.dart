@@ -329,6 +329,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     });
   }
 
+  /// Used to check for tilt movement to move the Kiwi.
   void tiltMovement() {
     accelerometerEvents.listen((AccelerometerEvent event) {
       this.tiltVelocity = event.x;
@@ -336,17 +337,14 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
     if (tiltVelocity > 1.0) {
       _kiwi.goLeft();
-    }
-
-    if (tiltVelocity < -1.0) {
+    } else if (tiltVelocity < -1.0) {
       _kiwi.goRight();
-    }
-
-    if (tiltVelocity < 1.0 && tiltVelocity > -1.0) {
+    } else if (tiltVelocity < 1.0 && tiltVelocity > -1.0) {
       _kiwi.stop();
     }
   }
 
+  /// Used to check for tap gestures to move the Kiwi.
   void tapMovement() {
     // If both left and right are pressed down.
     if (_isBothPressed()) {
