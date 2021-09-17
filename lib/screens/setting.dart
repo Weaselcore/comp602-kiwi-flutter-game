@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_game/screens/Auth/google_auth.dart';
 import 'package:hive/hive.dart';
-
 import 'Auth/auth_inf.dart';
 
 class SettingScreen extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => _settingState();
 }
 
 class _settingState extends State<SettingScreen> {
-
   late bool _isBgmMute;
   late bool _isSfxMute;
-  late Box _audioBox;
+  late Box _configBox;
   bool _logedin = false;
   late AuthInf _auth;
 
@@ -28,11 +25,12 @@ class _settingState extends State<SettingScreen> {
     }
 
     //check user config
-    _audioBox = Hive.box("config");
-    _isBgmMute = _audioBox.get("isBgmMute");
-    _isSfxMute = _audioBox.get("isSfxMute");
+    _configBox = Hive.box("config");
+    _isBgmMute = _configBox.get("isBgmMute");
+    _isSfxMute = _configBox.get("isSfxMute");
   }
-  void _changeMusicState () {
+
+  void _changeMusicState() {
     setState(() {
       _isBgmMute = !_isBgmMute;
     });
@@ -40,7 +38,7 @@ class _settingState extends State<SettingScreen> {
 
   void _upadteBGMConfig() async {
     //update BGM config in hive
-    await _audioBox.put("isBgmMute", !_isBgmMute);
+    await _configBox.put("isBgmMute", !_isBgmMute);
     _changeMusicState();
   }
 
@@ -52,7 +50,7 @@ class _settingState extends State<SettingScreen> {
 
   void _upadteSfxConfig() async {
     //update SFX config in hive
-    await _audioBox.put("isSfxMute", !_isSfxMute);
+    await _configBox.put("isSfxMute", !_isSfxMute);
     _changeSfxState();
   }
 
@@ -84,65 +82,86 @@ class _settingState extends State<SettingScreen> {
       ),
       body: Center(
           child: Container(
-            // color: Colors.white,
-            child: Column(
-              children: [
-                SizedBox(
-                  width: size.width * 0.9,
-                  height: 100,
-                  child: Card(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("music", style: TextStyle(fontSize: 30)),
-                        new GestureDetector(
-                          child: _isBgmMute ? Icon(IconData(59076, fontFamily: 'MaterialIcons'), size: 50) : Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'), size: 50),
-                          onTap: _upadteBGMConfig,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * 0.9,
-                  height: 100,
-                  child: Card(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("sfx",style: TextStyle(fontSize: 30)),
-                        new GestureDetector(
-                          child: _isSfxMute ? Icon(IconData(59076, fontFamily: 'MaterialIcons'), size: 50,) : Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'),size: 50),
-                          onTap: _upadteSfxConfig,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * 0.9,
-                  height: 100,
-                  child: Card(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Sign in", style: TextStyle(fontSize: 30),),
-                        _logedin ? ElevatedButton(onPressed: _logout, child: Text("Sign out", style: TextStyle(fontSize: 20))) :  ElevatedButton(onPressed: _login, child: Text("Sign in with Google", style: TextStyle(fontSize: 20))),
-                      ],
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+        // color: Colors.white,
+        child: Column(
+          children: [
+            SizedBox(
+              width: size.width * 0.9,
+              height: 100,
+              child: Card(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ElevatedButton(onPressed: () => {Navigator.of(context).pop()}, child: Text("Go back")),
+                    Text("music", style: TextStyle(fontSize: 30)),
+                    new GestureDetector(
+                      child: _isBgmMute
+                          ? Icon(IconData(59076, fontFamily: 'MaterialIcons'),
+                              size: 50)
+                          : Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'),
+                              size: 50),
+                      onTap: _upadteBGMConfig,
+                    ),
                   ],
                 ),
+              ),
+            ),
+            SizedBox(
+              width: size.width * 0.9,
+              height: 100,
+              child: Card(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("sfx", style: TextStyle(fontSize: 30)),
+                    new GestureDetector(
+                      child: _isSfxMute
+                          ? Icon(
+                              IconData(59076, fontFamily: 'MaterialIcons'),
+                              size: 50,
+                            )
+                          : Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'),
+                              size: 50),
+                      onTap: _upadteSfxConfig,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              width: size.width * 0.9,
+              height: 100,
+              child: Card(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Sign in",
+                      style: TextStyle(fontSize: 30),
+                    ),
+                    _logedin
+                        ? ElevatedButton(
+                            onPressed: _logout,
+                            child: Text("Sign out",
+                                style: TextStyle(fontSize: 20)))
+                        : ElevatedButton(
+                            onPressed: _login,
+                            child: Text("Sign in with Google",
+                                style: TextStyle(fontSize: 20))),
+                  ],
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                    onPressed: () => {Navigator.of(context).pop()},
+                    child: Text("Go back")),
               ],
             ),
-          )
-      ),
+          ],
+        ),
+      )),
     );
   }
-
 }
