@@ -4,17 +4,17 @@ import 'package:flutter_game/screens/Auth/auth_inf.dart';
 import 'package:flutter_game/screens/Auth/google_auth.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
 import 'package:hive/hive.dart';
-
 import '../score_item.dart';
 
 class RemoteScoreDao {
   late String _documentID;
-  final String _BOXNAME = "documentID";
+  final String _BOXNAME = "config";
+  final String _KEYNAME = "documentID";
   late LocalScoreDao _localDao;
 
   RemoteScoreDao() {
     _localDao = new LocalScoreDao();
-    _documentID = Hive.box(_BOXNAME).get(_BOXNAME);
+    _documentID = Hive.box(_BOXNAME).get(_KEYNAME);
   }
 
   void register() async {

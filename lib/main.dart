@@ -24,23 +24,13 @@ void main() async {
   //need to save documentID for a user to register his/her game score to firebase.
   BoxManager boxManager = new BoxManager();
 
-  if (!(await Hive.boxExists("documentID"))) {
-    print("No docID registered");
-    //there is not documentID registered.
-    //cretate new documentID and register it to Hive(local)
-    var box = await Hive.openBox("documentID");
-    var document = FirebaseFirestore.instance.collection('leaderboards').doc();
-    box.put('documentID', document.id);
-  } else {
-    // documentID already registered. just open a box.
-    await Hive.openBox("documentID");
-  }
-
+  var document = FirebaseFirestore.instance.collection('leaderboards').doc();
   //init a box for config
-  Map<String, bool> configMap = {
-    "isTiltOn": kIsWeb? false: true,
+  Map<String, dynamic> configMap = {
+    "isTiltOn": kIsWeb ? false : true,
     "isBgmMute": false,
-    "isSfxMute": false
+    "isSfxMute": false,
+    "documentID": document.id,
   };
   boxManager.initBox("config", configMap);
 
