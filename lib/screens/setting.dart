@@ -11,6 +11,7 @@ class SettingScreen extends StatefulWidget {
 class _settingState extends State<SettingScreen> {
   late bool _isBgmMute;
   late bool _isSfxMute;
+  late bool _isTiltOn;
   late Box _configBox;
   bool _logedin = false;
   late AuthInf _auth;
@@ -28,6 +29,19 @@ class _settingState extends State<SettingScreen> {
     _configBox = Hive.box("config");
     _isBgmMute = _configBox.get("isBgmMute");
     _isSfxMute = _configBox.get("isSfxMute");
+    _isTiltOn = _configBox.get("isTiltOn");
+  }
+
+  void _changeTiltState() {
+    setState(() {
+      _isTiltOn = !_isTiltOn;
+    });
+  }
+
+  void _updateTiltConfig() async {
+    //update Tilt config in hive
+    await _configBox.put("isTiltOn", !_isBgmMute);
+    _changeTiltState();
   }
 
   void _changeMusicState() {
@@ -95,9 +109,9 @@ class _settingState extends State<SettingScreen> {
                     Text("music", style: TextStyle(fontSize: 30)),
                     new GestureDetector(
                       child: _isBgmMute
-                          ? Icon(IconData(59076, fontFamily: 'MaterialIcons'),
+                          ? Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'),
                               size: 50)
-                          : Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'),
+                          : Icon(IconData(59076, fontFamily: 'MaterialIcons'),
                               size: 50),
                       onTap: _upadteBGMConfig,
                     ),
@@ -116,12 +130,34 @@ class _settingState extends State<SettingScreen> {
                     new GestureDetector(
                       child: _isSfxMute
                           ? Icon(
-                              IconData(59076, fontFamily: 'MaterialIcons'),
+                              IconData(0xe6c3, fontFamily: 'MaterialIcons'),
                               size: 50,
                             )
-                          : Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'),
+                          : Icon(IconData(59076, fontFamily: 'MaterialIcons'),
                               size: 50),
                       onTap: _upadteSfxConfig,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              width: size.width * 0.9,
+              height: 100,
+              child: Card(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Tilt Controls", style: TextStyle(fontSize: 30)),
+                    new GestureDetector(
+                      child: _isTiltOn
+                          ? Icon(
+                              IconData(57687, fontFamily: 'MaterialIcons'),
+                              size: 50,
+                            )
+                          : Icon(IconData(57688, fontFamily: 'MaterialIcons'),
+                              size: 50),
+                      onTap: _updateTiltConfig,
                     ),
                   ],
                 ),

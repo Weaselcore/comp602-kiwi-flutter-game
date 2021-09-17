@@ -25,9 +25,10 @@ void main() async {
   BoxManager boxManager = new BoxManager();
 
   var document = FirebaseFirestore.instance.collection('leaderboards').doc();
+
   //init a box for config
   Map<String, dynamic> configMap = {
-    "isTiltOn": kIsWeb ? false : true,
+    "isTiltOn": false,
     "isBgmMute": false,
     "isSfxMute": false,
     "documentID": document.id,
