@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_game/screens/Auth/google_auth.dart';
+import 'package:hive/hive.dart';
 
 import 'Auth/auth_inf.dart';
 
@@ -11,30 +12,48 @@ class SettingScreen extends StatefulWidget {
 
 class _settingState extends State<SettingScreen> {
 
-  bool _musicMute = false;
-  bool _sfxMute = false;
+  late bool _isBgmMute;
+  late bool _isSfxMute;
+  late Box _audioBox;
   bool _logedin = false;
   late AuthInf _auth;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    //check login state
     _auth = new GoogleAuth();
     if (_auth.isSignedIn() == true) {
       _logedin = true;
     }
+
+    //check user config
+    _audioBox = Hive.box("config");
+    _isBgmMute = _audioBox.get("isBgmMute");
+    _isSfxMute = _audioBox.get("isSfxMute");
   }
   void _changeMusicState () {
     setState(() {
-      _musicMute = !_musicMute;
+      _isBgmMute = !_isBgmMute;
     });
+  }
+
+  void _upadteBGMConfig() async {
+    //update BGM config in hive
+    await _audioBox.put("isBgmMute", !_isBgmMute);
+    _changeMusicState();
   }
 
   void _changeSfxState() {
     setState(() {
-      _sfxMute = !_sfxMute;
+      _isSfxMute = !_isSfxMute;
     });
+  }
+
+  void _upadteSfxConfig() async {
+    //update SFX config in hive
+    await _audioBox.put("isSfxMute", !_isSfxMute);
+    _changeSfxState();
   }
 
   void _login() {
@@ -77,8 +96,8 @@ class _settingState extends State<SettingScreen> {
                       children: [
                         Text("music", style: TextStyle(fontSize: 30)),
                         new GestureDetector(
-                          child: _musicMute ? Icon(IconData(59076, fontFamily: 'MaterialIcons'), size: 50) : Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'), size: 50),
-                          onTap: _changeMusicState,
+                          child: _isBgmMute ? Icon(IconData(59076, fontFamily: 'MaterialIcons'), size: 50) : Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'), size: 50),
+                          onTap: _upadteBGMConfig,
                         ),
                       ],
                     ),
@@ -93,8 +112,8 @@ class _settingState extends State<SettingScreen> {
                       children: [
                         Text("sfx",style: TextStyle(fontSize: 30)),
                         new GestureDetector(
-                          child: _sfxMute ? Icon(IconData(59076, fontFamily: 'MaterialIcons'), size: 50,) : Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'),size: 50),
-                          onTap: _changeSfxState,
+                          child: _isSfxMute ? Icon(IconData(59076, fontFamily: 'MaterialIcons'), size: 50,) : Icon(IconData(0xe6c3, fontFamily: 'MaterialIcons'),size: 50),
+                          onTap: _upadteSfxConfig,
                         ),
                       ],
                     ),
