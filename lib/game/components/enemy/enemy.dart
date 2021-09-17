@@ -8,8 +8,6 @@ import 'package:flutter_game/game/components/kiwi.dart';
 import 'package:flutter_game/game/components/powerup/component/laser_beam.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
 
-import 'package:flame_audio/flame_audio.dart';
-
 class Enemy extends SpriteComponent
     with HasGameRef<KiwiGame>, Hitbox, Collidable {
   // Every enemy gets assigned a unique ID so it can be tracked and removed.
@@ -108,7 +106,6 @@ class Enemy extends SpriteComponent
     gameRef.audioManager.playSfx('pop.wav');
     print("Removing enemy with ID($id)");
     gameRef.camera.shake(intensity: 5);
-
 
     // Generate 25 white circle particles with random speed and acceleration,
     // at current position of this enemy. Each particles lives for exactly
