@@ -44,7 +44,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   late RemoteScoreDao remoteScoreDao;
 
   bool isAudioManagerLoaded = false;
-  bool isTiltControlsLoaded = false;
+  bool isTiltConfigLoaded = false;
 
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
@@ -53,15 +53,13 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   int score = 0;
   int coin = 0;
 
-  bool isTiltControls = true;
-
-  //use for now
-  double tiltVelocity = 0.0;
-
   late Kiwi _kiwi;
 
   late AudioManagerComponent audioManager;
-  late TiltController tiltControlsManager;
+
+  late TiltConfig tiltConfigManager;
+  late bool isTiltControls;
+  double tiltVelocity = 0.0;
 
   late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
@@ -106,13 +104,13 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       isAudioManagerLoaded = true;
     }
 
-    if (!isTiltControlsLoaded) {
-      tiltControlsManager = TiltController();
-      add(tiltControlsManager);
+    if (!isTiltConfigLoaded) {
+      tiltConfigManager = TiltConfig();
+      add(tiltConfigManager);
     }
 
-    tiltControlsManager.fetchSettings();
-    isTiltControls = tiltControlsManager.getConfig();
+    tiltConfigManager.fetchSettings();
+    isTiltControls = tiltConfigManager.getConfig();
     audioManager.fetchSettings();
     audioManager.playBgm('background.mp3');
 
