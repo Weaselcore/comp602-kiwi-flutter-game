@@ -1,10 +1,17 @@
 import 'package:flame/components.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class AudioManagerComponent extends Component with HasGameRef {
+  late bool isBgmMute;
+  late bool isSfxMute;
+  late Box configBox;
+
   @override
   Future<void>? onLoad() async {
     FlameAudio.bgm.initialize();
+
+    configBox = Hive.box("config");
 
     await FlameAudio.audioCache.loadAll([
       'armour.wav',
@@ -20,11 +27,15 @@ class AudioManagerComponent extends Component with HasGameRef {
   }
 
   void playBgm(String audioFile) {
-    FlameAudio.bgm.play(audioFile);
+    if (isBgmMute) {
+      FlameAudio.bgm.play(audioFile);
+    }
   }
 
   void playSfx(String audioFile) {
-    FlameAudio.play(audioFile);
+    if (isSfxMute) {
+      FlameAudio.play(audioFile);
+    }
   }
 
   void stopBgm() {
@@ -41,6 +52,11 @@ class AudioManagerComponent extends Component with HasGameRef {
 
   void resetBgm(String audioFile) {
     FlameAudio.bgm.stop();
-    FlameAudio.bgm.play(audioFile);
+    playBgm(audioFile);
+  }
+
+  void fetchSettings() {
+    isBgmMute = configBox.get("isBgmMute");
+    isSfxMute = configBox.get("isSfxMute");
   }
 }
