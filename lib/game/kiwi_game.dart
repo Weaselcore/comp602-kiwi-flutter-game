@@ -25,6 +25,7 @@ import 'package:flutter_game/game/components/ticker/info_ticker.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
 import 'package:flutter_game/screens/dao/remote_score_dao.dart';
 import 'package:flutter_game/screens/score_item.dart';
+import 'components/tilt_controller.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
@@ -43,6 +44,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   late RemoteScoreDao remoteScoreDao;
 
   bool isAudioManagerLoaded = false;
+  bool isTiltControlsLoaded = false;
 
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
@@ -59,6 +61,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   late Kiwi _kiwi;
 
   late AudioManagerComponent audioManager;
+  late TiltController tiltControlsManager;
 
   late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
@@ -103,6 +106,13 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       isAudioManagerLoaded = true;
     }
 
+    if (!isTiltControlsLoaded) {
+      tiltControlsManager = TiltController();
+      add(tiltControlsManager);
+    }
+
+    tiltControlsManager.fetchSettings();
+    isTiltControls = tiltControlsManager.getConfig();
     audioManager.fetchSettings();
     audioManager.playBgm('background.mp3');
 
