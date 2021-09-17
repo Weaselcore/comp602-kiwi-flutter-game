@@ -89,7 +89,7 @@ class Enemy extends SpriteComponent
 
   void die() {
     this.remove();
-    FlameAudio.play('pop.wav');
+    gameRef.audioManager.playSfx('pop.wav');
     print("Removing enemy with ID($id)");
     gameRef.camera.shake(intensity: 20);
 

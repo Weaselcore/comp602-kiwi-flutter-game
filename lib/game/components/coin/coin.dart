@@ -69,7 +69,7 @@ class Coin extends SpriteAnimationComponent
       gameRef.coin += 1;
       gameRef.coinTracker.removeCoin(id);
       this.remove();
-      FlameAudio.play("coin.wav");
+      gameRef.audioManager.playSfx('coin.wav');
     }
   }
 }

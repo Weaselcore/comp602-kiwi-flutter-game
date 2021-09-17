@@ -124,17 +124,17 @@ class Kiwi extends SpriteComponent
       }
     } else if (other is ShieldPowerUp) {
       other.remove();
-      FlameAudio.play("armour.wav");
+      gameRef.audioManager.playSfx('armour.wav');
       addShield();
     } else if (other is SlomoPowerUp) {
       other.remove();
-      FlameAudio.play("slow_time.wav");
+      gameRef.audioManager.playSfx('slow_time.wav');
       gameRef.halfEnemySpeed();
     } else if (other is LaserPowerUp) {
       other.remove();
       if (!hasLaser) {
         fireLaser();
-        FlameAudio.play("laser.mp3");
+        gameRef.audioManager.playSfx('laser.mp3');
       }
     }
   }
@@ -167,8 +167,8 @@ class Kiwi extends SpriteComponent
 
   void die() {
     gameRef.gameEnded = true;
-    FlameAudio.play("death.mp3");
-    gameRef.stopMusic();
+    gameRef.audioManager.playSfx('death.mp3');
+    gameRef.audioManager.stopBgm();
     gameRef.pauseEngine();
     gameRef.overlays.remove(PauseButton.ID);
     gameRef.overlays.add(EndGameMenu.ID);
