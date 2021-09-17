@@ -137,7 +137,4 @@ class _ShopScreenState extends State<ShopScreen> {
 
 }
 
-  get coins => null; //Local get and must be update when after each user game.
-  get item => 100;
-
 
