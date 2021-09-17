@@ -72,7 +72,7 @@ class PauseMenu extends StatelessWidget {
                 gameRef.overlays.remove(PauseMenu.ID);
                 gameRef.reset();
                 gameRef.audioManager.stopBgm();
-
+                gameRef.getKiwi().remove();
                 Navigator.of(context).pop();
               },
               child: Text('Exit'),
