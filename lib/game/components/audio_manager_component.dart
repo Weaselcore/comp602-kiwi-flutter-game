@@ -13,6 +13,7 @@ class AudioManagerComponent extends Component with HasGameRef {
 
     configBox = Hive.box("config");
 
+    //loads audio files to cache for faster loading
     await FlameAudio.audioCache.loadAll([
       'armour.wav',
       'background.mp3',
@@ -26,26 +27,31 @@ class AudioManagerComponent extends Component with HasGameRef {
     return super.onLoad();
   }
 
+  //play audio background music
   void playBgm(String audioFile) {
     if (isBgmMute) {
       FlameAudio.bgm.play(audioFile);
     }
   }
 
+  //play audio sound effects music
   void playSfx(String audioFile) {
     if (isSfxMute) {
       FlameAudio.play(audioFile);
     }
   }
 
+  //stop background music
   void stopBgm() {
     FlameAudio.bgm.stop();
   }
 
+  //pause background music
   void pauseBgm() {
     FlameAudio.bgm.pause();
   }
 
+  //resume background music
   void resmueBgm() {
     FlameAudio.bgm.resume();
   }
@@ -55,6 +61,7 @@ class AudioManagerComponent extends Component with HasGameRef {
     playBgm(audioFile);
   }
 
+  //fetch audio config toggle settings
   void fetchSettings() {
     isBgmMute = configBox.get("isBgmMute");
     isSfxMute = configBox.get("isSfxMute");
