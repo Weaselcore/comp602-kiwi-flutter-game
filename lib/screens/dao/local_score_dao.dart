@@ -1,4 +1,5 @@
 
+import 'package:flutter_game/screens/notification/notification.dart';
 import 'package:flutter_game/screens/score_item.dart';
 import 'package:hive/hive.dart';
 
@@ -23,10 +24,18 @@ class LocalScoreDao {
         _scoreBox.add(newScoreItem);
         //remove the lowesy socre in the ranking
         scores.last.delete();
+        //notification check
       }
     } else {
       //records are less than 10
       _scoreBox.add(newScoreItem);
+    }
+
+    //send notification
+    if (scores.length > 0) {
+      if (newScoreItem.score > scores.first.score) {
+        nofity();
+      }
     }
   }
 
@@ -50,6 +59,11 @@ class LocalScoreDao {
     //sort the list: higher score is listed in the higher rank.
     scores.sort((a,b) => b.score.compareTo(a.score));
     return scores;
+  }
+
+  void nofity() {
+    Notification notification = new Notification();
+    notification.sendNotification();
   }
 
   //TODO this might be used only for testcode in leaderboard.dart. check if we need to remove it or not.
