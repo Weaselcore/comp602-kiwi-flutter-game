@@ -133,7 +133,16 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
     if (!isAlreadyLoaded) {
       final parallaxComponent = await loadParallaxComponent([
-        ParallaxImageData('cliff_parallax_1.png'),
+        //ParallaxImageData('pix_sky1.png'),
+        ParallaxImageData('pixsky.png'),
+        ParallaxImageData('po2.png'),
+        ParallaxImageData('pixbg.png'),
+        //ParallaxImageData('C02.png'),
+        ParallaxImageData('po1.png'),
+        ParallaxImageData('p03.png'),
+        ParallaxImageData('po4.png'),
+        //ParallaxImageData('birrd01.png'),
+        //ParallaxImageData('birdnob.gif'),
       ],
           baseVelocity: Vector2(0, 50),
           velocityMultiplierDelta: Vector2(1.8, 1.0),

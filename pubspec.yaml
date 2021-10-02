@@ -86,7 +86,7 @@ flutter:
     - assets/images/Cockroach.png
     - assets/images/Weta.png
     - assets/images/Worm.png
-    - assets/images/ads.png
+    - assets/images/pixbg.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
