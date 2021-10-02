@@ -1,11 +1,8 @@
-
 import 'package:flutter_game/screens/score_item.dart';
 import 'package:hive/hive.dart';
 
-
 class LocalScoreDao {
-
-  late Box<ScoreItem>  _scoreBox;
+  late Box<ScoreItem> _scoreBox;
   final String BOXNAME = "leaderboard";
   final int MAXIMUM = 10;
 
@@ -13,12 +10,12 @@ class LocalScoreDao {
     _scoreBox = Hive.box<ScoreItem>(BOXNAME);
   }
 
-  void register (ScoreItem newScoreItem) {
+  void register(ScoreItem newScoreItem) {
     List<ScoreItem> scores = getAll();
 
     if (scores.length >= MAXIMUM) {
       //records are more than 10
-      if (_isRankedIn(scores,newScoreItem)) {
+      if (_isRankedIn(scores, newScoreItem)) {
         //new score is ranked in
         _scoreBox.add(newScoreItem);
         //remove the lowesy socre in the ranking
@@ -48,7 +45,7 @@ class LocalScoreDao {
   List<ScoreItem> getAll() {
     List<ScoreItem> scores = _scoreBox.values.toList().cast<ScoreItem>();
     //sort the list: higher score is listed in the higher rank.
-    scores.sort((a,b) => b.score.compareTo(a.score));
+    scores.sort((a, b) => b.score.compareTo(a.score));
     return scores;
   }
 
@@ -58,5 +55,4 @@ class LocalScoreDao {
   }
 
   Box<ScoreItem> get box => _scoreBox;
-
 }

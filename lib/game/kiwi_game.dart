@@ -119,7 +119,6 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     _kiwi.anchor = Anchor.center;
     add(_kiwi);
 
-
     if (!isTiltConfigLoaded) {
       tiltConfigManager = TiltConfig();
       add(tiltConfigManager);
@@ -127,7 +126,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
     tiltConfigManager.fetchSettings();
     isTiltControls = tiltConfigManager.getConfig();
-    
+
     audioManager.fetchSettings();
     audioManager.playBgm('background.mp3');
 

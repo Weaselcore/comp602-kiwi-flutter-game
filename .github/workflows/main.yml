@@ -6,9 +6,13 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.g.dart'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - '**.g.dart'
 
 jobs:
   build:
@@ -31,7 +35,7 @@ jobs:
       - run: flutter pub get
 
       # Check for any formatting issues in the code.
-      - run: flutter format --set-exit-if-changed .
+      - run: flutter format -n --set-exit-if-changed -- --line-length 140 .
 
       # Statically analyze the Dart code for any errors.
       - run: flutter analyze .
