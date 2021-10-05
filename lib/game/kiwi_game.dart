@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame/gestures.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/audio_manager_component.dart';
@@ -31,10 +30,12 @@ import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
 
-class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
+class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   bool isAlreadyLoaded = false;
   bool _leftDirectionPressed = false;
   bool _rightDirectionPressed = false;
+  bool _upDirectionPressed = false;
+  bool _downDirectionPressed = false;
   bool gameEnded = false;
   bool _isSlowed = false;
   bool _isGodMode = false;
@@ -50,6 +51,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
   int _leftPointerId = -1;
+  int _upPointerId = -1;
+  int _downPointerId = -1;
 
   int score = 0;
   int coin = 0;
@@ -131,23 +134,23 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     audioManager.playBgm('background.mp3');
 
     if (!isAlreadyLoaded) {
-      final parallaxComponent = await loadParallaxComponent([
-        //ParallaxImageData('pix_sky1.png'),
-        ParallaxImageData('pixsky.png'),
-        ParallaxImageData('po2.png'),
-        ParallaxImageData('pixbg.png'),
-        //ParallaxImageData('C02.png'),
-        ParallaxImageData('po1.png'),
-        ParallaxImageData('p03.png'),
-        ParallaxImageData('po4.png'),
-        //ParallaxImageData('birrd01.png'),
-        //ParallaxImageData('birdnob.gif'),
-      ],
-          baseVelocity: Vector2(0, 50),
-          velocityMultiplierDelta: Vector2(1.8, 1.0),
-          repeat: ImageRepeat.repeatY,
-          fill: LayerFill.width);
-      add(parallaxComponent);
+      // final parallaxComponent = await loadParallaxComponent([
+      //   //ParallaxImageData('pix_sky1.png'),
+      //   ParallaxImageData('pixsky.png'),
+      //   ParallaxImageData('po2.png'),
+      //   ParallaxImageData('pixbg.png'),
+      //   //ParallaxImageData('C02.png'),
+      //   ParallaxImageData('po1.png'),
+      //   ParallaxImageData('p03.png'),
+      //   ParallaxImageData('po4.png'),
+      //   //ParallaxImageData('birrd01.png'),
+      //   //ParallaxImageData('birdnob.gif'),
+      // ],
+      //     baseVelocity: Vector2(0, 50),
+      //     velocityMultiplierDelta: Vector2(1.8, 1.0),
+      //     repeat: ImageRepeat.repeatY,
+      //     fill: LayerFill.width);
+      // add(parallaxComponent);
 
       _enemyManager = EnemyManager();
       add(_enemyManager);
@@ -195,6 +198,15 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
       _laserTicker.isHud = true;
       add(_laserTicker);
 
+      final joystick = JoystickComponent(
+        gameRef: this,
+        directional: JoystickDirectional(
+            size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
+      );
+
+      joystick.addObserver(_kiwi);
+      add(joystick);
+
       isAlreadyLoaded = true;
     }
   }
@@ -226,7 +238,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     super.render(canvas);
   }
 
-  /// Controls are being detected here and propogates the updates to child
+  /// Controls are being detected here and propagates the updates to child
   /// components. Also tickers are being updated as the game progresses.
   @override
   void update(double dt) {
@@ -241,8 +253,6 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
     if (isTiltControls) {
       tiltMovement();
-    } else {
-      tapMovement();
     }
 
     _scoreTicker.text = 'Score: ' + score.toString();
@@ -251,70 +261,6 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     _slowTicker.text = 'Slow Timer: ' + _slowTimer.current.toString();
     _laserTicker.text = 'Laser Timer: ' + _laserTimer.current.toString();
   }
-
-  /// Alters the control state when touch is detected.
-  @override
-  void onTapDown(int pointerId, TapDownInfo event) {
-    if (_tapIsLeft(event) && !_tapIsRight(event)) {
-      _leftDirectionPressed = true;
-      _leftPointerId = pointerId;
-    } else if (_tapIsRight(event) && !_tapIsLeft(event)) {
-      _rightDirectionPressed = true;
-      _rightPointerId = pointerId;
-    } else if (!(_isBothPressed())) {
-      _leftDirectionPressed = false;
-      _leftPointerId = -1;
-      _rightDirectionPressed = false;
-      _rightPointerId = -1;
-    }
-  }
-
-  /// Alters the control state when touch release has been detected.
-  @override
-  void onTapUp(int pointerId, TapUpInfo event) {
-    // If both left and right taps have been lifted.
-    if (_tapIsLeft(event) && _tapIsRight(event)) {
-      _leftDirectionPressed = false;
-      _leftPointerId = -1;
-      _rightDirectionPressed = false;
-      _rightPointerId = -1;
-      // If left tap has been lifted.
-    } else if (_tapIsLeft(event) && !_tapIsRight(event)) {
-      _leftDirectionPressed = false;
-      _leftPointerId = -1;
-      // If right tap has been lifted.
-    } else if (_tapIsRight(event) && !_tapIsLeft(event)) {
-      _rightDirectionPressed = false;
-      _rightPointerId = -1;
-    }
-  }
-
-  /// Since onTapCancel doesn't pass TapInfo, pointerId have to be tracked.
-  /// So if the finger slides off the sides instead of lifting it up, it will not bug out.
-  @override
-  void onTapCancel(int pointerId) {
-    if (_rightPointerId == pointerId) {
-      _rightPointerId = -1;
-      _rightDirectionPressed = false;
-    } else if (_leftPointerId == pointerId) {
-      _leftPointerId = -1;
-      _leftDirectionPressed = false;
-    }
-  }
-
-  /// Returns middle point of the screen.
-  double _getMiddlePoint() => viewport.canvasSize.x / 2;
-
-  /// Left touch is true when it happens on the left side of the screen.
-  bool _tapIsLeft(PositionInfo event) =>
-      event.eventPosition.game.x < _getMiddlePoint();
-
-  /// Right touch is true when it happens on the right side of the screen.
-  bool _tapIsRight(PositionInfo event) =>
-      event.eventPosition.game.x > _getMiddlePoint();
-
-  /// Is true when a finger is detected on the ledt and right side of the screen.
-  bool _isBothPressed() => (_rightDirectionPressed && _leftDirectionPressed);
 
   /// Slows the enemies speed as long as [_slowTimer] is running.
   void halfEnemySpeed() {
@@ -437,26 +383,6 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     } else if (tiltVelocity < -1.0) {
       _kiwi.goRight();
     } else if (tiltVelocity < 1.0 && tiltVelocity > -1.0) {
-      _kiwi.stop();
-    }
-  }
-
-  /// Used to check for tap gestures to move the Kiwi.
-  void tapMovement() {
-    // If both left and right are pressed down.
-    if (_isBothPressed()) {
-      _kiwi.stop();
-    }
-    // If right are pressed down.
-    else if (_rightDirectionPressed && !_leftDirectionPressed) {
-      _kiwi.goRight();
-    }
-    // If left are pressed down.
-    else if (_leftDirectionPressed && !_rightDirectionPressed) {
-      _kiwi.goLeft();
-    }
-    // If no buttons are pressed.
-    else {
       _kiwi.stop();
     }
   }
