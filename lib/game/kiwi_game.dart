@@ -9,6 +9,7 @@ import 'package:flutter_game/game/components/audio_manager_component.dart';
 import 'package:flutter_game/game/components/coin/coin.dart';
 import 'package:flutter_game/game/components/coin/coin_manager.dart';
 import 'package:flutter_game/game/components/coin/coin_tracker.dart';
+import 'package:flutter_game/game/components/controls/tilt_controls.dart';
 import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 import 'package:hive/hive.dart';
@@ -64,7 +65,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
   late TiltConfig tiltConfigManager;
   late bool isTiltControls;
-  double tiltVelocity = 0.0;
+  double tiltXVelocity = 0.0;
+  double tiltYVelocity = 0.0;
 
   late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
@@ -251,9 +253,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       _laserBeam.position = _kiwi.position;
     }
 
-    if (isTiltControls) {
-      tiltMovement();
-    }
+    // if (isTiltControls) {
+    tiltMovement();
+    // }
 
     _scoreTicker.text = 'Score: ' + score.toString();
     _coinTicker.text = 'Coins: ' + coin.toString();
@@ -375,15 +377,41 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   /// Used to check for tilt movement to move the Kiwi.
   void tiltMovement() {
     accelerometerEvents.listen((AccelerometerEvent event) {
-      this.tiltVelocity = event.x;
-    });
+      this.tiltXVelocity = event.x;
+      this.tiltYVelocity = event.y;
 
-    if (tiltVelocity > 1.0) {
-      _kiwi.goLeft();
-    } else if (tiltVelocity < -1.0) {
-      _kiwi.goRight();
-    } else if (tiltVelocity < 1.0 && tiltVelocity > -1.0) {
-      _kiwi.stop();
-    }
+      TiltDirectionalEvent tiltDirectionalEvent = TiltDirectionalEvent();
+
+      switch (tiltDirectionalEvent.calculate(
+          this.tiltXVelocity, this.tiltYVelocity)) {
+        case TiltMoveDirectional.moveUp:
+          _kiwi.setMoveDirection(Vector2(0, -1));
+          break;
+        case TiltMoveDirectional.moveUpLeft:
+          _kiwi.setMoveDirection(Vector2(-1, -1));
+          break;
+        case TiltMoveDirectional.moveUpRight:
+          _kiwi.setMoveDirection(Vector2(1, -1));
+          break;
+        case TiltMoveDirectional.moveRight:
+          _kiwi.setMoveDirection(Vector2(1, 0));
+          break;
+        case TiltMoveDirectional.moveDown:
+          _kiwi.setMoveDirection(Vector2(0, 1));
+          break;
+        case TiltMoveDirectional.moveDownRight:
+          _kiwi.setMoveDirection(Vector2(1, 1));
+          break;
+        case TiltMoveDirectional.moveDownLeft:
+          _kiwi.setMoveDirection(Vector2(-1, 1));
+          break;
+        case TiltMoveDirectional.moveLeft:
+          _kiwi.setMoveDirection(Vector2(-1, 0));
+          break;
+        case TiltMoveDirectional.idle:
+          _kiwi.setMoveDirection(Vector2.zero());
+          break;
+      }
+    });
   }
 }

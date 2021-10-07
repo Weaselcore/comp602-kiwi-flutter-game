@@ -205,13 +205,23 @@ class Kiwi extends SpriteComponent
     _spriteOrientationDefault = false;
   }
 
+  void goUp() {
+    _kiwiDirection = Vector2(1, 0);
+    _spriteOrientationDefault = true;
+  }
+
+  void goDown() {
+    _kiwiDirection = Vector2(-1, 0);
+    _spriteOrientationDefault = false;
+  }
+
   void stop() {
     _kiwiDirection = Vector2.zero();
   }
 
   @override
   void joystickAction(JoystickActionEvent event) {
-    // TODO: implement joystickAction
+    // TODO: maybe add laser or slow time button?
   }
 
   void setMoveDirection(Vector2 newKiwiDirection) {
