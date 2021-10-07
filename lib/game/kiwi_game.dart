@@ -48,6 +48,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
   bool isAudioManagerLoaded = false;
   bool isTiltConfigLoaded = false;
+  TiltDirectionalEvent tiltDirectionalEvent = TiltDirectionalEvent();
 
   // These variables are to track multi-gesture taps.
   int _rightPointerId = -1;
@@ -206,8 +207,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
             size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
       );
 
-      joystick.addObserver(_kiwi);
-      add(joystick);
+      //joystick.addObserver(_kiwi);
+      //add(joystick);
 
       isAlreadyLoaded = true;
     }
@@ -379,39 +380,44 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     accelerometerEvents.listen((AccelerometerEvent event) {
       this.tiltXVelocity = event.x;
       this.tiltYVelocity = event.y;
-
-      TiltDirectionalEvent tiltDirectionalEvent = TiltDirectionalEvent();
-
-      switch (tiltDirectionalEvent.calculate(
-          this.tiltXVelocity, this.tiltYVelocity)) {
-        case TiltMoveDirectional.moveUp:
-          _kiwi.setMoveDirection(Vector2(0, -1));
-          break;
-        case TiltMoveDirectional.moveUpLeft:
-          _kiwi.setMoveDirection(Vector2(-1, -1));
-          break;
-        case TiltMoveDirectional.moveUpRight:
-          _kiwi.setMoveDirection(Vector2(1, -1));
-          break;
-        case TiltMoveDirectional.moveRight:
-          _kiwi.setMoveDirection(Vector2(1, 0));
-          break;
-        case TiltMoveDirectional.moveDown:
-          _kiwi.setMoveDirection(Vector2(0, 1));
-          break;
-        case TiltMoveDirectional.moveDownRight:
-          _kiwi.setMoveDirection(Vector2(1, 1));
-          break;
-        case TiltMoveDirectional.moveDownLeft:
-          _kiwi.setMoveDirection(Vector2(-1, 1));
-          break;
-        case TiltMoveDirectional.moveLeft:
-          _kiwi.setMoveDirection(Vector2(-1, 0));
-          break;
-        case TiltMoveDirectional.idle:
-          _kiwi.setMoveDirection(Vector2.zero());
-          break;
-      }
     });
+
+    TiltMoveDirectional tiltDirection = this
+        .tiltDirectionalEvent
+        .calculate(this.tiltXVelocity, this.tiltYVelocity);
+
+    print(
+        "X: ${this.tiltXVelocity.toString()}, Y: ${this.tiltYVelocity.toString()}");
+    print(tiltDirection);
+
+    switch (tiltDirection) {
+      case TiltMoveDirectional.moveUp:
+        _kiwi.setMoveDirection(Vector2(0, -1));
+        break;
+      case TiltMoveDirectional.moveUpLeft:
+        _kiwi.setMoveDirection(Vector2(-1, -1));
+        break;
+      case TiltMoveDirectional.moveUpRight:
+        _kiwi.setMoveDirection(Vector2(1, -1));
+        break;
+      case TiltMoveDirectional.moveRight:
+        _kiwi.setMoveDirection(Vector2(1, 0));
+        break;
+      case TiltMoveDirectional.moveDown:
+        _kiwi.setMoveDirection(Vector2(0, 1));
+        break;
+      case TiltMoveDirectional.moveDownRight:
+        _kiwi.setMoveDirection(Vector2(1, 1));
+        break;
+      case TiltMoveDirectional.moveDownLeft:
+        _kiwi.setMoveDirection(Vector2(-1, 1));
+        break;
+      case TiltMoveDirectional.moveLeft:
+        _kiwi.setMoveDirection(Vector2(-1, 0));
+        break;
+      case TiltMoveDirectional.idle:
+        _kiwi.setMoveDirection(Vector2.zero());
+        break;
+    }
   }
 }

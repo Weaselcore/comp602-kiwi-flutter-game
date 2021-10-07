@@ -15,22 +15,26 @@ class TiltDirectionalEvent {
   /// cardinal directions.
 
   TiltMoveDirectional calculate(double tiltXValue, double tiltYValue) {
-    if (isXIdle(tiltXValue) && isYIdle(tiltYValue)) {
+    if (isUp(tiltYValue)) {
+      if (isUp(tiltYValue) && isLeft(tiltXValue)) {
+        return TiltMoveDirectional.moveUpLeft;
+      } else if (isUp(tiltYValue) && isRight(tiltXValue)) {
+        return TiltMoveDirectional.moveUpRight;
+      } else {
+        return TiltMoveDirectional.moveUp;
+      }
+    } else if (isDown(tiltYValue)) {
+      if (isDown(tiltYValue) && isRight(tiltXValue)) {
+        return TiltMoveDirectional.moveDownRight;
+      } else if (isDown(tiltYValue) && isLeft(tiltXValue)) {
+        return TiltMoveDirectional.moveDownLeft;
+      } else {
+        return TiltMoveDirectional.moveDown;
+      }
+    } else if (isRight(tiltXValue)) {
       return TiltMoveDirectional.moveRight;
-    } else if (isDown(tiltYValue) && isRight(tiltYValue)) {
-      return TiltMoveDirectional.moveDownRight;
-    } else if (isDown(tiltYValue) && isXIdle(tiltXValue)) {
-      return TiltMoveDirectional.moveDown;
-    } else if (isDown(tiltYValue) && isLeft(tiltXValue)) {
-      return TiltMoveDirectional.moveDownLeft;
-    } else if (isLeft(tiltXValue) && isYIdle(tiltYValue)) {
+    } else if (isLeft(tiltXValue)) {
       return TiltMoveDirectional.moveLeft;
-    } else if (isUp(tiltYValue) && isLeft(tiltXValue)) {
-      return TiltMoveDirectional.moveUpLeft;
-    } else if (isXIdle(tiltXValue) && isUp(tiltYValue)) {
-      return TiltMoveDirectional.moveUp;
-    } else if (isUp(tiltYValue) && isRight(tiltXValue)) {
-      return TiltMoveDirectional.moveUpRight;
     } else {
       return TiltMoveDirectional.idle;
     }
@@ -40,11 +44,11 @@ class TiltDirectionalEvent {
 
   bool isYIdle(double tiltYValue) => (tiltYValue < 1.0 && tiltYValue > -1.0);
 
-  bool isRight(double tiltXValue) => tiltXValue > 1.0;
+  bool isRight(double tiltXValue) => tiltXValue < -1.0;
 
-  bool isLeft(double tiltXValue) => tiltXValue < -1.0;
+  bool isLeft(double tiltXValue) => tiltXValue > 1.0;
 
-  bool isUp(double tiltYValue) => tiltYValue < 1.0;
+  bool isUp(double tiltYValue) => tiltYValue < -1.0;
 
-  bool isDown(double tiltYValue) => tiltYValue < -1.0;
+  bool isDown(double tiltYValue) => tiltYValue > 1.0;
 }
