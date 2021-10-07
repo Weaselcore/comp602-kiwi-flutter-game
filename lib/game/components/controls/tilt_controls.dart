@@ -11,8 +11,12 @@ enum TiltMoveDirectional {
 }
 
 class TiltDirectionalEvent {
-  /// The direction the knob was moved towards, converted to a set of 8
-  /// cardinal directions.
+  double yOffset = 5.0;
+  double yLowerBound = -1.0;
+  double yUpperBound = 1.0;
+  double xOffset = 0.0;
+  double xLowerBound = -1.0;
+  double xUpperBound = 1.0;
 
   TiltMoveDirectional calculate(double tiltXValue, double tiltYValue) {
     if (isUp(tiltYValue)) {
@@ -40,15 +44,17 @@ class TiltDirectionalEvent {
     }
   }
 
-  bool isXIdle(double tiltXValue) => (tiltXValue < 1.0 && tiltXValue > -1.0);
+  bool isXIdle(double tiltXValue) => (tiltXValue < xUpperBound + xUpperBound &&
+      tiltXValue > xUpperBound + xLowerBound);
 
-  bool isYIdle(double tiltYValue) => (tiltYValue < 1.0 && tiltYValue > -1.0);
+  bool isYIdle(double tiltYValue) => (tiltYValue < yOffset + yUpperBound &&
+      tiltYValue > yOffset + yLowerBound);
 
-  bool isRight(double tiltXValue) => tiltXValue < -1.0;
+  bool isRight(double tiltXValue) => tiltXValue < xOffset + xLowerBound;
 
-  bool isLeft(double tiltXValue) => tiltXValue > 1.0;
+  bool isLeft(double tiltXValue) => tiltXValue > xOffset + xUpperBound;
 
-  bool isUp(double tiltYValue) => tiltYValue < -1.0;
+  bool isUp(double tiltYValue) => tiltYValue < yOffset + yLowerBound;
 
-  bool isDown(double tiltYValue) => tiltYValue > 1.0;
+  bool isDown(double tiltYValue) => tiltYValue > yOffset + yUpperBound;
 }
