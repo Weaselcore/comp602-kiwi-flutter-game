@@ -141,27 +141,24 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       });
     }
 
-    print(this.components.toList());
-    print(this.components.toList().toString());
-
     if (!isAlreadyLoaded) {
-      // final parallaxComponent = await loadParallaxComponent([
-      //   //ParallaxImageData('pix_sky1.png'),
-      //   ParallaxImageData('pixsky.png'),
-      //   ParallaxImageData('po2.png'),
-      //   ParallaxImageData('pixbg.png'),
-      //   //ParallaxImageData('C02.png'),
-      //   ParallaxImageData('po1.png'),
-      //   ParallaxImageData('p03.png'),
-      //   ParallaxImageData('po4.png'),
-      //   //ParallaxImageData('birrd01.png'),
-      //   //ParallaxImageData('birdnob.gif'),
-      // ],
-      //     baseVelocity: Vector2(0, 50),
-      //     velocityMultiplierDelta: Vector2(1.8, 1.0),
-      //     repeat: ImageRepeat.repeatY,
-      //     fill: LayerFill.width);
-      // add(parallaxComponent);
+      final parallaxComponent = await loadParallaxComponent([
+        //ParallaxImageData('pix_sky1.png'),
+        ParallaxImageData('pixsky.png'),
+        ParallaxImageData('po2.png'),
+        ParallaxImageData('pixbg.png'),
+        //ParallaxImageData('C02.png'),
+        ParallaxImageData('po1.png'),
+        ParallaxImageData('p03.png'),
+        ParallaxImageData('po4.png'),
+        //ParallaxImageData('birrd01.png'),
+        //ParallaxImageData('birdnob.gif'),
+      ],
+          baseVelocity: Vector2(0, 50),
+          velocityMultiplierDelta: Vector2(1.8, 1.0),
+          repeat: ImageRepeat.repeatY,
+          fill: LayerFill.width);
+      add(parallaxComponent);
 
       _enemyManager = EnemyManager();
       add(_enemyManager);
