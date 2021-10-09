@@ -15,10 +15,16 @@ import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/screens/score_item.dart';
 
 class Kiwi extends SpriteComponent
-    with GameSizeAware, Hitbox, Collidable, HasGameRef<KiwiGame> {
+    with
+        GameSizeAware,
+        Hitbox,
+        Collidable,
+        HasGameRef<KiwiGame>,
+        JoystickListener {
   // The kiwi is initialised in the center with no motion.
-  Vector2 _horizontalMoveDirection = Vector2.zero();
-  double _horizontalSpeed = 200;
+  Vector2 _kiwiDirection = Vector2.zero();
+  double _kiwiSpeed = 200;
+
   bool _spriteOrientationDefault = false;
   bool isLoaded = false;
   int _shieldCount = 0;
@@ -63,8 +69,10 @@ class Kiwi extends SpriteComponent
   void update(double dt) {
     super.update(dt);
 
-    this.position +=
-        _horizontalMoveDirection.normalized() * _horizontalSpeed * dt;
+    // this.position +=
+    //     _horizontalMoveDirection.normalized() * _horizontalSpeed * dt;
+
+    this.position += _kiwiDirection.normalized() * _kiwiSpeed * dt;
 
     switch (_shieldCount) {
       case 0:
@@ -92,20 +100,6 @@ class Kiwi extends SpriteComponent
           Vector2.zero() + this.size / 3,
           gameSize - this.size / 3,
         );
-  }
-
-  void goRight() {
-    _horizontalMoveDirection = Vector2(1, 0);
-    _spriteOrientationDefault = true;
-  }
-
-  void goLeft() {
-    _horizontalMoveDirection = Vector2(-1, 0);
-    _spriteOrientationDefault = false;
-  }
-
-  void stop() {
-    _horizontalMoveDirection = Vector2.zero();
   }
 
   void reset() {
@@ -190,7 +184,7 @@ class Kiwi extends SpriteComponent
   int getShieldCount() => _shieldCount;
 
   void setHorizontalSpeed(double speed) {
-    _horizontalSpeed = speed;
+    _kiwiSpeed = speed;
   }
 
   bool hasShield() {
@@ -198,6 +192,72 @@ class Kiwi extends SpriteComponent
       return true;
     } else {
       return false;
+    }
+  }
+
+  void goRight() {
+    _kiwiDirection = Vector2(1, 0);
+    _spriteOrientationDefault = true;
+  }
+
+  void goLeft() {
+    _kiwiDirection = Vector2(-1, 0);
+    _spriteOrientationDefault = false;
+  }
+
+  void goUp() {
+    _kiwiDirection = Vector2(1, 0);
+    _spriteOrientationDefault = true;
+  }
+
+  void goDown() {
+    _kiwiDirection = Vector2(-1, 0);
+    _spriteOrientationDefault = false;
+  }
+
+  void stop() {
+    _kiwiDirection = Vector2.zero();
+  }
+
+  @override
+  void joystickAction(JoystickActionEvent event) {
+    // TODO: maybe add laser or slow time button?
+  }
+
+  void setMoveDirection(Vector2 newKiwiDirection) {
+    _kiwiDirection = newKiwiDirection;
+  }
+
+  @override
+  void joystickChangeDirectional(JoystickDirectionalEvent event) {
+    switch (event.directional) {
+      case JoystickMoveDirectional.moveUp:
+        this.setMoveDirection(Vector2(0, -1));
+        break;
+      case JoystickMoveDirectional.moveUpLeft:
+        this.setMoveDirection(Vector2(-1, -1));
+        break;
+      case JoystickMoveDirectional.moveUpRight:
+        this.setMoveDirection(Vector2(1, -1));
+        break;
+      case JoystickMoveDirectional.moveRight:
+        this.setMoveDirection(Vector2(1, 0));
+        break;
+      case JoystickMoveDirectional.moveDown:
+        this.setMoveDirection(Vector2(0, 1));
+        break;
+      case JoystickMoveDirectional.moveDownRight:
+        this.setMoveDirection(Vector2(1, 1));
+        break;
+      case JoystickMoveDirectional.moveDownLeft:
+        this.setMoveDirection(Vector2(-1, 1));
+        break;
+      case JoystickMoveDirectional.moveLeft:
+        this.setMoveDirection(Vector2(-1, 0));
+        break;
+      case JoystickMoveDirectional.idle:
+        this.setMoveDirection(Vector2.zero());
+        break;
     }
   }
 }
