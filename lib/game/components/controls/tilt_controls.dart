@@ -11,13 +11,17 @@ enum TiltMoveDirectional {
 }
 
 class TiltDirectionalEvent {
-  double yOffset = 5.0;
-  double yLowerBound = -1.0;
-  double yUpperBound = 1.0;
+  // [yOffset] is used so the phone doesn't have to be parallel to the ground.
+  double yOffset = 6.0;
+  // [yLowerBound] and [yUpperBound] are used to establish tilt threshold.
+  double yLowerBound = -0.5;
+  double yUpperBound = 0.5;
   double xOffset = 0.0;
-  double xLowerBound = -1.0;
-  double xUpperBound = 1.0;
+  double xLowerBound = -0.5;
+  double xUpperBound = 0.5;
 
+  /// Receives accelerometer values and returns a [TiltMoveDirectional] for the
+  /// game to move the kiwi in a certain direction.
   TiltMoveDirectional calculate(double tiltXValue, double tiltYValue) {
     if (isUp(tiltYValue)) {
       if (isUp(tiltYValue) && isLeft(tiltXValue)) {

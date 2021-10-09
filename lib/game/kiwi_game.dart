@@ -33,10 +33,6 @@ import 'overlay/pause_menu.dart';
 
 class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   bool isAlreadyLoaded = false;
-  bool _leftDirectionPressed = false;
-  bool _rightDirectionPressed = false;
-  bool _upDirectionPressed = false;
-  bool _downDirectionPressed = false;
   bool gameEnded = false;
   bool _isSlowed = false;
   bool _isGodMode = false;
@@ -49,12 +45,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   bool isAudioManagerLoaded = false;
   bool isTiltConfigLoaded = false;
   TiltDirectionalEvent tiltDirectionalEvent = TiltDirectionalEvent();
-
-  // These variables are to track multi-gesture taps.
-  int _rightPointerId = -1;
-  int _leftPointerId = -1;
-  int _upPointerId = -1;
-  int _downPointerId = -1;
 
   int score = 0;
   int coin = 0;
@@ -136,6 +126,19 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     audioManager.fetchSettings();
     audioManager.playBgm('background.mp3');
 
+    final joystick = JoystickComponent(
+      gameRef: this,
+      directional: JoystickDirectional(
+          size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
+    );
+
+    if (!isTiltControls && !this.components.contains(joystick)) {
+      joystick.addObserver(_kiwi);
+      add(joystick);
+    } else {
+      joystick.remove();
+    }
+
     if (!isAlreadyLoaded) {
       // final parallaxComponent = await loadParallaxComponent([
       //   //ParallaxImageData('pix_sky1.png'),
@@ -201,15 +204,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       _laserTicker.isHud = true;
       add(_laserTicker);
 
-      final joystick = JoystickComponent(
-        gameRef: this,
-        directional: JoystickDirectional(
-            size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
-      );
-
-      //joystick.addObserver(_kiwi);
-      //add(joystick);
-
       isAlreadyLoaded = true;
     }
   }
@@ -254,9 +248,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       _laserBeam.position = _kiwi.position;
     }
 
-    // if (isTiltControls) {
-    tiltMovement();
-    // }
+    if (isTiltControls) {
+      tiltMovement();
+    }
 
     _scoreTicker.text = 'Score: ' + score.toString();
     _coinTicker.text = 'Coins: ' + coin.toString();
@@ -375,7 +369,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     });
   }
 
-  /// Used to check for tilt movement to move the Kiwi.
+  /// Used to apply movement using the [TiltMoveDirectional] enum from the
+  /// [tiltDirectionalEvent] class. Inputs are taken from the
+  /// [AccelerometerEvent] package.
   void tiltMovement() {
     accelerometerEvents.listen((AccelerometerEvent event) {
       this.tiltXVelocity = event.x;
@@ -385,10 +381,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     TiltMoveDirectional tiltDirection = this
         .tiltDirectionalEvent
         .calculate(this.tiltXVelocity, this.tiltYVelocity);
-
-    print(
-        "X: ${this.tiltXVelocity.toString()}, Y: ${this.tiltYVelocity.toString()}");
-    print(tiltDirection);
 
     switch (tiltDirection) {
       case TiltMoveDirectional.moveUp:
