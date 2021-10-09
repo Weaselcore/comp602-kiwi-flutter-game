@@ -136,8 +136,13 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       joystick.addObserver(_kiwi);
       add(joystick);
     } else {
-      joystick.remove();
+      components.whereType<JoystickComponent>().forEach((element) {
+        element.remove();
+      });
     }
+
+    print(this.components.toList());
+    print(this.components.toList().toString());
 
     if (!isAlreadyLoaded) {
       // final parallaxComponent = await loadParallaxComponent([
