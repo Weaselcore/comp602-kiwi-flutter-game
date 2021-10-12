@@ -8,10 +8,22 @@ import 'boss.dart';
 
 class FalconBoss extends Boss {
   late Vector2 startingPosition;
+  late Timer _swoopTimer;
+  Vector2 swoopRightVector = Vector2(1.0, 0.0);
+  Vector2 swoopLeftVector = Vector2(-1.0, 0.0);
+  late Vector2 direction;
+
+  bool _spriteOrientationDefault = false;
+  bool isSwoopDown = true;
 
   Random random = Random();
 
-  FalconBoss(int idCount) : super(id: idCount, enemySpeed: 150);
+  FalconBoss(int idCount, bool swoopRight)
+      : super(id: idCount, enemySpeed: 150) {
+    direction = swoopRight ? swoopRightVector : swoopLeftVector;
+    _swoopTimer = Timer(3, callback: swoopUp, repeat: true);
+    _swoopTimer.start();
+  }
 
   @override
   Future<void> onLoad() async {
@@ -21,6 +33,16 @@ class FalconBoss extends Boss {
 
     final hitboxShape = HitboxCircle(definition: 0.6);
     addShape(hitboxShape);
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (isSwoopDown) {
+      this.position += swoopDown().normalized() * enemySpeed * dt;
+    } else {
+      this.position += swoopUp().normalized() * enemySpeed * dt;
+    }
   }
 
   @override
@@ -41,8 +63,16 @@ class FalconBoss extends Boss {
       gameRef.canvasSize + Vector2(150, 0),
     );
 
-    print("Spawning thundercloud at $position");
+    print("Spawning boss falcon at $position");
 
     return position;
   }
+
+  void spriteFlipOrientation() {
+    _spriteOrientationDefault = !_spriteOrientationDefault;
+  }
+
+  Vector2 swoopDown() => direction + Vector2(0.0, 1.0);
+
+  Vector2 swoopUp() => direction + Vector2(0.0, -1.0);
 }

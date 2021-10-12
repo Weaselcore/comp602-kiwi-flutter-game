@@ -1,16 +1,14 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:flutter_game/game/components/enemy/enemy_factory.dart';
+import 'package:flutter_game/game/components/boss/boss_falcon.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
 import '../../kiwi_game.dart';
-import 'package:flutter_game/game/components/enemy/enemy.dart';
+import 'boss.dart';
 
-class EnemyManager extends BaseComponent
+class BossManager extends BaseComponent
     with GameSizeAware, HasGameRef<KiwiGame> {
-  // A factory object to output enemy instances.
-  late EnemyFactory enemyFactory;
   // A timer that causes spawns to occur.
   late Timer _timer;
   // A time that cause a small freeze when the game engine pauses.
@@ -21,33 +19,35 @@ class EnemyManager extends BaseComponent
   // A randomiser for the type of enemy to spawn.
   Random random = Random();
 
-  // 'CRATE', 'CLOUD', 'FERRET'
-  var enemyType = ['CRATE', 'CLOUD', 'FERRET', 'IMAGINARY'];
+  var enemyType = [];
 
-  EnemyManager() : super() {
+  BossManager() : super() {
     // Enemies spawn every 2 seconds.
-    _timer = Timer(2, callback: _spawnEnemy, repeat: true);
+    _timer = Timer(2, callback: _spawnBoss, repeat: true);
     // There is a 1 second pause after the game resumes.
     _freezeTimer = Timer(1.0, callback: () {
       _timer.start();
     });
-    enemyFactory = EnemyFactory();
   }
 
   /// This spawns enemy objects when the timer triggers.
-  void _spawnEnemy() {
-    if (gameRef.buildContext != null) {
-      // Increment count by one per spawn.
-      _idCount += 1;
-      // Choose enemy to spawn from the enemyType list.
-      int randomEnemy = random.nextInt(enemyType.length);
-      // Fabricate new enemy object from the enemy type.
-      Enemy enemy = enemyFactory.getEnemyType(enemyType[randomEnemy], _idCount);
-      // Add enemy to the tracker.
-      gameRef.enemyTracker.addEnemy(enemy);
-      // Add enemy to the game.
-      gameRef.add(enemy);
-    }
+  void _spawnBoss() {
+    _idCount += 1;
+    Boss bossFalcon = FalconBoss(_idCount, directionRandomiser());
+    gameRef.bossTracker.addBoss(bossFalcon);
+
+    // if (gameRef.buildContext != null) {
+    //   // Increment count by one per spawn.
+    //   _idCount += 1;
+    //   // Choose enemy to spawn from the enemyType list.
+    //   int randomEnemy = random.nextInt(enemyType.length);
+    //   // Fabricate new enemy object from the enemy type.
+    //   Enemy enemy = enemyFactory.getEnemyType(enemyType[randomEnemy], _idCount);
+    //   // Add enemy to the tracker.
+    //   gameRef.enemyTracker.addEnemy(enemy);
+    //   // Add enemy to the game.
+    //   gameRef.add(enemy);
+    // }
   }
 
   /// Start timer when the widget gets mounted.
@@ -92,5 +92,9 @@ class EnemyManager extends BaseComponent
     _timer.stop;
     _freezeTimer.stop;
     _freezeTimer.start();
+  }
+
+  bool directionRandomiser() {
+    return this.random.nextDouble() > 0.5 ? true : false;
   }
 }

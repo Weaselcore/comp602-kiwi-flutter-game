@@ -26,6 +26,7 @@ import 'package:flutter_game/game/components/ticker/info_ticker.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
 import 'package:flutter_game/screens/dao/remote_score_dao.dart';
 import 'package:flutter_game/screens/score_item.dart';
+import 'components/boss/boss_tracker.dart';
 import 'components/tilt_config_component.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
@@ -65,6 +66,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   late PowerUpManager _powerUpManager;
   late CoinManager _coinManager;
   late CoinTracker coinTracker;
+  late BossTracker bossTracker;
 
   late TextComponent _scoreTicker;
   late TextComponent _coinTicker;
@@ -76,6 +78,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   late Timer _laserTimer;
 
   late LaserBeam _laserBeam;
+
+  late ParallaxComponent parallaxComponent;
 
   String kiwiSkin = "kiwi_sprite.png";
 
@@ -142,7 +146,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     }
 
     if (!isAlreadyLoaded) {
-      final ParallaxComponent parallaxComponent = await loadParallaxComponent([
+      final parallaxComponent = await loadParallaxComponent([
         //ParallaxImageData('pix_sky1.png'),
         ParallaxImageData('pixsky.png'),
         ParallaxImageData('po2.png'),
@@ -159,11 +163,13 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
           repeat: ImageRepeat.repeatY,
           fill: LayerFill.width);
       add(parallaxComponent);
-
-      add(_enemyManager);
-
-      enemyTracker = EnemyTracker();
-      add(enemyTracker);
+      //
+      // add(_enemyManager);
+      //
+      // enemyTracker = EnemyTracker();
+      // add(enemyTracker);
+      bossTracker = BossTracker();
+      add(bossTracker);
 
       _powerUpManager = PowerUpManager();
       add(_powerUpManager);
@@ -175,7 +181,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       add(coinTracker);
 
       // Register reference of Kiwi once to improve performance.
-      enemyTracker.registerKiwi(_kiwi);
+      // enemyTracker.registerKiwi(_kiwi);
+      bossTracker.registerKiwi(_kiwi);
 
       // Below are tickers that display information.
       _scoreTicker =
@@ -336,6 +343,16 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
         }
         break;
     }
+  }
+
+  void stopParallax() {
+    final Parallax? parallax = parallaxComponent.parallax;
+    parallax!.baseVelocity = Vector2(0.0, 0.0);
+  }
+
+  void startParallax() {
+    final Parallax? parallax = parallaxComponent.parallax;
+    parallax!.baseVelocity = Vector2(0, 50);
   }
 
   /// When restarting, it resets managers, timers and position of the kiwi.

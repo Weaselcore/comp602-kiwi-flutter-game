@@ -14,15 +14,11 @@ class Boss extends SpriteComponent
   late final double originalSpeed;
   late final double slowSpeed;
   late double enemySpeed;
+  int conditionCount = 0;
+  static const int winCondition = 3;
 
   // A randomiser object is used to calculate random particles.
   Random _random = Random();
-
-  // A flag for shield interaction, if the kiwi has collided with the shield,
-  // the enemy should not be able collide with the kiwi on subsequent updates.
-  bool _canDamage = true;
-  // A flag to toggle slow state when the kiwi has picked up the slow powerup.
-  bool _isSlowed = false;
 
   Boss({required this.id, required this.enemySpeed}) {
     this.originalSpeed = enemySpeed;
@@ -44,15 +40,15 @@ class Boss extends SpriteComponent
   void update(double dt) {
     super.update(dt);
 
-    // Enemies are constantly moving upwards.
-    this.position += Vector2(0, -1).normalized() * enemySpeed * dt;
-
-    // The enemies get destroyed off screen using their unique ID.
-    if (this.position.y < -100) {
-      gameRef.enemyTracker.removeEnemy(id);
-      print("Removing enemy with ID($id)");
-      remove();
-    }
+    // // Enemies are constantly moving upwards.
+    // this.position += Vector2(0, -1).normalized() * enemySpeed * dt;
+    //
+    // // The enemies get destroyed off screen using their unique ID.
+    // if (this.position.y < -100) {
+    //   gameRef.enemyTracker.removeEnemy(id);
+    //   print("Removing enemy with ID($id)");
+    //   remove();
+    // }
   }
 
   @override
@@ -97,6 +93,8 @@ class Boss extends SpriteComponent
     gameRef.add(particleComponent);
 
     // Disposes and removes reference of the enemy from the tracker.
-    gameRef.enemyTracker.removeEnemy(id);
+    if (conditionCount == winCondition) {
+      gameRef.enemyTracker.removeEnemy(id);
+    }
   }
 }
