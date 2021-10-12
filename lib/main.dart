@@ -37,15 +37,7 @@ void main() async {
     "firstPlay": true,
   };
 
-  // TODO add an update function for BoxManager
-  if (!(await Hive.boxExists("config"))) {
-    await boxManager.initBox("config", configMap);
-  } else if ((await Hive.openBox("config")
-        ..length) !=
-      configMap.length) {
-    await Hive.deleteBoxFromDisk("config");
-    await boxManager.initBox("config", configMap);
-  }
+  await boxManager.initBox("config", configMap);
 
   Flame.device.fullScreen();
   runApp(MyApp());
