@@ -14,6 +14,8 @@ import 'package:flutter_game/game/overlay/pause_button.dart';
 import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/screens/score_item.dart';
 
+import 'boss/boss.dart';
+
 class Kiwi extends SpriteComponent
     with
         GameSizeAware,
@@ -119,6 +121,13 @@ class Kiwi extends SpriteComponent
           other.toggleDamage();
           removeShield();
         }
+      }
+    } else if (other is Boss && !godMode) {
+      // If enemy has not been nullified by shield.
+      if (_shieldCount == 0) {
+        die();
+      } else if (_shieldCount > 0) {
+        removeShield();
       }
     } else if (other is ShieldPowerUp) {
       other.remove();

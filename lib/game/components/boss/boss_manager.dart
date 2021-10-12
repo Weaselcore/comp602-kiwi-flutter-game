@@ -25,7 +25,7 @@ class BossManager extends BaseComponent
     // Enemies spawn every 2 seconds.
     _timer = Timer(2, callback: _spawnBoss, repeat: true);
     // There is a 1 second pause after the game resumes.
-    _freezeTimer = Timer(1.0, callback: () {
+    _freezeTimer = Timer(0.5, callback: () {
       _timer.start();
     });
   }
@@ -35,6 +35,7 @@ class BossManager extends BaseComponent
     _idCount += 1;
     Boss bossFalcon = FalconBoss(_idCount, directionRandomiser());
     gameRef.bossTracker.addBoss(bossFalcon);
+    gameRef.add(bossFalcon);
 
     // if (gameRef.buildContext != null) {
     //   // Increment count by one per spawn.

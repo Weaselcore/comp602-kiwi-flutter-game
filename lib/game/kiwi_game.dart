@@ -26,6 +26,7 @@ import 'package:flutter_game/game/components/ticker/info_ticker.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
 import 'package:flutter_game/screens/dao/remote_score_dao.dart';
 import 'package:flutter_game/screens/score_item.dart';
+import 'components/boss/boss_manager.dart';
 import 'components/boss/boss_tracker.dart';
 import 'components/tilt_config_component.dart';
 import 'game_size_aware.dart';
@@ -66,6 +67,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   late PowerUpManager _powerUpManager;
   late CoinManager _coinManager;
   late CoinTracker coinTracker;
+  late BossManager bossManager;
   late BossTracker bossTracker;
 
   late TextComponent _scoreTicker;
@@ -146,28 +148,30 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     }
 
     if (!isAlreadyLoaded) {
-      final parallaxComponent = await loadParallaxComponent([
-        //ParallaxImageData('pix_sky1.png'),
-        ParallaxImageData('pixsky.png'),
-        ParallaxImageData('po2.png'),
-        ParallaxImageData('pixbg.png'),
-        //ParallaxImageData('C02.png'),
-        ParallaxImageData('po1.png'),
-        ParallaxImageData('p03.png'),
-        ParallaxImageData('po4.png'),
-        //ParallaxImageData('birrd01.png'),
-        //ParallaxImageData('birdnob.gif'),
-      ],
-          baseVelocity: Vector2(0, 50),
-          velocityMultiplierDelta: Vector2(1.8, 1.0),
-          repeat: ImageRepeat.repeatY,
-          fill: LayerFill.width);
-      add(parallaxComponent);
+      // final parallaxComponent = await loadParallaxComponent([
+      //   //ParallaxImageData('pix_sky1.png'),
+      //   ParallaxImageData('pixsky.png'),
+      //   ParallaxImageData('po2.png'),
+      //   ParallaxImageData('pixbg.png'),
+      //   //ParallaxImageData('C02.png'),
+      //   ParallaxImageData('po1.png'),
+      //   ParallaxImageData('p03.png'),
+      //   ParallaxImageData('po4.png'),
+      //   //ParallaxImageData('birrd01.png'),
+      //   //ParallaxImageData('birdnob.gif'),
+      // ],
+      //     baseVelocity: Vector2(0, 50),
+      //     velocityMultiplierDelta: Vector2(1.8, 1.0),
+      //     repeat: ImageRepeat.repeatY,
+      //     fill: LayerFill.width);
+      // add(parallaxComponent);
       //
       // add(_enemyManager);
       //
       // enemyTracker = EnemyTracker();
       // add(enemyTracker);
+      bossManager = BossManager();
+      add(bossManager);
       bossTracker = BossTracker();
       add(bossTracker);
 

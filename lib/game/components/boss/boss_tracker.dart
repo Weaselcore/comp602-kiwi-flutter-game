@@ -33,16 +33,16 @@ class BossTracker extends BaseComponent with HasGameRef<KiwiGame> {
 
   /// The update functions checks if enemies have passed the kiwi if so,
   /// incrementing the score.
-  // @override
-  // void update(double dt) {
-  //   super.update(dt);
-  //   if (!_bossList.isEmpty) {
-  //     for (Boss boss in _bossList) {
-  //         if ()
-  //       }
-  //     }
-  //   }
-  // }
+  @override
+  void update(double dt) {
+    super.update(dt);
+    // if (!_bossList.isEmpty) {
+    // for (Boss boss in _bossList) {
+    //     if ()
+    //   }
+    //   print("pass");
+    //   }
+  }
 
   /// Passes a reference to the kiwi when initialising the [kiwi].
   void registerKiwi(Kiwi kiwi) {
