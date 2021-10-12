@@ -30,6 +30,7 @@ import 'components/tilt_config_component.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
+import 'overlay/tutorial_slides.dart';
 
 class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   bool isAlreadyLoaded = false;
@@ -76,6 +77,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   late Timer _laserTimer;
 
   late LaserBeam _laserBeam;
+  late bool firstPlay;
 
   String kiwiSkin = "kiwi_sprite.png";
 
@@ -106,6 +108,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     configBox = await Hive.openBox("config");
     kiwiSkin = configBox.get("skin");
+    firstPlay = configBox.get("firstPlay");
 
     _kiwi = Kiwi(
       sprite: await Sprite.load(kiwiSkin),
@@ -259,6 +262,15 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     _shieldTicker.text = 'Shield: ' + _kiwi.getShieldCount().toString();
     _slowTicker.text = 'Slow Timer: ' + _slowTimer.current.toString();
     _laserTicker.text = 'Laser Timer: ' + _laserTimer.current.toString();
+
+    if (firstPlay) {
+      //show tutorial slides
+      this.pauseEngine();
+      this.overlays.remove(PauseButton.ID);
+      this.overlays.add(TutorialSlides.ID);
+      firstPlay = !firstPlay;
+    }
+
   }
 
   /// Slows the enemies speed as long as [_slowTimer] is running.
