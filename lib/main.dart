@@ -34,6 +34,7 @@ void main() async {
     "documentID": document.id,
     "coin": 10,
     "skin": "kiwi_sprite.png",
+    "firstPlay": true,
   };
 
   // TODO add an update function for BoxManager
