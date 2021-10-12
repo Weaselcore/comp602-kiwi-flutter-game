@@ -142,7 +142,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     }
 
     if (!isAlreadyLoaded) {
-      final parallaxComponent = await loadParallaxComponent([
+      final ParallaxComponent parallaxComponent = await loadParallaxComponent([
         //ParallaxImageData('pix_sky1.png'),
         ParallaxImageData('pixsky.png'),
         ParallaxImageData('po2.png'),
@@ -160,7 +160,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
           fill: LayerFill.width);
       add(parallaxComponent);
 
-      _enemyManager = EnemyManager();
       add(_enemyManager);
 
       enemyTracker = EnemyTracker();
