@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/overlay/pause_button.dart';
+import 'package:hive/hive.dart';
 
 import '../kiwi_game.dart';
 
@@ -62,6 +62,7 @@ class _TutorialSlidesState extends State<TutorialSlides> {
                         ? TextButton(
                             child: Text("Next"),
                             onPressed: () {
+                              //Go to the next slide
                               _pageController.animateToPage(++_index,
                                   duration: Duration(milliseconds: 300),
                                   curve: Curves.linear);
@@ -69,10 +70,13 @@ class _TutorialSlidesState extends State<TutorialSlides> {
                         : TextButton(
                             child: Text("Start Game"),
                             onPressed: () {
+                              //resume game
                               gameRef.resumeEngine();
                               gameRef.overlays.remove(TutorialSlides.ID);
                               gameRef.overlays.add(PauseButton.ID);
                               gameRef.audioManager.resmueBgm();
+                              //set tutorial flag = false(false means user finished tutorial)
+                              setTutorialFin();
                             }),
                   ],
                 ),
@@ -84,20 +88,24 @@ class _TutorialSlidesState extends State<TutorialSlides> {
     );
   }
 
+  //create sides to display
   List<SliderModel> getSlides() {
     List<SliderModel> slides = [];
+    //the first slide
     SliderModel sliderModel = new SliderModel(
         title: 'Dodge Enemies',
         imagePath: 'assets/images/tutorial1.png',
         desc: 'tap/tilt to right and left to dodge enemies!');
     slides.add(sliderModel);
 
+    //the second slide
     sliderModel = new SliderModel(
         title: 'Get Coins',
         imagePath: 'assets/images/tutorial2.png',
         desc: 'Collecting coins for buying new skins!');
     slides.add(sliderModel);
 
+    //the third slide
     sliderModel = new SliderModel(
         title: 'Get Powerups',
         imagePath: 'assets/images/tutorial3.png',
@@ -106,8 +114,15 @@ class _TutorialSlidesState extends State<TutorialSlides> {
 
     return slides;
   }
+
+  //set first play flag = false to hive (data store)
+  setTutorialFin() async {
+    Box configBox = Hive.box("config");
+    await configBox.put("firstPlay", false);
+  }
 }
 
+//a model class for slide
 class SliderModel {
   late String title;
   late String imagePath;
