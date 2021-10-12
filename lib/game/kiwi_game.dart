@@ -143,16 +143,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     if (!isAlreadyLoaded) {
       final parallaxComponent = await loadParallaxComponent([
-        //ParallaxImageData('pix_sky1.png'),
         ParallaxImageData('pixbs.png'),
         ParallaxImageData('side1.png'),
         ParallaxImageData('pixc.png'),
-        //ParallaxImageData('C02.png'),
-        //ParallaxImageData('po1.png'),
-        //ParallaxImageData('p03.png'),
-        //ParallaxImageData('po4.png'),
-        //ParallaxImageData('birrd01.png'),
-        //ParallaxImageData('birdnob.gif'),
       ],
           baseVelocity: Vector2(0, 50),
           velocityMultiplierDelta: Vector2(1.8, 1.0),
