@@ -14,8 +14,10 @@ class Boss extends SpriteComponent
   late final double originalSpeed;
   late final double slowSpeed;
   late double enemySpeed;
-  int conditionCount = 0;
-  static const int winCondition = 3;
+
+  // A flag for shield interaction, if the kiwi has collided with the shield,
+  // the enemy should not be able collide with the kiwi on subsequent updates.
+  bool _canDamage = true;
 
   // A randomiser object is used to calculate random particles.
   Random _random = Random();
@@ -24,6 +26,15 @@ class Boss extends SpriteComponent
     this.originalSpeed = enemySpeed;
     slowSpeed = enemySpeed * 0.50;
   }
+
+  /// Disables the ability to damage the kiwi.
+  void toggleDamage() {
+    _canDamage = false;
+    die();
+  }
+
+  /// Returns if the enemy object can damage.
+  bool canDamage() => _canDamage;
 
   /// This method generates a random vector with its angle
   /// between from 0 and 360 degrees.
@@ -91,10 +102,5 @@ class Boss extends SpriteComponent
 
     // Add particle where the enemy object has been removed.
     gameRef.add(particleComponent);
-
-    // Disposes and removes reference of the enemy from the tracker.
-    if (conditionCount == winCondition) {
-      gameRef.enemyTracker.removeEnemy(id);
-    }
   }
 }

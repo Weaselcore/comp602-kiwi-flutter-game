@@ -21,18 +21,16 @@ class BossTracker extends BaseComponent with HasGameRef<KiwiGame> {
     _bossList.add(boss);
   }
 
-  /// Removes enemy that is being tracked using the [id].
+  /// Removes boss that is being tracked using the [id].
   void removeBoss(int id) {
     _bossList.remove(id);
   }
 
-  /// Clears the enemy list ready for a new game.
+  /// Clears the boss list ready for a new game.
   void reset() {
     _bossList.clear();
   }
 
-  /// The update functions checks if enemies have passed the kiwi if so,
-  /// incrementing the score.
   @override
   void update(double dt) {
     super.update(dt);

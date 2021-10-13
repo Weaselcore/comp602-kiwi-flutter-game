@@ -18,17 +18,17 @@ class FalconBoss extends Boss {
 
   Random random = Random();
 
-  FalconBoss(int idCount, bool swoopRight)
-      : super(id: idCount, enemySpeed: 200) {
+  FalconBoss(int idCount) : super(id: idCount, enemySpeed: 500) {
+    bool swoopRight = directionRandomiser();
     direction = swoopRight ? swoopRightVector : swoopLeftVector;
-    _swoopTimer = Timer(1, callback: swooptoggle, repeat: true);
+    _swoopTimer = Timer(1.0, callback: swoopToggle, repeat: true);
     _swoopTimer.start();
   }
 
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load('boss_falcon.png');
-    size = Vector2(150, 150);
+    size = Vector2(400, 400);
     position = this.getPosition() - size / 2;
 
     final hitboxShape = HitboxCircle(definition: 0.6);
@@ -38,6 +38,7 @@ class FalconBoss extends Boss {
   @override
   void update(double dt) {
     super.update(dt);
+    _swoopTimer.update(dt);
     if (isSwoopDown) {
       this.position += swoopDown().normalized() * enemySpeed * dt;
     } else {
@@ -57,18 +58,16 @@ class FalconBoss extends Boss {
     double randomPositionMultiplier = random.nextDouble();
 
     if (direction == 1.0) {
-      position = Vector2(randomPositionMultiplier * gameRef.canvasSize.y, -150);
+      position = Vector2(
+          -150, randomPositionMultiplier * gameRef.viewport.canvasSize.y);
     } else {
-      position = Vector2(randomPositionMultiplier * gameRef.canvasSize.y,
-          gameRef.canvasSize.x);
+      position = Vector2(gameRef.canvasSize.x + 100,
+          randomPositionMultiplier * gameRef.viewport.canvasSize.y);
+      print(gameRef.canvasSize.x);
       spriteFlipOrientation();
     }
-    position.clamp(
-      Vector2.zero() + Vector2(150, 0),
-      gameRef.canvasSize + Vector2(150, 0),
-    );
 
-    print("Spawning boss falcon at $position");
+    print("Spawning BossFalcon at $position");
 
     return position;
   }
@@ -78,11 +77,21 @@ class FalconBoss extends Boss {
     this.renderFlipX = _spriteOrientationDefault == !renderFlipX ? true : false;
   }
 
-  void swooptoggle() {
+  void swoopToggle() {
     isSwoopDown = !isSwoopDown;
   }
 
   Vector2 swoopDown() => Vector2(direction, 0.5);
 
   Vector2 swoopUp() => Vector2(direction, -0.5);
+
+  @override
+  void die() {
+    super.die();
+    gameRef.bossManager.conditionCount;
+  }
+
+  bool directionRandomiser() {
+    return this.random.nextDouble() > 0.5 ? true : false;
+  }
 }

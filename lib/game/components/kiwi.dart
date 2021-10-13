@@ -122,12 +122,16 @@ class Kiwi extends SpriteComponent
           removeShield();
         }
       }
-    } else if (other is Boss && !godMode) {
+    }
+    if (other is Boss && !godMode) {
       // If enemy has not been nullified by shield.
-      if (_shieldCount == 0) {
-        die();
-      } else if (_shieldCount > 0) {
-        removeShield();
+      if (other.canDamage()) {
+        if (_shieldCount == 0 && other.canDamage()) {
+          die();
+        } else if (_shieldCount > 0 && other.canDamage()) {
+          other.toggleDamage();
+          removeShield();
+        }
       }
     } else if (other is ShieldPowerUp) {
       other.remove();

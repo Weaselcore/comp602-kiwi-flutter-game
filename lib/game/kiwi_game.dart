@@ -132,44 +132,44 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     audioManager.fetchSettings();
     audioManager.playBgm('background.mp3');
 
-    final joystick = JoystickComponent(
-      gameRef: this,
-      directional: JoystickDirectional(
-          size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
-    );
-
-    if (!isTiltControls && !this.components.contains(joystick)) {
-      joystick.addObserver(_kiwi);
-      add(joystick);
-    } else {
-      components.whereType<JoystickComponent>().forEach((element) {
-        element.remove();
-      });
-    }
-
     if (!isAlreadyLoaded) {
-      // final parallaxComponent = await loadParallaxComponent([
-      //   //ParallaxImageData('pix_sky1.png'),
-      //   ParallaxImageData('pixsky.png'),
-      //   ParallaxImageData('po2.png'),
-      //   ParallaxImageData('pixbg.png'),
-      //   //ParallaxImageData('C02.png'),
-      //   ParallaxImageData('po1.png'),
-      //   ParallaxImageData('p03.png'),
-      //   ParallaxImageData('po4.png'),
-      //   //ParallaxImageData('birrd01.png'),
-      //   //ParallaxImageData('birdnob.gif'),
-      // ],
-      //     baseVelocity: Vector2(0, 50),
-      //     velocityMultiplierDelta: Vector2(1.8, 1.0),
-      //     repeat: ImageRepeat.repeatY,
-      //     fill: LayerFill.width);
-      // add(parallaxComponent);
-      //
-      // add(_enemyManager);
-      //
-      // enemyTracker = EnemyTracker();
-      // add(enemyTracker);
+      final parallaxComponent = await loadParallaxComponent([
+        //ParallaxImageData('pix_sky1.png'),
+        ParallaxImageData('pixsky.png'),
+        ParallaxImageData('po2.png'),
+        ParallaxImageData('pixbg.png'),
+        //ParallaxImageData('C02.png'),
+        ParallaxImageData('po1.png'),
+        ParallaxImageData('p03.png'),
+        ParallaxImageData('po4.png'),
+        //ParallaxImageData('birrd01.png'),
+        //ParallaxImageData('birdnob.gif'),
+      ],
+          baseVelocity: Vector2(0, 50),
+          velocityMultiplierDelta: Vector2(1.8, 1.0),
+          repeat: ImageRepeat.repeatY,
+          fill: LayerFill.width);
+      add(parallaxComponent);
+
+      final joystick = JoystickComponent(
+        gameRef: this,
+        directional: JoystickDirectional(
+            size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
+      );
+
+      if (!isTiltControls && !this.components.contains(joystick)) {
+        joystick.addObserver(_kiwi);
+        add(joystick);
+      } else {
+        components.whereType<JoystickComponent>().forEach((element) {
+          element.remove();
+        });
+      }
+
+      _enemyManager = EnemyManager();
+      add(_enemyManager);
+      enemyTracker = EnemyTracker();
+      add(enemyTracker);
       bossManager = BossManager();
       add(bossManager);
       bossTracker = BossTracker();
@@ -185,7 +185,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       add(coinTracker);
 
       // Register reference of Kiwi once to improve performance.
-      // enemyTracker.registerKiwi(_kiwi);
+      enemyTracker.registerKiwi(_kiwi);
       bossTracker.registerKiwi(_kiwi);
 
       // Below are tickers that display information.
