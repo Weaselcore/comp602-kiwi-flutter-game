@@ -66,11 +66,11 @@ class Boss extends SpriteComponent
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
     super.onCollision(intersectionPoints, other);
 
-    if (other is Kiwi) {
-      if (other.hasShield()) {
-        die();
-      }
-    }
+    // if (other is Kiwi) {
+    //   if (other.hasShield()) {
+    //     die();
+    //   }
+    // }
   }
 
   /// Destroys the enemy object and removes the component from the game with style.

@@ -26,6 +26,7 @@ import 'package:flutter_game/game/components/ticker/info_ticker.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
 import 'package:flutter_game/screens/dao/remote_score_dao.dart';
 import 'package:flutter_game/screens/score_item.dart';
+import 'components/boss/boss.dart';
 import 'components/boss/boss_manager.dart';
 import 'components/boss/boss_tracker.dart';
 import 'components/tilt_config_component.dart';
@@ -62,9 +63,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   double tiltYVelocity = 0.0;
 
   late EnemyTracker enemyTracker;
-  late EnemyManager _enemyManager;
+  late EnemyManager enemyManager;
   late PowerUpTracker powerUpTracker;
-  late PowerUpManager _powerUpManager;
+  late PowerUpManager powerUpManager;
   late CoinManager _coinManager;
   late CoinTracker coinTracker;
   late BossManager bossManager;
@@ -166,8 +167,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
         });
       }
 
-      _enemyManager = EnemyManager();
-      add(_enemyManager);
+      enemyManager = EnemyManager();
+      add(enemyManager);
       enemyTracker = EnemyTracker();
       add(enemyTracker);
       bossManager = BossManager();
@@ -175,8 +176,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       bossTracker = BossTracker();
       add(bossTracker);
 
-      _powerUpManager = PowerUpManager();
-      add(_powerUpManager);
+      powerUpManager = PowerUpManager();
+      add(powerUpManager);
       powerUpTracker = PowerUpTracker();
       add(powerUpTracker);
       _coinManager = CoinManager();
@@ -362,12 +363,14 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   /// When restarting, it resets managers, timers and position of the kiwi.
   void reset() {
     // Resetting id counts.
-    _enemyManager.reset();
-    _powerUpManager.reset();
+    enemyManager.reset();
+    powerUpManager.reset();
+    bossManager.reset();
     _coinManager.reset();
     _kiwi.reset();
 
     // Clearing the entity list.
+    bossTracker.reset();
     enemyTracker.reset();
     powerUpTracker.reset();
     coinTracker.reset();
@@ -388,6 +391,10 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     components.whereType<Coin>().forEach((coin) {
       coin.remove();
+    });
+
+    components.whereType<Boss>().forEach((boss) {
+      boss.remove();
     });
   }
 

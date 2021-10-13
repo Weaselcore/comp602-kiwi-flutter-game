@@ -39,13 +39,17 @@ class BossManager extends BaseComponent
 
   /// This spawns enemy objects when the timer triggers.
   void _spawnBoss() {
-    if (conditionCount < _winCondition) {
+    print(conditionCount);
+    if (conditionCount <= _winCondition) {
       _idCount += 1;
       Boss newBoss = _bossFactory.getBossType(_bossTypes[_bossCount], _idCount);
       gameRef.bossTracker.addBoss(newBoss);
       gameRef.add(newBoss);
     } else {
       _timer.stop();
+      gameRef.powerUpManager.switchToDefault();
+      gameRef.enemyManager.start();
+      conditionCount = 0;
       _bossCount += 1;
     }
   }
@@ -75,7 +79,6 @@ class BossManager extends BaseComponent
   /// Reset the timers and IDs when the game engine resets.
   void reset() {
     _timer.stop();
-    _timer.start();
     _idCount = 0;
   }
 

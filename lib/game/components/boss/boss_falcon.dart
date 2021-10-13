@@ -18,7 +18,7 @@ class FalconBoss extends Boss {
 
   Random random = Random();
 
-  FalconBoss(int idCount) : super(id: idCount, enemySpeed: 500) {
+  FalconBoss(int idCount) : super(id: idCount, enemySpeed: 400) {
     bool swoopRight = directionRandomiser();
     direction = swoopRight ? swoopRightVector : swoopLeftVector;
     _swoopTimer = Timer(1.0, callback: swoopToggle, repeat: true);
@@ -88,7 +88,7 @@ class FalconBoss extends Boss {
   @override
   void die() {
     super.die();
-    gameRef.bossManager.conditionCount;
+    gameRef.bossManager.incrementWinCondition();
   }
 
   bool directionRandomiser() {

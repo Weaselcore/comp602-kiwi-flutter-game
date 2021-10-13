@@ -3,6 +3,7 @@ import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/image_composition.dart';
+import 'package:flutter_game/game/components/powerup/powerup_types/boss_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/laser_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/shield_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/slomo_powerup.dart';
@@ -147,6 +148,13 @@ class Kiwi extends SpriteComponent
         fireLaser();
         gameRef.audioManager.playSfx('laser.mp3');
       }
+    } else if (other is BossPowerUp) {
+      other.remove();
+      // TODO: Add sound effect for spawning boss.
+      // gameRef.audioManager.playSfx('slow_time.wav');
+      gameRef.powerUpManager.switchToShield();
+      gameRef.enemyManager.stop();
+      gameRef.bossManager.start();
     }
   }
 
