@@ -10,6 +10,8 @@ import 'package:flutter_game/screens/score_item.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
+//import 'package:rive/rive.dart';
+
 void main() async {
   if (!kIsWeb) {
     WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +48,7 @@ void main() async {
     await boxManager.initBox("config", configMap);
   }
 
+
   Flame.device.fullScreen();
   runApp(MyApp());
 }
@@ -55,12 +58,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Kiwi Fall',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Kiwi Fall'),
+      home: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/mm.png"), fit: BoxFit.cover
+          )
         ),
-        body: const MainMenu(),
-      ),
+        child: Scaffold(
+            backgroundColor: Colors.transparent,
+            // appBar: AppBar(
+            //   title: const Text('Kiwi Fall'),
+            // ),
+            body:const MainMenu()
+        ),
+      )
     );
   }
 }

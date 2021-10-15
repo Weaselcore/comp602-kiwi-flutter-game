@@ -11,7 +11,8 @@ class MainMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.end, //mainAxisAlignment: MainAxisAlignment.spaceEvenly
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
@@ -27,6 +28,7 @@ class MainMenu extends StatelessWidget {
               child: Text("New Game"),
             ),
           ),
+          SizedBox(height: 130.0),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
             child: ElevatedButton(
@@ -36,6 +38,7 @@ class MainMenu extends StatelessWidget {
                 },
                 child: Text("Shop")),
           ),
+          SizedBox(height: 40.0),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
             child: ElevatedButton(
@@ -45,6 +48,7 @@ class MainMenu extends StatelessWidget {
                 },
                 child: Text("Settings")),
           ),
+          SizedBox(height: 40.0),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
             child: ElevatedButton(
@@ -54,6 +58,7 @@ class MainMenu extends StatelessWidget {
                 },
                 child: Text("Leaderboard")),
           ),
+          SizedBox(height: 30.0),
         ],
       ),
     );
