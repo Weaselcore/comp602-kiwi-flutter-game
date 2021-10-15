@@ -18,7 +18,7 @@ class PauseMenu extends StatelessWidget {
         children: [
           // Pause menu title.
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 50.0),
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Text(
               'Paused',
               style: TextStyle(
@@ -46,6 +46,11 @@ class PauseMenu extends StatelessWidget {
                 gameRef.audioManager.resmueBgm();
               },
               child: Text('Resume'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.brown,
+                onPrimary: Colors.orangeAccent,
+                side: BorderSide(color: Colors.black, width: 2),
+              ),
             ),
           ),
 
@@ -61,6 +66,11 @@ class PauseMenu extends StatelessWidget {
                 gameRef.audioManager.resetBgm('background.mp3');
               },
               child: Text('Restart'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.brown,
+                onPrimary: Colors.orangeAccent,
+                side: BorderSide(color: Colors.black, width: 2),
+              ),
             ),
           ),
 
@@ -76,6 +86,11 @@ class PauseMenu extends StatelessWidget {
                 Navigator.of(context).pop();
               },
               child: Text('Exit'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.brown,
+                onPrimary: Colors.orangeAccent,
+                side: BorderSide(color: Colors.black, width: 2),
+              ),
             ),
           ),
         ],
