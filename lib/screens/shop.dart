@@ -149,7 +149,13 @@ class _ShopScreenState extends State<ShopScreen> {
                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                   ElevatedButton(
                       onPressed: () => {Navigator.of(context).pop()},
-                      child: Text("Go back")),
+                      child: Text("Go back"),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.brown,
+                      onPrimary: Colors.orangeAccent,
+                      side: BorderSide(color: Colors.black, width: 2),
+                    ),
+                  ),
                 ])
               ],
             ),

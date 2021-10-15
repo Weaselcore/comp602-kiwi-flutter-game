@@ -183,7 +183,7 @@ class _settingState extends State<SettingScreen> {
                         ? ElevatedButton(
                             onPressed: _logout,
                             child: Text("Sign out",
-                                style: TextStyle(fontSize: 20, backgroundColor: Colors.brown, color: Colors.orange,  )
+                                style: TextStyle(fontSize: 20, backgroundColor: Colors.brown, color: Colors.orange,)
                             ))
                         : ElevatedButton(
                             onPressed: _login,
