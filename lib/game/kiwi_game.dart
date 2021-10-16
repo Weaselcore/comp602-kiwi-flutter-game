@@ -48,6 +48,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
   int score = 0;
   int coin = 0;
+  int usedItem = 0;
+  int beatenEnemy = 0;
+  int beatenBoss = 0;
 
   late Kiwi _kiwi;
 
@@ -350,6 +353,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     score = 0;
     coin = 0;
+    beatenBoss = 0;
+    beatenEnemy = 0;
+    usedItem = 0;
 
     components.whereType<Enemy>().forEach((enemy) {
       enemy.remove();

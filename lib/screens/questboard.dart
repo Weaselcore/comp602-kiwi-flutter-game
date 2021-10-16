@@ -21,7 +21,6 @@ class _QuestBoardState extends State<QuestBoard> {
   @override
   void initState() {
     super.initState();
-    print("init");
     _configBox = Hive.box("config");
     _dailyQuests = [];
 
@@ -53,7 +52,6 @@ class _QuestBoardState extends State<QuestBoard> {
 
   @override
   Widget build(BuildContext context) {
-    print("build");
     return Scaffold(
       appBar: AppBar(
         title: Text("Daily Quests"),
@@ -83,7 +81,7 @@ class _QuestBoardState extends State<QuestBoard> {
                   //if quest is completed and reward is not collected, show "collect" button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: Colors.blue),
-                    child: Text("Collect"),
+                    child: Text("Collect " + entry.quest.rewardAmount.toString() + " " +entry.quest.rewardType.toString()),
                     onPressed: () => _giveRewards(entry),
                   ) :
                   //if quest is not colpmeted, show disable button

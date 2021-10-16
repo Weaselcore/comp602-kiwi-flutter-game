@@ -15,6 +15,10 @@ class QuestManager {
   static init() async {
     //make config box available from other methods in this class
     _configBox = await Hive.openBox(CONFIGBOXNAME);
+
+    //reason why updating lastlogin here: Since I could not update lastLogin in constructor of main menu
+    //this method runs when the app is launched. Thus, not different from updating lastLogin in constructor of main menu.
+    _configBox.put("lastLogin", DateTime.now());
     //populate quets data if it is necessary.
     prepareQuestData();
 
@@ -87,27 +91,82 @@ class QuestManager {
   }
 
   /**
+   * judge if the game result satisfies daily quests.
+   * parameters
+   * numCoins: the number of coins player gets
+   * score: the score a player earns
+   * usedItems: the number of power-up items used
+   * numEnemies: the number of enemies passed
+   * numBosses: the number of bosses a player defeat
+   */
+  static void checkQuestCompletion(int numCoins, int score, int usedItems, int numEnemies , int numBosses) async {
+    //get daily quests
+    List<QuestStatus> dailyQuests = _configBox.get("dailyQuests");
+    for (QuestStatus questSatatus in dailyQuests) {
+
+      //check game status only if it is not completed yet.
+      if (!questSatatus.isSatisfied) {
+        //check conditions corresponding to quest type
+        switch (questSatatus.quest.questType) {
+          case "coin":
+            if (questSatatus.quest.counter <= numCoins) {
+              makeStatusComplete(questSatatus);
+            }
+            break;
+          case "score":
+            if (questSatatus.quest.counter <= score) {
+              makeStatusComplete(questSatatus);
+            }
+            break;
+          case "item":
+            if (questSatatus.quest.counter <= usedItems) {
+              makeStatusComplete(questSatatus);
+            }
+            break;
+          case "enemy":
+            if (questSatatus.quest.counter <= numEnemies) {
+              makeStatusComplete(questSatatus);
+            }
+            break;
+          case "boss":
+            if (questSatatus.quest.counter <= numBosses) {
+              makeStatusComplete(questSatatus);
+            }
+            break;
+        }
+      }
+    }
+  }
+
+  /**
+   * make daily quest status completed
+   */
+  static void makeStatusComplete(QuestStatus questStatus) {
+    questStatus.isSatisfied = true;
+  }
+
+  /**
    * This function returns a list of quest data to be registered.
    */
   static List<Quest> generateQuestData() {
     List<Quest> quests = [];
 
     Quest quest0 =
-        new Quest(0, "coin", "get coins more than 10", "coin", 5, 10);
+        new Quest(0, "coin", "Get coins more than 10", "coin", 5, 10);
     quests.add(quest0);
 
     Quest quest1 =
-        new Quest(1, "enemy", "break enemies more than 5", "coin", 10, 5);
+        new Quest(1, "enemy", "Break enemies more than 5", "coin", 10, 5);
     quests.add(quest1);
 
     Quest quest2 =
-        new Quest(2, "score", "earn score more than 30", "coin", 15, 30);
+        new Quest(2, "score", "Earn score more than 20", "coin", 15, 20);
     quests.add(quest2);
 
-    Quest quest3 = new Quest(3, "item", "use 3 items", "coin", 20, 3);
+    Quest quest3 = new Quest(3, "item", "Use 3 items", "coin", 20, 3);
     quests.add(quest3);
 
-    Quest quest4 = new Quest(4, "boss", "beat a boss", "coin", 25, 1);
+    Quest quest4 = new Quest(4, "boss", "Defeat a boss", "coin", 25, 1);
     quests.add(quest4);
 
     return quests;

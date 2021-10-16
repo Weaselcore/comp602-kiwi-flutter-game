@@ -12,6 +12,7 @@ import 'package:flutter_game/game/overlay/end_game_menu.dart';
 import 'package:flutter_game/game/overlay/pause_button.dart';
 
 import 'package:flutter_game/game/components/enemy/enemy.dart';
+import 'package:flutter_game/screens/dailyQuest/quest_manager.dart';
 import 'package:flutter_game/screens/score_item.dart';
 
 class Kiwi extends SpriteComponent
@@ -124,15 +125,18 @@ class Kiwi extends SpriteComponent
       other.remove();
       gameRef.audioManager.playSfx('armour.wav');
       addShield();
+      gameRef.usedItem += 1;
     } else if (other is SlomoPowerUp) {
       other.remove();
       gameRef.audioManager.playSfx('slow_time.wav');
       gameRef.halfEnemySpeed();
+      gameRef.usedItem += 1;
     } else if (other is LaserPowerUp) {
       other.remove();
       if (!hasLaser) {
         fireLaser();
         gameRef.audioManager.playSfx('laser.mp3');
+        gameRef.usedItem += 1;
       }
     }
   }
@@ -172,6 +176,7 @@ class Kiwi extends SpriteComponent
     gameRef.overlays.add(EndGameMenu.ID);
     _shieldCount = 0;
     hasLaser = false;
+    QuestManager.checkQuestCompletion(gameRef.coin, gameRef.score, gameRef.usedItem, gameRef.beatenEnemy, gameRef.beatenBoss);
     gameRef.localScoreDao.register(ScoreItem('user', gameRef.score));
     gameRef.remoteScoreDao.register();
   }
