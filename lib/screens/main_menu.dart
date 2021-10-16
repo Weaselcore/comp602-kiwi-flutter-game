@@ -33,7 +33,7 @@ class MainMenu extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 130.0),
+          SizedBox(height: 110.0),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
             child: ElevatedButton(
@@ -49,7 +49,7 @@ class MainMenu extends StatelessWidget {
                 ),
             ),
           ),
-          SizedBox(height: 40.0),
+          SizedBox(height: 20.0),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
             child: ElevatedButton(
@@ -65,7 +65,7 @@ class MainMenu extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 40.0),
+          SizedBox(height: 20.0),
           SizedBox(
             width: MediaQuery.of(context).size.width / 3,
             child: ElevatedButton(
@@ -81,7 +81,23 @@ class MainMenu extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 30.0),
+          SizedBox(height: 20.0),
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 3,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LeaderScreen()));
+              },
+              child: Text("Questboard"),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.brown[500],
+                onPrimary: Colors.orangeAccent,
+                side: BorderSide(color: Colors.black, width: 2),
+              ),
+            ),
+          ),
+          SizedBox(height: 20.0),
         ],
       ),
     );
