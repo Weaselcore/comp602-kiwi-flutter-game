@@ -45,19 +45,12 @@ void main() async {
     "documentID": document.id,
     "coin": 10,
     "skin": "kiwi_sprite.png",
+    "firstPlay": true,
     "dailyQuests": [],
     "lastLogin": DateTime.now(),
   };
 
-  // TODO add an update function for BoxManager
-  if (!(await Hive.boxExists("config"))) {
-    await boxManager.initBox("config", configMap);
-  } else if ((await Hive.openBox("config")
-        ..length) !=
-      configMap.length) {
-    await Hive.deleteBoxFromDisk("config");
-    await boxManager.initBox("config", configMap);
-  }
+  await boxManager.initBox("config", configMap);
 
   //setup quest data
   QuestManager.init();
