@@ -45,6 +45,7 @@ void main() async {
     "documentID": document.id,
     "coin": 10,
     "skin": "kiwi_sprite.png",
+    "dailyQuests": [],
     "lastLogin": DateTime.now(),
   };
 

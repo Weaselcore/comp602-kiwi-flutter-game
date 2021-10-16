@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter_game/screens/dailyQuest/quest.dart';
+import 'package:flutter_game/screens/dailyQuest/quest_status.dart';
 import 'package:flutter_game/screens/dao/local_quest_dao.dart';
 import 'package:hive/hive.dart';
 
@@ -14,6 +17,13 @@ class QuestManager {
     _configBox = await Hive.openBox(CONFIGBOXNAME);
     //populate quets data if it is necessary.
     prepareQuestData();
+
+    //if daily quests are not registered (this happens when the app is lunched for the very first time)
+    List dailyQuests = _configBox.get("dailyQuests");
+    if (dailyQuests.isEmpty) {
+      //initialize daily quest
+      generateRandomDailyQuests();
+    }
   }
 
   /**
@@ -26,12 +36,54 @@ class QuestManager {
     //get quest data to be registered
     List<Quest> questData = generateQuestData();
 
-    //if there is no quest data registered
+    //if there is no quest data registered in data store
     //or new quest data is added or deleted
     if (dao.getSize() == 0 || questData.length != dao.getSize()) {
       //replace old quest data with new quest data
       dao.replaceAll(questData);
     }
+  }
+
+  /**
+   * Check if updating daily quests is needed or not.
+   * return true if more than one day has passed since last login
+   */
+  static bool oneDayPassed(DateTime targetDate) {
+    //get last login
+    DateTime lastLogin = _configBox.get("lastLogin");
+    //check if one day has passed since last login
+    return targetDate.difference(lastLogin).inDays >= 1;
+  }
+
+  /**
+   * generate new daily quests
+   *  step1. randomly select quest id
+   *  step2. retrieve quests info that corresponds to selected ids
+   *  step3. register quests retrieved in step2 as daily quests
+   */
+  static generateRandomDailyQuests() async {
+    List dailyQuests = _configBox.get("dailyQuests");
+    LocalQuestDao dao = new LocalQuestDao();
+    int dataSize = dao.getSize();
+    Iterable<Quest>? questData = dao.getAll();
+
+    //step1. randomly select quest id
+    Set newQuestIds = <int>{};
+    while (newQuestIds.length < NUMQUESTS) {
+      int questId = Random().nextInt(dataSize);
+      newQuestIds.add(questId);
+    }
+
+    //a list od quest data for daily quests
+    List<QuestStatus> newDailyQuests = [];
+    for (int id in newQuestIds) {
+      //step2. retrieve quest info that corresponds to selected ids.
+      Quest quest = questData!.where((item) => item.id == id).first;
+      newDailyQuests.add(new QuestStatus(quest, false, false));
+    }
+
+    //step3. register quests retrieved in step2 as daily quests
+    _configBox.put("dailyQuests", newDailyQuests);
   }
 
   /**
