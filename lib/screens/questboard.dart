@@ -55,6 +55,8 @@ class _QuestBoardState extends State<QuestBoard> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Daily Quests"),
+        leading: Icon(Icons.calendar_today),
+        backgroundColor: Colors.brown,
       ),
       body: (_dailyQuests.isEmpty) ?
       //if _dailyQuests has not been initialized yet, show loading message
