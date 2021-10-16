@@ -49,6 +49,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
   int score = 0;
   int coin = 0;
+  int usedItem = 0;
+  int beatenEnemy = 0;
+  int beatenBoss = 0;
 
   late Kiwi _kiwi;
 
@@ -146,16 +149,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     if (!isAlreadyLoaded) {
       final parallaxComponent = await loadParallaxComponent([
-        //ParallaxImageData('pix_sky1.png'),
-        ParallaxImageData('pixsky.png'),
-        ParallaxImageData('po2.png'),
-        ParallaxImageData('pixbg.png'),
-        //ParallaxImageData('C02.png'),
-        ParallaxImageData('po1.png'),
-        ParallaxImageData('p03.png'),
-        ParallaxImageData('po4.png'),
-        //ParallaxImageData('birrd01.png'),
-        //ParallaxImageData('birdnob.gif'),
+        ParallaxImageData('pixbs.png'),
+        ParallaxImageData('side1.png'),
+        ParallaxImageData('pixc.png'),
       ],
           baseVelocity: Vector2(0, 50),
           velocityMultiplierDelta: Vector2(1.8, 1.0),
@@ -369,6 +365,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     score = 0;
     coin = 0;
+    beatenBoss = 0;
+    beatenEnemy = 0;
+    usedItem = 0;
 
     components.whereType<Enemy>().forEach((enemy) {
       enemy.remove();

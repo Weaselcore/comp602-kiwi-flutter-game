@@ -55,7 +55,12 @@ class _LeaderScreenState extends State<LeaderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Ranking"),
+        backgroundColor: Colors.brown,
+        leading: Icon(Icons.emoji_events),
+        title: const Text(
+          'Ranking',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: ValueListenableBuilder(
         valueListenable: scoreDao.box.listenable(),
@@ -88,7 +93,13 @@ class _LeaderScreenState extends State<LeaderScreen> {
                 children: [
                   ElevatedButton(
                       onPressed: () => {Navigator.of(context).pop()},
-                      child: Text("Go back")),
+                      child: Text("Go back"),
+                      style: ElevatedButton.styleFrom(
+                      primary: Colors.brown,
+                      onPrimary: Colors.orangeAccent,
+                      side: BorderSide(color: Colors.black, width: 2),
+                      )
+                  ),
                 ],
               ),
             ],

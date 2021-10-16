@@ -92,7 +92,12 @@ class _settingState extends State<SettingScreen> {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Setting"),
+        backgroundColor: Colors.brown,
+        leading: Icon(Icons.settings),
+        title: const Text(
+          'Settings',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Center(
           child: Container(
@@ -178,11 +183,12 @@ class _settingState extends State<SettingScreen> {
                         ? ElevatedButton(
                             onPressed: _logout,
                             child: Text("Sign out",
-                                style: TextStyle(fontSize: 20)))
+                                style: TextStyle(fontSize: 20, backgroundColor: Colors.brown, color: Colors.orange,)
+                            ))
                         : ElevatedButton(
                             onPressed: _login,
                             child: Text("Sign in with Google",
-                                style: TextStyle(fontSize: 20))),
+                                style: TextStyle(fontSize: 20, backgroundColor: Colors.brown, color: Colors.orange,))),
                   ],
                 ),
               ),
@@ -192,7 +198,13 @@ class _settingState extends State<SettingScreen> {
               children: [
                 ElevatedButton(
                     onPressed: () => {Navigator.of(context).pop()},
-                    child: Text("Go back")),
+                    child: Text("Go back"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.brown,
+                    onPrimary: Colors.orangeAccent,
+                    side: BorderSide(color: Colors.black, width: 2),
+                  ),
+                ),
               ],
             ),
           ],
