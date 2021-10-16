@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/screens/dailyQuest/quest.dart';
+import 'package:flutter_game/screens/dailyQuest/quest_manager.dart';
 import 'package:flutter_game/screens/dailyQuest/quest_status.dart';
 import 'package:flutter_game/screens/hive/box_manager.dart';
 import 'package:flutter_game/screens/main_menu.dart';
@@ -57,6 +58,8 @@ void main() async {
     await boxManager.initBox("config", configMap);
   }
 
+  //setup quest data
+  QuestManager.init();
 
   Flame.device.fullScreen();
   runApp(MyApp());
