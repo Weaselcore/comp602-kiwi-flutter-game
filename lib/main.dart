@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_game/screens/dailyQuest/quest.dart';
+import 'package:flutter_game/screens/dailyQuest/quest_status.dart';
 import 'package:flutter_game/screens/hive/box_manager.dart';
 import 'package:flutter_game/screens/main_menu.dart';
 import 'package:flutter_game/screens/score_item.dart';
@@ -21,6 +23,12 @@ void main() async {
 
   Hive.registerAdapter(ScoreItemAdapter());
   Hive.openBox<ScoreItem>("leaderboard");
+  //register QuestAdapter to handle Quest model
+  Hive.registerAdapter(QuestAdapter());
+  //open data store for quest
+  Hive.openBox<Quest>("quest");
+  //register QuestStatusAdapter to handle QuestStatus model
+  Hive.registerAdapter(QuestStatusAdapter());
 
   await Firebase.initializeApp();
   //need to save documentID for a user to register his/her game score to firebase.
@@ -36,6 +44,7 @@ void main() async {
     "documentID": document.id,
     "coin": 10,
     "skin": "kiwi_sprite.png",
+    "lastLogin": DateTime.now(),
   };
 
   // TODO add an update function for BoxManager
