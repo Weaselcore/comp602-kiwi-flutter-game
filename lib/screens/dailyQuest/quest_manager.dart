@@ -19,11 +19,11 @@ class QuestManager {
     //reason why updating lastlogin here: Since I could not update lastLogin in constructor of main menu
     //this method runs when the app is launched. Thus, not different from updating lastLogin in constructor of main menu.
     _configBox.put("lastLogin", DateTime.now());
-    //populate quets data if it is necessary.
-    prepareQuestData();
+    //populate quest data if it is necessary.
+    _prepareQuestData();
 
-    //if daily quests are not registered (this happens when the app is lunched for the very first time)
     List dailyQuests = _configBox.get("dailyQuests");
+    //if daily quests are not registered (this happens when the app is lunched for the very first time)
     if (dailyQuests.isEmpty) {
       //initialize daily quest
       generateRandomDailyQuests();
@@ -32,16 +32,16 @@ class QuestManager {
 
   /**
    * populate data
-   * if there is no quest data registered
-   *    or new quest data is added or deleted
+   * if there is no quest data registered in data store
+   *    or new quest data is added or deleted and the length is different from the ones in data store
    */
-  static void prepareQuestData() {
+  static void _prepareQuestData() {
     LocalQuestDao dao = new LocalQuestDao();
     //get quest data to be registered
-    List<Quest> questData = generateQuestData();
+    List<Quest> questData = _generateQuestData();
 
     //if there is no quest data registered in data store
-    //or new quest data is added or deleted
+    //or the length of new quest data is different from the one's in data store
     if (dao.getSize() == 0 || questData.length != dao.getSize()) {
       //replace old quest data with new quest data
       dao.replaceAll(questData);
@@ -66,16 +66,18 @@ class QuestManager {
    *  step3. register quests retrieved in step2 as daily quests
    */
   static generateRandomDailyQuests() async {
-    List dailyQuests = _configBox.get("dailyQuests");
     LocalQuestDao dao = new LocalQuestDao();
-    int dataSize = dao.getSize();
+    int biggestId = dao.getBiggestId();
     Iterable<Quest>? questData = dao.getAll();
 
     //step1. randomly select quest id
     Set newQuestIds = <int>{};
     while (newQuestIds.length < NUMQUESTS) {
-      int questId = Random().nextInt(dataSize);
-      newQuestIds.add(questId);
+      int questId = Random().nextInt(biggestId);
+      //check if there is a quest that maches randomely selected id in data store.
+      if (questData!.where((item) => item.id == questId).isNotEmpty) {
+        newQuestIds.add(questId);
+      }
     }
 
     //a list od quest data for daily quests
@@ -93,44 +95,44 @@ class QuestManager {
   /**
    * judge if the game result satisfies daily quests.
    * parameters
-   * numCoins: the number of coins player gets
+   * numCoins: the number of coins a player gets
    * score: the score a player earns
-   * usedItems: the number of power-up items used
-   * numEnemies: the number of enemies passed
-   * numBosses: the number of bosses a player defeat
+   * usedItems: the number of power-up items a player uses
+   * numEnemies: the number of enemies a player breaks
+   * numBosses: the number of bosses a player defeats
    */
-  static void checkQuestCompletion(int numCoins, int score, int usedItems, int numEnemies , int numBosses) async {
+  static void checkQuestCompletion(int numCoins, int score, int usedItems,
+      int numEnemies, int numBosses) async {
     //get daily quests
     List<QuestStatus> dailyQuests = _configBox.get("dailyQuests");
     for (QuestStatus questSatatus in dailyQuests) {
-
-      //check game status only if it is not completed yet.
+      //check quest completion only if it is not completed yet.
       if (!questSatatus.isSatisfied) {
         //check conditions corresponding to quest type
         switch (questSatatus.quest.questType) {
           case "coin":
             if (questSatatus.quest.counter <= numCoins) {
-              makeStatusComplete(questSatatus);
+              _makeStatusComplete(questSatatus);
             }
             break;
           case "score":
             if (questSatatus.quest.counter <= score) {
-              makeStatusComplete(questSatatus);
+              _makeStatusComplete(questSatatus);
             }
             break;
           case "item":
             if (questSatatus.quest.counter <= usedItems) {
-              makeStatusComplete(questSatatus);
+              _makeStatusComplete(questSatatus);
             }
             break;
           case "enemy":
             if (questSatatus.quest.counter <= numEnemies) {
-              makeStatusComplete(questSatatus);
+              _makeStatusComplete(questSatatus);
             }
             break;
           case "boss":
             if (questSatatus.quest.counter <= numBosses) {
-              makeStatusComplete(questSatatus);
+              _makeStatusComplete(questSatatus);
             }
             break;
         }
@@ -141,26 +143,26 @@ class QuestManager {
   /**
    * make daily quest status completed
    */
-  static void makeStatusComplete(QuestStatus questStatus) {
+  static void _makeStatusComplete(QuestStatus questStatus) {
     questStatus.isSatisfied = true;
   }
 
   /**
    * This function returns a list of quest data to be registered.
    */
-  static List<Quest> generateQuestData() {
+  static List<Quest> _generateQuestData() {
     List<Quest> quests = [];
 
     Quest quest0 =
-        new Quest(0, "coin", "Get coins more than 10", "coin", 5, 10);
+        new Quest(0, "coin", "Get 10 coins", "coin", 5, 10);
     quests.add(quest0);
 
     Quest quest1 =
-        new Quest(1, "enemy", "Break enemies more than 5", "coin", 10, 5);
+        new Quest(1, "enemy", "Break 5 enemies", "coin", 10, 5);
     quests.add(quest1);
 
     Quest quest2 =
-        new Quest(2, "score", "Earn score more than 20", "coin", 15, 20);
+        new Quest(2, "score", "Score 20 points", "coin", 15, 20);
     quests.add(quest2);
 
     Quest quest3 = new Quest(3, "item", "Use 3 items", "coin", 20, 3);

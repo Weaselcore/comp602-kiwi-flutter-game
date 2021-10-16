@@ -1,4 +1,5 @@
 import 'package:flutter_game/screens/dailyQuest/quest.dart';
+import 'package:flutter_game/screens/dailyQuest/quest_manager.dart';
 import 'package:hive/hive.dart';
 
 /**
@@ -36,5 +37,14 @@ class LocalQuestDao {
     }
 
     _questBox.addAll(quests);
+  }
+
+  /**
+   * get the biggest quest id
+   */
+  int getBiggestId() {
+    var quests = _questBox.values.toList();
+    quests.sort((a, b) => a.id.compareTo(b.id));
+    return quests.last.id;
   }
 }
