@@ -48,6 +48,7 @@ dependencies:
   sensors_plus: ^1.1.0
   sensors_plus_web: ^1.1.0
   flame_audio: ^1.0.0-rc.1
+  flutter_local_notifications: ^8.2.0
   mockito: ^5.0.15
 
 dev_dependencies:

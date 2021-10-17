@@ -12,6 +12,7 @@ import 'package:flutter_game/game/components/coin/coin_tracker.dart';
 import 'package:flutter_game/game/components/controls/tilt_controls.dart';
 import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
+import 'package:flutter_game/screens/notification/notification.dart' as notif;
 import 'package:hive/hive.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
@@ -42,6 +43,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   bool isRemoteScoreDaoLoaded = false;
   late LocalScoreDao localScoreDao;
   late RemoteScoreDao remoteScoreDao;
+
+  bool isNotificationLoaded = false;
+  late notif.Notification notification;
 
   bool isAudioManagerLoaded = false;
   bool isTiltConfigLoaded = false;
@@ -80,7 +84,10 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   late Timer _laserTimer;
 
   late LaserBeam _laserBeam;
+  int highScore = 0;
+  bool isNotified = false;
   late bool firstPlay;
+
 
   String kiwiSkin = "kiwi_sprite.png";
 
@@ -96,11 +103,17 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     if (!isLocalScoreDaoLoaded) {
       localScoreDao = LocalScoreDao();
       isLocalScoreDaoLoaded = true;
+      highScore = localScoreDao.getHighestScore();
     }
 
     if (!isRemoteScoreDaoLoaded) {
       remoteScoreDao = RemoteScoreDao();
       isRemoteScoreDaoLoaded = true;
+    }
+
+    if (!isNotificationLoaded) {
+      notification = notif.Notification();
+      isNotificationLoaded = true;
     }
 
     if (!isAudioManagerLoaded) {
@@ -259,6 +272,13 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     _slowTicker.text = 'Slow Timer: ' + _slowTimer.current.toString();
     _laserTicker.text = 'Laser Timer: ' + _laserTimer.current.toString();
 
+    //check if a player beats her/his high score
+    if (highScore != 0 && !isNotified && highScore < score) {
+      isNotified = true;
+      notification.sendNotification();
+    }
+  }
+
     if (firstPlay) {
       //show tutorial slides
       this.pauseEngine();
@@ -365,6 +385,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     score = 0;
     coin = 0;
+    isNotified = false;
+    highScore = localScoreDao.getHighestScore();
     beatenBoss = 0;
     beatenEnemy = 0;
     usedItem = 0;
