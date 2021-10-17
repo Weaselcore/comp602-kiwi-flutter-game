@@ -29,6 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  rive: ^0.7.22
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -48,6 +49,7 @@ dependencies:
   sensors_plus_web: ^1.1.0
   flame_audio: ^1.0.0-rc.1
   flutter_local_notifications: ^8.2.0
+  mockito: ^5.0.15
 
 dev_dependencies:
   flutter_test:
@@ -78,16 +80,7 @@ flutter:
   assets:
     - assets/images/
     - assets/audio/
-    - assets/images/kiwi_sprite_grey.png
-    - assets/images/kiwi_sprite_purple.png
-    - assets/images/kiwi_sprite_red.png
-    - assets/images/kiwi_sprite_yellow.png
-    - assets/images/heart.png
-    - assets/images/Caterpillar.png
-    - assets/images/Cockroach.png
-    - assets/images/Weta.png
-    - assets/images/Worm.png
-    - assets/images/ads.png
+    - assets/images/pixbs.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

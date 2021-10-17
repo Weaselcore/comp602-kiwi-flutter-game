@@ -3,13 +3,13 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame/gestures.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/audio_manager_component.dart';
 import 'package:flutter_game/game/components/coin/coin.dart';
 import 'package:flutter_game/game/components/coin/coin_manager.dart';
 import 'package:flutter_game/game/components/coin/coin_tracker.dart';
+import 'package:flutter_game/game/components/controls/tilt_controls.dart';
 import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 import 'package:flutter_game/screens/notification/notification.dart' as notif;
@@ -31,11 +31,10 @@ import 'components/tilt_config_component.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
+import 'overlay/tutorial_slides.dart';
 
-class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
+class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   bool isAlreadyLoaded = false;
-  bool _leftDirectionPressed = false;
-  bool _rightDirectionPressed = false;
   bool gameEnded = false;
   bool _isSlowed = false;
   bool _isGodMode = false;
@@ -50,13 +49,13 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
   bool isAudioManagerLoaded = false;
   bool isTiltConfigLoaded = false;
-
-  // These variables are to track multi-gesture taps.
-  int _rightPointerId = -1;
-  int _leftPointerId = -1;
+  TiltDirectionalEvent tiltDirectionalEvent = TiltDirectionalEvent();
 
   int score = 0;
   int coin = 0;
+  int usedItem = 0;
+  int beatenEnemy = 0;
+  int beatenBoss = 0;
 
   late Kiwi _kiwi;
 
@@ -65,7 +64,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
   late TiltConfig tiltConfigManager;
   late bool isTiltControls;
-  double tiltVelocity = 0.0;
+  double tiltXVelocity = 0.0;
+  double tiltYVelocity = 0.0;
 
   late EnemyTracker enemyTracker;
   late EnemyManager _enemyManager;
@@ -86,6 +86,8 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
   late LaserBeam _laserBeam;
   int highScore = 0;
   bool isNotified = false;
+  late bool firstPlay;
+
 
   String kiwiSkin = "kiwi_sprite.png";
 
@@ -122,6 +124,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
     configBox = await Hive.openBox("config");
     kiwiSkin = configBox.get("skin");
+    firstPlay = configBox.get("firstPlay");
 
     _kiwi = Kiwi(
       sprite: await Sprite.load(kiwiSkin),
@@ -131,7 +134,6 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     _kiwi.anchor = Anchor.center;
     add(_kiwi);
 
-
     if (!isTiltConfigLoaded) {
       tiltConfigManager = TiltConfig();
       add(tiltConfigManager);
@@ -139,13 +141,30 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
     tiltConfigManager.fetchSettings();
     isTiltControls = tiltConfigManager.getConfig();
-    
+
     audioManager.fetchSettings();
     audioManager.playBgm('background.mp3');
 
+    final joystick = JoystickComponent(
+      gameRef: this,
+      directional: JoystickDirectional(
+          size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
+    );
+
+    if (!isTiltControls && !this.components.contains(joystick)) {
+      joystick.addObserver(_kiwi);
+      add(joystick);
+    } else {
+      components.whereType<JoystickComponent>().forEach((element) {
+        element.remove();
+      });
+    }
+
     if (!isAlreadyLoaded) {
       final parallaxComponent = await loadParallaxComponent([
-        ParallaxImageData('cliff_parallax_1.png'),
+        ParallaxImageData('pixbs.png'),
+        ParallaxImageData('side1.png'),
+        ParallaxImageData('pixc.png'),
       ],
           baseVelocity: Vector2(0, 50),
           velocityMultiplierDelta: Vector2(1.8, 1.0),
@@ -230,7 +249,7 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     super.render(canvas);
   }
 
-  /// Controls are being detected here and propogates the updates to child
+  /// Controls are being detected here and propagates the updates to child
   /// components. Also tickers are being updated as the game progresses.
   @override
   void update(double dt) {
@@ -245,8 +264,6 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
 
     if (isTiltControls) {
       tiltMovement();
-    } else {
-      tapMovement();
     }
 
     _scoreTicker.text = 'Score: ' + score.toString();
@@ -262,69 +279,15 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     }
   }
 
-  /// Alters the control state when touch is detected.
-  @override
-  void onTapDown(int pointerId, TapDownInfo event) {
-    if (_tapIsLeft(event) && !_tapIsRight(event)) {
-      _leftDirectionPressed = true;
-      _leftPointerId = pointerId;
-    } else if (_tapIsRight(event) && !_tapIsLeft(event)) {
-      _rightDirectionPressed = true;
-      _rightPointerId = pointerId;
-    } else if (!(_isBothPressed())) {
-      _leftDirectionPressed = false;
-      _leftPointerId = -1;
-      _rightDirectionPressed = false;
-      _rightPointerId = -1;
+    if (firstPlay) {
+      //show tutorial slides
+      this.pauseEngine();
+      this.overlays.remove(PauseButton.ID);
+      this.overlays.add(TutorialSlides.ID);
+      firstPlay = !firstPlay;
     }
+
   }
-
-  /// Alters the control state when touch release has been detected.
-  @override
-  void onTapUp(int pointerId, TapUpInfo event) {
-    // If both left and right taps have been lifted.
-    if (_tapIsLeft(event) && _tapIsRight(event)) {
-      _leftDirectionPressed = false;
-      _leftPointerId = -1;
-      _rightDirectionPressed = false;
-      _rightPointerId = -1;
-      // If left tap has been lifted.
-    } else if (_tapIsLeft(event) && !_tapIsRight(event)) {
-      _leftDirectionPressed = false;
-      _leftPointerId = -1;
-      // If right tap has been lifted.
-    } else if (_tapIsRight(event) && !_tapIsLeft(event)) {
-      _rightDirectionPressed = false;
-      _rightPointerId = -1;
-    }
-  }
-
-  /// Since onTapCancel doesn't pass TapInfo, pointerId have to be tracked.
-  /// So if the finger slides off the sides instead of lifting it up, it will not bug out.
-  @override
-  void onTapCancel(int pointerId) {
-    if (_rightPointerId == pointerId) {
-      _rightPointerId = -1;
-      _rightDirectionPressed = false;
-    } else if (_leftPointerId == pointerId) {
-      _leftPointerId = -1;
-      _leftDirectionPressed = false;
-    }
-  }
-
-  /// Returns middle point of the screen.
-  double _getMiddlePoint() => viewport.canvasSize.x / 2;
-
-  /// Left touch is true when it happens on the left side of the screen.
-  bool _tapIsLeft(PositionInfo event) =>
-      event.eventPosition.game.x < _getMiddlePoint();
-
-  /// Right touch is true when it happens on the right side of the screen.
-  bool _tapIsRight(PositionInfo event) =>
-      event.eventPosition.game.x > _getMiddlePoint();
-
-  /// Is true when a finger is detected on the ledt and right side of the screen.
-  bool _isBothPressed() => (_rightDirectionPressed && _leftDirectionPressed);
 
   /// Slows the enemies speed as long as [_slowTimer] is running.
   void halfEnemySpeed() {
@@ -424,6 +387,9 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     coin = 0;
     isNotified = false;
     highScore = localScoreDao.getHighestScore();
+    beatenBoss = 0;
+    beatenEnemy = 0;
+    usedItem = 0;
 
     components.whereType<Enemy>().forEach((enemy) {
       enemy.remove();
@@ -438,38 +404,47 @@ class KiwiGame extends BaseGame with MultiTouchTapDetector, HasCollidables {
     });
   }
 
-  /// Used to check for tilt movement to move the Kiwi.
+  /// Used to apply movement using the [TiltMoveDirectional] enum from the
+  /// [tiltDirectionalEvent] class. Inputs are taken from the
+  /// [AccelerometerEvent] package.
   void tiltMovement() {
     accelerometerEvents.listen((AccelerometerEvent event) {
-      this.tiltVelocity = event.x;
+      this.tiltXVelocity = event.x;
+      this.tiltYVelocity = event.y;
     });
 
-    if (tiltVelocity > 1.0) {
-      _kiwi.goLeft();
-    } else if (tiltVelocity < -1.0) {
-      _kiwi.goRight();
-    } else if (tiltVelocity < 1.0 && tiltVelocity > -1.0) {
-      _kiwi.stop();
-    }
-  }
+    TiltMoveDirectional tiltDirection = this
+        .tiltDirectionalEvent
+        .calculate(this.tiltXVelocity, this.tiltYVelocity);
 
-  /// Used to check for tap gestures to move the Kiwi.
-  void tapMovement() {
-    // If both left and right are pressed down.
-    if (_isBothPressed()) {
-      _kiwi.stop();
-    }
-    // If right are pressed down.
-    else if (_rightDirectionPressed && !_leftDirectionPressed) {
-      _kiwi.goRight();
-    }
-    // If left are pressed down.
-    else if (_leftDirectionPressed && !_rightDirectionPressed) {
-      _kiwi.goLeft();
-    }
-    // If no buttons are pressed.
-    else {
-      _kiwi.stop();
+    switch (tiltDirection) {
+      case TiltMoveDirectional.moveUp:
+        _kiwi.setMoveDirection(Vector2(0, -1));
+        break;
+      case TiltMoveDirectional.moveUpLeft:
+        _kiwi.setMoveDirection(Vector2(-1, -1));
+        break;
+      case TiltMoveDirectional.moveUpRight:
+        _kiwi.setMoveDirection(Vector2(1, -1));
+        break;
+      case TiltMoveDirectional.moveRight:
+        _kiwi.setMoveDirection(Vector2(1, 0));
+        break;
+      case TiltMoveDirectional.moveDown:
+        _kiwi.setMoveDirection(Vector2(0, 1));
+        break;
+      case TiltMoveDirectional.moveDownRight:
+        _kiwi.setMoveDirection(Vector2(1, 1));
+        break;
+      case TiltMoveDirectional.moveDownLeft:
+        _kiwi.setMoveDirection(Vector2(-1, 1));
+        break;
+      case TiltMoveDirectional.moveLeft:
+        _kiwi.setMoveDirection(Vector2(-1, 0));
+        break;
+      case TiltMoveDirectional.idle:
+        _kiwi.setMoveDirection(Vector2.zero());
+        break;
     }
   }
 }

@@ -13,7 +13,7 @@ class _settingState extends State<SettingScreen> {
   late bool _isSfxMute;
   late bool _isTiltOn;
   late Box _configBox;
-  bool _logedin = false;
+  bool _loggedIn = false;
   late AuthInf _auth;
 
   @override
@@ -22,7 +22,7 @@ class _settingState extends State<SettingScreen> {
     //check login state
     _auth = new GoogleAuth();
     if (_auth.isSignedIn() == true) {
-      _logedin = true;
+      _loggedIn = true;
     }
 
     //check user config
@@ -50,7 +50,7 @@ class _settingState extends State<SettingScreen> {
     });
   }
 
-  void _upadteBGMConfig() async {
+  void _updateBGMConfig() async {
     //update BGM config in hive
     await _configBox.put("isBgmMute", !_isBgmMute);
     _changeMusicState();
@@ -62,7 +62,7 @@ class _settingState extends State<SettingScreen> {
     });
   }
 
-  void _upadteSfxConfig() async {
+  void _updateSfxConfig() async {
     //update SFX config in hive
     await _configBox.put("isSfxMute", !_isSfxMute);
     _changeSfxState();
@@ -76,9 +76,9 @@ class _settingState extends State<SettingScreen> {
   void changeState() {
     setState(() {
       if (_auth.isSignedIn() == true) {
-        _logedin = true;
+        _loggedIn = true;
       } else {
-        _logedin = false;
+        _loggedIn = false;
       }
     });
   }
@@ -92,7 +92,12 @@ class _settingState extends State<SettingScreen> {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Setting"),
+        backgroundColor: Colors.brown,
+        leading: Icon(Icons.settings),
+        title: const Text(
+          'Settings',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Center(
           child: Container(
@@ -113,7 +118,7 @@ class _settingState extends State<SettingScreen> {
                               size: 50)
                           : Icon(IconData(59076, fontFamily: 'MaterialIcons'),
                               size: 50),
-                      onTap: _upadteBGMConfig,
+                      onTap: _updateBGMConfig,
                     ),
                   ],
                 ),
@@ -135,7 +140,7 @@ class _settingState extends State<SettingScreen> {
                             )
                           : Icon(IconData(59076, fontFamily: 'MaterialIcons'),
                               size: 50),
-                      onTap: _upadteSfxConfig,
+                      onTap: _updateSfxConfig,
                     ),
                   ],
                 ),
@@ -174,15 +179,16 @@ class _settingState extends State<SettingScreen> {
                       "Sign in",
                       style: TextStyle(fontSize: 30),
                     ),
-                    _logedin
+                    _loggedIn
                         ? ElevatedButton(
                             onPressed: _logout,
                             child: Text("Sign out",
-                                style: TextStyle(fontSize: 20)))
+                                style: TextStyle(fontSize: 20, backgroundColor: Colors.brown, color: Colors.orange,)
+                            ))
                         : ElevatedButton(
                             onPressed: _login,
                             child: Text("Sign in with Google",
-                                style: TextStyle(fontSize: 20))),
+                                style: TextStyle(fontSize: 20, backgroundColor: Colors.brown, color: Colors.orange,))),
                   ],
                 ),
               ),
@@ -192,7 +198,13 @@ class _settingState extends State<SettingScreen> {
               children: [
                 ElevatedButton(
                     onPressed: () => {Navigator.of(context).pop()},
-                    child: Text("Go back")),
+                    child: Text("Go back"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.brown,
+                    onPrimary: Colors.orangeAccent,
+                    side: BorderSide(color: Colors.black, width: 2),
+                  ),
+                ),
               ],
             ),
           ],

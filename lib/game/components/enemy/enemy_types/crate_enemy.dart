@@ -15,8 +15,8 @@ class CrateEnemy extends Enemy with GameSizeAware {
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('crate_sprite.png');
-    size = Vector2(160, 84);
+    sprite = await Sprite.load('rock_sprite.png');
+    size = Vector2(90,90);
     position = this.getPosition() - size;
 
     final hitboxShape = HitboxCircle(definition: 0.8);

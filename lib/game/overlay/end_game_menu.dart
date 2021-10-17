@@ -17,7 +17,7 @@ class EndGameMenu extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 50.0),
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
               child: Text(
                 'GAME OVER',
                 style: TextStyle(
@@ -48,8 +48,15 @@ class EndGameMenu extends StatelessWidget {
                       gameRef.audioManager.playBgm('background.mp3');
                     },
                     child: Text('Restart'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.brown,
+                      onPrimary: Colors.orangeAccent,
+                      side: BorderSide(color: Colors.black, width: 2),
+                    ),
                   ),
                 ),
+                //Space between buttons
+                SizedBox(width:5.0),
 
                 // Exit button.
                 SizedBox(
@@ -62,6 +69,11 @@ class EndGameMenu extends StatelessWidget {
                       gameRef.reset();
                     },
                     child: Text('Exit'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.brown,
+                      onPrimary: Colors.orangeAccent,
+                      side: BorderSide(color: Colors.black, width: 2),
+                    ),
                   ),
                 ),
               ],

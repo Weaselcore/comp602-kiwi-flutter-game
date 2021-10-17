@@ -6,6 +6,7 @@ import 'package:flutter_game/game/kiwi_game.dart';
 import 'package:flutter_game/game/overlay/end_game_menu.dart';
 import 'package:flutter_game/game/overlay/pause_button.dart';
 import 'package:flutter_game/game/overlay/pause_menu.dart';
+import 'package:flutter_game/game/overlay/tutorial_slides.dart';
 
 KiwiGame _kiwiGame = KiwiGame();
 
@@ -39,6 +40,10 @@ class GameInstance extends StatelessWidget {
             EndGameMenu.ID: (BuildContext context, KiwiGame gameRef) =>
                 EndGameMenu(
                   gameRef: gameRef,
+                ),
+            TutorialSlides.ID: (BuildContext context, KiwiGame gameRef) =>
+                TutorialSlides(
+                    gameRef: gameRef
                 ),
           },
         ),
