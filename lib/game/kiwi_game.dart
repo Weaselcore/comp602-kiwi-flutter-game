@@ -22,12 +22,12 @@ import 'package:flutter_game/game/components/powerup/powerup_tracker.dart';
 import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_manager.dart';
 import 'package:flutter_game/game/components/enemy/enemy_tracker.dart';
-import 'package:flutter_game/game/components/ticker/info_ticker.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
 import 'package:flutter_game/screens/dao/remote_score_dao.dart';
 import 'package:flutter_game/screens/score_item.dart';
 import 'components/tilt_config_component.dart';
 import 'game_size_aware.dart';
+import 'overlay/hud.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
 import 'overlay/tutorial_slides.dart';
@@ -70,11 +70,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   late CoinManager _coinManager;
   late CoinTracker coinTracker;
 
-  late TextComponent _scoreTicker;
-  late TextComponent _coinTicker;
-  late TextComponent _shieldTicker;
-  late TextComponent _slowTicker;
-  late TextComponent _laserTicker;
+  late Hud hud;
 
   late Timer _slowTimer;
   late Timer _laserTimer;
@@ -132,21 +128,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     audioManager.fetchSettings();
     audioManager.playBgm('background.mp3');
 
-    final joystick = JoystickComponent(
-      gameRef: this,
-      directional: JoystickDirectional(
-          size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
-    );
-
-    if (!isTiltControls && !this.components.contains(joystick)) {
-      joystick.addObserver(_kiwi);
-      add(joystick);
-    } else {
-      components.whereType<JoystickComponent>().forEach((element) {
-        element.remove();
-      });
-    }
-
     if (!isAlreadyLoaded) {
       final parallaxComponent = await loadParallaxComponent([
         ParallaxImageData('pixbs.png'),
@@ -159,12 +140,37 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
           fill: LayerFill.width);
       add(parallaxComponent);
 
+      final joystick = JoystickComponent(
+        gameRef: this,
+        directional: JoystickDirectional(
+            size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
+        actions: [
+          JoystickAction(
+            actionId: 0,
+            size: 60,
+            margin: const EdgeInsets.all(
+              50,
+            ),
+          ),
+        ],
+      );
+
+      if (!isTiltControls && !this.components.contains(joystick)) {
+        joystick.addObserver(_kiwi);
+        add(joystick);
+      } else {
+        components.whereType<JoystickComponent>().forEach((element) {
+          element.remove();
+        });
+      }
+
+      hud = Hud(_kiwi);
+      add(hud);
+
       _enemyManager = EnemyManager();
       add(_enemyManager);
-
       enemyTracker = EnemyTracker();
       add(enemyTracker);
-
       _powerUpManager = PowerUpManager();
       add(_powerUpManager);
       powerUpTracker = PowerUpTracker();
@@ -176,34 +182,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
       // Register reference of Kiwi once to improve performance.
       enemyTracker.registerKiwi(_kiwi);
-
-      // Below are tickers that display information.
-      _scoreTicker =
-          InfoTicker(initialText: 'Score: 0', initialPos: Vector2(10, 10));
-
-      _coinTicker =
-          InfoTicker(initialText: 'Coins: 0', initialPos: Vector2(10, 25));
-
-      _shieldTicker =
-          InfoTicker(initialText: 'Shield: 0', initialPos: Vector2(10, 40));
-
-      _slowTicker =
-          InfoTicker(initialText: 'SlowTimer: 0', initialPos: Vector2(10, 55));
-
-      _laserTicker =
-          InfoTicker(initialText: 'LaserTimer: 0', initialPos: Vector2(10, 70));
-
-      // Set the tickers to HUD components.
-      _scoreTicker.isHud = true;
-      add(_scoreTicker);
-      _coinTicker.isHud = true;
-      add(_coinTicker);
-      _shieldTicker.isHud = true;
-      add(_shieldTicker);
-      _slowTicker.isHud = true;
-      add(_slowTicker);
-      _laserTicker.isHud = true;
-      add(_laserTicker);
 
       isAlreadyLoaded = true;
     }
@@ -244,6 +222,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     _kiwi.update(dt);
     _slowTimer.update(dt);
     _laserTimer.update(dt);
+    hud.update(dt);
 
     if (_kiwi.hasLaser) {
       _laserBeam.position = _kiwi.position;
@@ -253,12 +232,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       tiltMovement();
     }
 
-    _scoreTicker.text = 'Score: ' + score.toString();
-    _coinTicker.text = 'Coins: ' + coin.toString();
-    _shieldTicker.text = 'Shield: ' + _kiwi.getShieldCount().toString();
-    _slowTicker.text = 'Slow Timer: ' + _slowTimer.current.toString();
-    _laserTicker.text = 'Laser Timer: ' + _laserTimer.current.toString();
-
     if (firstPlay) {
       //show tutorial slides
       this.pauseEngine();
@@ -266,7 +239,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       this.overlays.add(TutorialSlides.ID);
       firstPlay = !firstPlay;
     }
-
   }
 
   /// Slows the enemies speed as long as [_slowTimer] is running.
