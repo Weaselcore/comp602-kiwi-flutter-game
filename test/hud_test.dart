@@ -144,5 +144,37 @@ void main() {
 
       expect(hud.getPowerUpQueueLength(), isNot(2));
     });
+
+    group('HUD reset', () {
+      test('Hud should show zero powerup after reset.', () async {
+        Kiwi kiwi = Kiwi(
+          godMode: true,
+          sprite: await Sprite.load('kiwi_sprite.png'),
+          size: Vector2(122, 76),
+          position: Vector2(50, 50),
+        );
+        Hud hud = Hud(kiwi);
+
+        ShieldPowerUp shieldPowerUp = ShieldPowerUp(1);
+        kiwi.addPowerUp(shieldPowerUp);
+        kiwi.resetPowerUp();
+        expect(hud.getPowerUpQueueLength(), equals(0));
+      });
+
+      test('Hud should show one powerup after reset.', () async {
+        Kiwi kiwi = Kiwi(
+          godMode: true,
+          sprite: await Sprite.load('kiwi_sprite.png'),
+          size: Vector2(122, 76),
+          position: Vector2(50, 50),
+        );
+        Hud hud = Hud(kiwi);
+        kiwi.resetPowerUp();
+        ShieldPowerUp shieldPowerUp = ShieldPowerUp(1);
+        kiwi.addPowerUp(shieldPowerUp);
+
+        expect(hud.getPowerUpQueueLength(), isNot(0));
+      });
+    });
   });
 }

@@ -19,7 +19,7 @@ class PowerUpManager extends BaseComponent
   var powerUpType = ['LASER', 'SLOMO', 'SHIELD'];
 
   PowerUpManager() : super() {
-    _timer = Timer(1.0, callback: _spawnPowerUp, repeat: true);
+    _timer = Timer(10.0, callback: _spawnPowerUp, repeat: true);
     _freezeTimer = Timer(1.0, callback: () {
       _timer.start();
     });

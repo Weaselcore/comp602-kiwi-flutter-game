@@ -123,18 +123,17 @@ class Kiwi extends SpriteComponent
         other is LaserPowerUp) {
       addPowerUp(other as PowerUp);
       other.remove();
+    } else if (other is Enemy && !godMode) {
+      // If enemy has not been nullified by shield.
+      if (other.canDamage()) {
+        if (_shieldCount == 0 && other.canDamage()) {
+          die();
+        } else if (_shieldCount > 0 && other.canDamage()) {
+          other.toggleDamage();
+          removeShield();
+        }
+      }
     }
-    // else if (other is Enemy && !godMode) {
-    //   // If enemy has not been nullified by shield.
-    //   if (other.canDamage()) {
-    //     if (_shieldCount == 0 && other.canDamage()) {
-    //       die();
-    //     } else if (_shieldCount > 0 && other.canDamage()) {
-    //       other.toggleDamage();
-    //       removeShield();
-    //     }
-    //   }
-    // }
   }
 
   double getYPosition() => this.position.y;
