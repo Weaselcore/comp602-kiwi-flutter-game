@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter_game/game/components/boss/boss_factory.dart';
 import 'package:flutter_game/game/components/boss/boss_falcon.dart';
+import 'package:flutter_game/game/components/boss/boss_ufo.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
 import '../../kiwi_game.dart';
@@ -13,10 +14,7 @@ class BossManager extends BaseComponent
   // A timer that causes spawns to occur.
   late Timer _falconTimer;
   late Timer _ufoTimer;
-  // A time that cause a small freeze when the game engine pauses.
-  late Timer _falconFreezeTimer;
-  late Timer _ufoFreezeTimer;
-
+  // Flags to keep track of running boss timers.
   bool isFalconRunning = false;
   bool isUfoRunning = false;
   // Enemy manager keeps track of enemy instances and assigns them unique IDs.
@@ -35,28 +33,20 @@ class BossManager extends BaseComponent
 
   BossManager() : super() {
     // Enemies spawn every 2 seconds.
-    _falconTimer = Timer(2, callback: _spawnBoss, repeat: true);
-    _ufoTimer = Timer(3, callback: _spawnBoss, repeat: true);
-
-    // There is a 1 second pause after the game resumes.
-    _falconFreezeTimer = Timer(5, callback: () {
-      _falconTimer.start();
-    });
-    _ufoFreezeTimer = Timer(5, callback: () {
-      _ufoTimer.start();
-    });
+    _falconTimer = Timer(2, callback: spawnBoss, repeat: true);
+    _ufoTimer = Timer(3, callback: spawnBoss, repeat: true);
   }
 
   /// This spawns enemy objects when the timer triggers.
-  void _spawnBoss() {
-    print(conditionCount);
+  void spawnBoss() {
     if (conditionCount <= _winCondition) {
       _idCount += 1;
       Boss newBoss = _bossFactory.getBossType(_bossTypes[_bossCount], _idCount);
+      start(newBoss);
       gameRef.bossTracker.addBoss(newBoss);
       gameRef.add(newBoss);
     } else {
-      bossStop();
+      stop();
       gameRef.powerUpManager.switchToDefault();
       gameRef.enemyManager.start();
       conditionCount = 0;
@@ -64,18 +54,11 @@ class BossManager extends BaseComponent
     }
   }
 
-  // /// Start timer when the widget gets mounted.
-  // @override
-  // void onMount() {
-  //   super.onMount();
-  //   _timer.start();
-  // }
-
   /// Stop timer when the widget is removed.
   @override
   void onRemove() {
     super.onRemove();
-    bossStop();
+    stop();
   }
 
   /// Update the timers when the game engine is running.
@@ -84,51 +67,37 @@ class BossManager extends BaseComponent
     super.update(dt);
     _falconTimer.update(dt);
     _ufoTimer.update(dt);
-    _falconFreezeTimer.update(dt);
-    _ufoFreezeTimer.update(dt);
   }
 
   /// Reset the timers and IDs when the game engine resets.
   void reset() {
-    bossStop();
+    stop();
     _idCount = 0;
   }
 
   void stop() {
-    bossStop();
+    if (_falconTimer.isRunning()) {
+      _falconTimer.stop();
+      isFalconRunning = false;
+    }
+    if (_ufoTimer.isRunning()) {
+      _ufoTimer.stop();
+      isUfoRunning = false;
+    }
   }
 
-  void start() {
-    _timer.start();
-  }
-
-  /// Freeze the timers when the game engine is pausing.
-  void freeze() {
-    bossStop();
-    bossFreezeTimer();
+  void start(Boss boss) {
+    if (boss is FalconBoss && !_falconTimer.isRunning()) {
+      _falconTimer.start();
+      isFalconRunning = true;
+    }
+    if (boss is UfoBoss && !_ufoTimer.isRunning()) {
+      _ufoTimer.start();
+      isUfoRunning = true;
+    }
   }
 
   void incrementWinCondition() {
     conditionCount += 1;
-  }
-
-  void bossStop() {
-    if (_falconTimer.isRunning()) {
-      _falconTimer.stop();
-    }
-    if (_ufoTimer.isRunning()) {
-      _ufoTimer.stop();
-    }
-  }
-
-  void bossFreezeTimer() {
-    if (isFalconRunning) {
-      _falconFreezeTimer.stop;
-      _falconFreezeTimer.start();
-    }
-    if (isUfoRunning) {
-      _ufoFreezeTimer.stop;
-      _ufoFreezeTimer.start();
-    }
   }
 }

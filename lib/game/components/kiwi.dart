@@ -166,7 +166,7 @@ class Kiwi extends SpriteComponent
       // gameRef.audioManager.playSfx('slow_time.wav');
       gameRef.powerUpManager.switchToShield();
       gameRef.enemyManager.stop();
-      gameRef.bossManager.start();
+      gameRef.bossManager.spawnBoss();
     }
   }
 
