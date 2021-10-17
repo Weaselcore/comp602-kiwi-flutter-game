@@ -3,6 +3,7 @@ import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/image_composition.dart';
+import 'package:flutter_game/game/components/boss/wizard_lighting.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/boss_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/laser_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/shield_powerup.dart';
@@ -143,6 +144,16 @@ class Kiwi extends SpriteComponent
           die();
         } else if (_shieldCount > 0 && other.canDamage()) {
           other.toggleDamage();
+          removeShield();
+        }
+      }
+    }
+    if (other is WizardLightning && !godMode) {
+      // If enemy has not been nullified by shield.
+      if (other.canDamage()) {
+        if (_shieldCount == 0 && other.canDamage()) {
+          die();
+        } else if (_shieldCount > 0 && other.canDamage()) {
           removeShield();
         }
       }

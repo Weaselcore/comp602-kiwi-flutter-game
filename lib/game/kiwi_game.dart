@@ -6,6 +6,8 @@ import 'package:flame/game.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/audio_manager_component.dart';
+import 'package:flutter_game/game/components/boss/wizard_lighting.dart';
+import 'package:flutter_game/game/components/boss/wizard_prep_lightning.dart';
 import 'package:flutter_game/game/components/coin/coin.dart';
 import 'package:flutter_game/game/components/coin/coin_manager.dart';
 import 'package:flutter_game/game/components/coin/coin_tracker.dart';
@@ -400,6 +402,14 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     components.whereType<UfoBullet>().forEach((bullet) {
       bullet.remove();
+    });
+
+    components.whereType<WizardLightning>().forEach((lightning) {
+      lightning.remove();
+    });
+
+    components.whereType<PrepLightning>().forEach((lightning) {
+      lightning.remove();
     });
   }
 
