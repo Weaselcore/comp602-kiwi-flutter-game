@@ -8,10 +8,10 @@ class BossFactory extends BaseComponent {
   Boss getBossType(String type, int idCount) {
     if (type == "falcon") {
       print("Making Crate");
+      return new FalconBoss(idCount);
+    } else if (type == "ufo") {
+      print("Making Cloud");
       return new UfoBoss(idCount);
-      // } else if (type == "CLOUD") {
-      //   print("Making Cloud");
-      //   return new CloudEnemy(idCount);
       // } else if (type == "FERRET") {
       //   print("Making Ferret");
       //   return new FerretEnemy(idCount);

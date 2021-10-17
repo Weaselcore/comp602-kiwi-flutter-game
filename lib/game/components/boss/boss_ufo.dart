@@ -50,7 +50,7 @@ class UfoBoss extends Boss with GameSizeAware {
 
     position = Vector2(0, 0 + size.y);
 
-    print("Spawning BossFalcon at $position");
+    print("Spawning BossUfo at $position");
 
     return position;
   }

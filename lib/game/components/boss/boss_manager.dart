@@ -11,9 +11,14 @@ import 'boss.dart';
 class BossManager extends BaseComponent
     with GameSizeAware, HasGameRef<KiwiGame> {
   // A timer that causes spawns to occur.
-  late Timer _timer;
+  late Timer _falconTimer;
+  late Timer _ufoTimer;
   // A time that cause a small freeze when the game engine pauses.
-  late Timer _freezeTimer;
+  late Timer _falconFreezeTimer;
+  late Timer _ufoFreezeTimer;
+
+  bool isFalconRunning = false;
+  bool isUfoRunning = false;
   // Enemy manager keeps track of enemy instances and assigns them unique IDs.
   int _idCount = 0;
   // Counter for win condition to remove boss.
@@ -26,14 +31,19 @@ class BossManager extends BaseComponent
   Random random = Random();
 
   int _bossCount = 0;
-  var _bossTypes = ["falcon", "placeholder1", "placeholder2"];
+  var _bossTypes = ["falcon", "ufo", "placeholder2"];
 
   BossManager() : super() {
     // Enemies spawn every 2 seconds.
-    _timer = Timer(2, callback: _spawnBoss, repeat: true);
+    _falconTimer = Timer(2, callback: _spawnBoss, repeat: true);
+    _ufoTimer = Timer(3, callback: _spawnBoss, repeat: true);
+
     // There is a 1 second pause after the game resumes.
-    _freezeTimer = Timer(5, callback: () {
-      _timer.start();
+    _falconFreezeTimer = Timer(5, callback: () {
+      _falconTimer.start();
+    });
+    _ufoFreezeTimer = Timer(5, callback: () {
+      _ufoTimer.start();
     });
   }
 
@@ -46,7 +56,7 @@ class BossManager extends BaseComponent
       gameRef.bossTracker.addBoss(newBoss);
       gameRef.add(newBoss);
     } else {
-      _timer.stop();
+      bossStop();
       gameRef.powerUpManager.switchToDefault();
       gameRef.enemyManager.start();
       conditionCount = 0;
@@ -65,25 +75,27 @@ class BossManager extends BaseComponent
   @override
   void onRemove() {
     super.onRemove();
-    _timer.stop();
+    bossStop();
   }
 
   /// Update the timers when the game engine is running.
   @override
   void update(double dt) {
     super.update(dt);
-    _timer.update(dt);
-    _freezeTimer.update(dt);
+    _falconTimer.update(dt);
+    _ufoTimer.update(dt);
+    _falconFreezeTimer.update(dt);
+    _ufoFreezeTimer.update(dt);
   }
 
   /// Reset the timers and IDs when the game engine resets.
   void reset() {
-    _timer.stop();
+    bossStop();
     _idCount = 0;
   }
 
   void stop() {
-    _timer.stop();
+    bossStop();
   }
 
   void start() {
@@ -92,12 +104,31 @@ class BossManager extends BaseComponent
 
   /// Freeze the timers when the game engine is pausing.
   void freeze() {
-    _timer.stop;
-    _freezeTimer.stop;
-    _freezeTimer.start();
+    bossStop();
+    bossFreezeTimer();
   }
 
   void incrementWinCondition() {
     conditionCount += 1;
+  }
+
+  void bossStop() {
+    if (_falconTimer.isRunning()) {
+      _falconTimer.stop();
+    }
+    if (_ufoTimer.isRunning()) {
+      _ufoTimer.stop();
+    }
+  }
+
+  void bossFreezeTimer() {
+    if (isFalconRunning) {
+      _falconFreezeTimer.stop;
+      _falconFreezeTimer.start();
+    }
+    if (isUfoRunning) {
+      _ufoFreezeTimer.stop;
+      _ufoFreezeTimer.start();
+    }
   }
 }
