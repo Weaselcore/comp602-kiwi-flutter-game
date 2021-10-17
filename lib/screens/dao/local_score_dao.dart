@@ -24,18 +24,10 @@ class LocalScoreDao {
         _scoreBox.add(newScoreItem);
         //remove the lowesy socre in the ranking
         scores.last.delete();
-        //notification check
       }
     } else {
       //records are less than 10
       _scoreBox.add(newScoreItem);
-    }
-
-    //send notification
-    if (scores.length > 0) {
-      if (newScoreItem.score > scores.first.score) {
-        nofity();
-      }
     }
   }
 
@@ -61,9 +53,16 @@ class LocalScoreDao {
     return scores;
   }
 
-  void nofity() {
-    Notification notification = new Notification();
-    notification.sendNotification();
+  /**
+   * return highest score.
+   */
+  int getHighestScore() {
+    List<ScoreItem> scores = getAll();
+    if (scores.isEmpty) {
+      return 0;
+    } else {
+      return scores.first.score;
+    }
   }
 
   //TODO this might be used only for testcode in leaderboard.dart. check if we need to remove it or not.
