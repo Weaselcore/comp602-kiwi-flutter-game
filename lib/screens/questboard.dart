@@ -14,7 +14,7 @@ class QuestBoard extends StatefulWidget {
 
 class _QuestBoardState extends State<QuestBoard> {
 
-  late List<QuestStatus> _dailyQuests = [];
+  late List<dynamic> _dailyQuests = [];
   late Box _configBox;
   // final ValueNotifier<List<QuestStatus>> dailyQuestNotifier = ValueNotifier(_dailyQuests);
 
@@ -23,7 +23,6 @@ class _QuestBoardState extends State<QuestBoard> {
     super.initState();
     _configBox = Hive.box("config");
     _dailyQuests = [];
-
     initDailyQuest();
   }
 
@@ -34,10 +33,10 @@ class _QuestBoardState extends State<QuestBoard> {
       await QuestManager.generateRandomDailyQuests();
     }
 
-    //get daily quests from user config
-    _dailyQuests = _configBox.get("dailyQuests");
     //notify that _dailyQuests is initialized.
     setState(() {
+      //get daily quests from user config
+      _dailyQuests = _configBox.get("dailyQuests");
     });
   }
 

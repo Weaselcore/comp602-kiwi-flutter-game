@@ -16,9 +16,6 @@ class QuestManager {
     //make config box available from other methods in this class
     _configBox = await Hive.openBox(CONFIGBOXNAME);
 
-    //reason why updating lastlogin here: Since I could not update lastLogin in constructor of main menu
-    //this method runs when the app is launched. Thus, not different from updating lastLogin in constructor of main menu.
-    _configBox.put("lastLogin", DateTime.now());
     //populate quest data if it is necessary.
     _prepareQuestData();
 
@@ -28,6 +25,16 @@ class QuestManager {
       //initialize daily quest
       generateRandomDailyQuests();
     }
+
+    //for updating daily quests under the following condition
+    //a player launces the app for the first time in a day/ some days.
+    if (oneDayPassed(DateTime.now())) {
+      generateRandomDailyQuests();
+    }
+
+    //reason why updating lastlogin here: Since I could not update lastLogin in constructor of main menu
+    //this method runs when the app is launched. Thus, not different from updating lastLogin in constructor of main menu.
+    _configBox.put("lastLogin", DateTime.now());
   }
 
   /**
@@ -54,7 +61,7 @@ class QuestManager {
    */
   static bool oneDayPassed(DateTime targetDate) {
     //get last login
-    DateTime lastLogin = _configBox.get("lastLogin");
+    dynamic lastLogin = _configBox.get("lastLogin");
     //check if one day has passed since last login
     return targetDate.difference(lastLogin).inDays >= 1;
   }
