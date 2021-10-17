@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
@@ -32,6 +34,8 @@ class Kiwi extends SpriteComponent
 
   bool hasLaser = false;
   bool godMode = false;
+
+  Queue powerUpQueue = Queue();
 
   late Sprite _kiwiSprite;
   late Sprite _kiwiWeakShieldSprite;
@@ -176,7 +180,8 @@ class Kiwi extends SpriteComponent
     gameRef.overlays.add(EndGameMenu.ID);
     _shieldCount = 0;
     hasLaser = false;
-    QuestManager.checkQuestCompletion(gameRef.coin, gameRef.score, gameRef.usedItem, gameRef.beatenEnemy, gameRef.beatenBoss);
+    QuestManager.checkQuestCompletion(gameRef.coin, gameRef.score,
+        gameRef.usedItem, gameRef.beatenEnemy, gameRef.beatenBoss);
     gameRef.localScoreDao.register(ScoreItem('user', gameRef.score));
     gameRef.remoteScoreDao.register();
   }
