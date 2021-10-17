@@ -16,6 +16,7 @@ import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/screens/score_item.dart';
 
 import 'boss/boss.dart';
+import 'boss/ufo_bullet.dart';
 
 class Kiwi extends SpriteComponent
     with
@@ -125,6 +126,17 @@ class Kiwi extends SpriteComponent
       }
     }
     if (other is Boss && !godMode) {
+      // If enemy has not been nullified by shield.
+      if (other.canDamage()) {
+        if (_shieldCount == 0 && other.canDamage()) {
+          die();
+        } else if (_shieldCount > 0 && other.canDamage()) {
+          other.toggleDamage();
+          removeShield();
+        }
+      }
+    }
+    if (other is UfoBullet && !godMode) {
       // If enemy has not been nullified by shield.
       if (other.canDamage()) {
         if (_shieldCount == 0 && other.canDamage()) {

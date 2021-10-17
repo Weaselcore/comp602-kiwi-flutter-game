@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flutter_game/game/components/boss/boss_falcon.dart';
+import 'package:flutter_game/game/components/boss/boss_ufo.dart';
 import 'boss.dart';
 
 /// A class that returns enemy objects or a dummy Imaginary object.
@@ -7,7 +8,7 @@ class BossFactory extends BaseComponent {
   Boss getBossType(String type, int idCount) {
     if (type == "falcon") {
       print("Making Crate");
-      return new FalconBoss(idCount);
+      return new UfoBoss(idCount);
       // } else if (type == "CLOUD") {
       //   print("Making Cloud");
       //   return new CloudEnemy(idCount);

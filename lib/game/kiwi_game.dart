@@ -29,6 +29,7 @@ import 'package:flutter_game/screens/score_item.dart';
 import 'components/boss/boss.dart';
 import 'components/boss/boss_manager.dart';
 import 'components/boss/boss_tracker.dart';
+import 'components/boss/ufo_bullet.dart';
 import 'components/tilt_config_component.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
@@ -395,6 +396,10 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     components.whereType<Boss>().forEach((boss) {
       boss.remove();
+    });
+
+    components.whereType<UfoBullet>().forEach((bullet) {
+      bullet.remove();
     });
   }
 
