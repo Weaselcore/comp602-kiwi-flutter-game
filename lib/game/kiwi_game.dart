@@ -277,7 +277,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       isNotified = true;
       notification.sendNotification();
     }
-  }
 
     if (firstPlay) {
       //show tutorial slides
