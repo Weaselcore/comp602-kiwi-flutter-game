@@ -17,7 +17,7 @@ class UfoBoss extends Boss with GameSizeAware {
   Random random = Random();
 
   UfoBoss(int idCount) : super(id: idCount, enemySpeed: 100) {
-    _bulletTimer = Timer(0.7, callback: fireBullet, repeat: true);
+    _bulletTimer = Timer(1, callback: fireBullet, repeat: true);
     _bulletTimer.start();
   }
 
