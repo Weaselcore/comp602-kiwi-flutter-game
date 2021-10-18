@@ -79,6 +79,14 @@ class EnemyManager extends BaseComponent
     _idCount = 0;
   }
 
+  void stop() {
+    _timer.stop();
+  }
+
+  void start() {
+    _timer.start();
+  }
+
   /// Freeze the timers when the game engine is pausing.
   void freeze() {
     _timer.stop;
