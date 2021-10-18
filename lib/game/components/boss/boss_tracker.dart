@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
 
 import '../kiwi.dart';
@@ -34,12 +33,6 @@ class BossTracker extends BaseComponent with HasGameRef<KiwiGame> {
   @override
   void update(double dt) {
     super.update(dt);
-    // if (!_bossList.isEmpty) {
-    // for (Boss boss in _bossList) {
-    //     if ()
-    //   }
-    //   print("pass");
-    //   }
   }
 
   /// Passes a reference to the kiwi when initialising the [kiwi].

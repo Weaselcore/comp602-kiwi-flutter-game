@@ -28,7 +28,7 @@ class FalconBoss extends Boss {
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load('boss_falcon.png');
-    size = Vector2(400, 400);
+    size = Vector2(350, 350);
     position = this.getPosition() - size / 2;
 
     final hitboxShape = HitboxCircle(definition: 0.6);

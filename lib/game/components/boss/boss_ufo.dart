@@ -11,7 +11,9 @@ import 'boss.dart';
 class UfoBoss extends Boss with GameSizeAware {
   late Vector2 startingPosition;
 
+  //bullet component
   late UfoBullet _fireBullet;
+  //bullet spawn timer
   late Timer _bulletTimer;
 
   Random random = Random();
@@ -62,8 +64,8 @@ class UfoBoss extends Boss with GameSizeAware {
   }
 
   void fireBullet() {
+    //set spawn position of bullet to middle of the ufo
     _fireBullet = UfoBullet(position + Vector2(0, size.y / 2));
-    //_fireBullet.anchor = Anchor.bottomCenter;
     gameRef.add(_fireBullet);
   }
 }

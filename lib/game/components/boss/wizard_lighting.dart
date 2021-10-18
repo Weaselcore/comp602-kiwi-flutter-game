@@ -7,11 +7,11 @@ import '../../kiwi_game.dart';
 
 class WizardLightning extends SpriteComponent
     with GameSizeAware, HasGameRef<KiwiGame>, Hitbox, Collidable {
+  //spawn position of component
   late Vector2 _startingPosition;
 
+  //timer to remove component from game
   late Timer _fadeTimer;
-
-  bool _canDamage = true;
 
   WizardLightning(Vector2 startingPosition) {
     _startingPosition = startingPosition;
@@ -21,10 +21,11 @@ class WizardLightning extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('pixsky.png');
+    sprite = await Sprite.load('lightning.png');
     size = Vector2(gameSize.x / 3, gameSize.y);
     position = _startingPosition;
 
+    //hit box for lightning bolt
     final hitboxShape = HitboxRectangle();
     addShape(hitboxShape);
   }
@@ -35,14 +36,13 @@ class WizardLightning extends SpriteComponent
     _fadeTimer.update(dt);
   }
 
-  /// Returns if the enemy object can damage.
-  bool canDamage() => _canDamage;
-
+  //allow collisions with player
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
     super.onCollision(intersectionPoints, other);
   }
 
+  //remove component from the game
   void despawn() {
     remove();
   }

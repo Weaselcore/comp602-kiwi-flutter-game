@@ -10,21 +10,25 @@ import 'package:flutter_game/game/game_size_aware.dart';
 import 'boss.dart';
 
 class WizardBoss extends Boss with GameSizeAware {
+  //timers for spawning lightning bolts and prep zones
   late Timer _prepBoltTimer;
-  late Timer _cycleTimer;
   late Timer _boltTimer;
+  //timer for despawning boss
+  late Timer _cycleTimer;
 
+  //variable for initial boss spawn
   late int spawnPosition;
 
+  //lightning bolt components
   late PrepLightning _prepLightning;
   late WizardLightning _wizardLightning;
 
   Random random = Random();
 
-  WizardBoss(int idCount) : super(id: idCount, enemySpeed: 400) {
+  WizardBoss(int idCount) : super(id: idCount, enemySpeed: 0) {
     _prepBoltTimer = Timer(1, callback: prepareBolt);
-    _cycleTimer = Timer(5.5, callback: despawn);
-    _boltTimer = Timer(2, callback: summonBolt);
+    _cycleTimer = Timer(4, callback: despawn);
+    _boltTimer = Timer(0.5, callback: summonBolt);
     _prepBoltTimer.start();
     _cycleTimer.start();
 
@@ -60,17 +64,7 @@ class WizardBoss extends Boss with GameSizeAware {
     super.render(canvas);
   }
 
-  // Vector2 getPosition() {
-  //   // Vector2 initialSize = Vector2(64, 64);
-  //   Vector2 position;
-
-  //   double randomPositionMultiplier = random.nextDouble();
-
-  //   print("Spawning BossFalcon at $position");
-
-  //   return position;
-  // }
-
+  //when player kills the boss progress boss fight win condition
   @override
   void die() {
     super.die();
@@ -84,12 +78,14 @@ class WizardBoss extends Boss with GameSizeAware {
       gameSize.x - 1 * (gameSize.x / 3)
     ];
 
+    //spawn lightning in every spot that isn't where the boss is spawning
     for (var i = 0; i < 3; i++) {
       if (i != spawnPosition) {
         _prepLightning = PrepLightning(Vector2(startingPosition[i], 0.0));
         gameRef.add(_prepLightning);
       }
     }
+    //start lighting bolt timer
     _boltTimer.start();
   }
 
@@ -100,6 +96,7 @@ class WizardBoss extends Boss with GameSizeAware {
       gameSize.x - 1 * (gameSize.x / 3)
     ];
 
+    //spawn lightning in every spot that isn't where the boss is spawning
     for (var i = 0; i < 3; i++) {
       if (i != spawnPosition) {
         _wizardLightning = WizardLightning(Vector2(startingPosition[i], 0.0));
@@ -109,10 +106,12 @@ class WizardBoss extends Boss with GameSizeAware {
     setRandomSpawn();
   }
 
+  //set random spawn location for boss
   void setRandomSpawn() {
     spawnPosition = random.nextInt(3);
   }
 
+  //remove boss component from game
   void despawn() {
     remove();
   }

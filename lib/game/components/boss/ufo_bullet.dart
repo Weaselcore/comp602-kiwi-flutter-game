@@ -11,11 +11,14 @@ import '../../kiwi_game.dart';
 class UfoBullet extends SpriteComponent
     with GameSizeAware, HasGameRef<KiwiGame>, Hitbox, Collidable {
   double _speed = 200;
+
   late Vector2 startingPosition;
 
   // A randomiser object is used to calculate random particles.
   Random _random = Random();
 
+  // A flag for shield interaction, if the kiwi has collided with the shield,
+  // the enemy should not be able collide with the kiwi on subsequent updates.
   bool _canDamage = true;
 
   UfoBullet(Vector2 startingPosition) {
@@ -36,8 +39,10 @@ class UfoBullet extends SpriteComponent
   void update(double dt) {
     super.update(dt);
 
+    //set the movement of the bullet after it spawns
     this.position += Vector2(0, 1) * this._speed * dt;
 
+    //removes laser bullet when it leaves the screen
     if (this.position.y > (gameSize.y + 100)) {
       remove();
     }
@@ -66,12 +71,6 @@ class UfoBullet extends SpriteComponent
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
     super.onCollision(intersectionPoints, other);
-
-    // if (other is Kiwi) {
-    //   if (other.hasShield()) {
-    //     die();
-    //   }
-    // }
   }
 
   /// Destroys the enemy object and removes the component from the game with style.

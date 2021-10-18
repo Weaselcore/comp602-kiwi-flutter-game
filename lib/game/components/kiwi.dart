@@ -150,13 +150,7 @@ class Kiwi extends SpriteComponent
     }
     if (other is WizardLightning && !godMode) {
       // If enemy has not been nullified by shield.
-      if (other.canDamage()) {
-        if (_shieldCount == 0 && other.canDamage()) {
-          die();
-        } else if (_shieldCount > 0 && other.canDamage()) {
-          removeShield();
-        }
-      }
+      die();
     } else if (other is ShieldPowerUp) {
       other.remove();
       gameRef.audioManager.playSfx('armour.wav');

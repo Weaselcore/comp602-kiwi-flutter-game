@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_game/game/components/kiwi.dart';
 import 'package:flutter_game/game/kiwi_game.dart';
 
 class Boss extends SpriteComponent
@@ -50,27 +49,11 @@ class Boss extends SpriteComponent
   @override
   void update(double dt) {
     super.update(dt);
-
-    // // Enemies are constantly moving upwards.
-    // this.position += Vector2(0, -1).normalized() * enemySpeed * dt;
-    //
-    // // The enemies get destroyed off screen using their unique ID.
-    // if (this.position.y < -100) {
-    //   gameRef.enemyTracker.removeEnemy(id);
-    //   print("Removing enemy with ID($id)");
-    //   remove();
-    // }
   }
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
     super.onCollision(intersectionPoints, other);
-
-    // if (other is Kiwi) {
-    //   if (other.hasShield()) {
-    //     die();
-    //   }
-    // }
   }
 
   /// Destroys the enemy object and removes the component from the game with style.

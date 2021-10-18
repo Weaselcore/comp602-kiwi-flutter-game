@@ -32,18 +32,18 @@ class BossManager extends BaseComponent
   Random random = Random();
 
   int _bossCount = 0;
-  var _bossTypes = ["wizard", "ufo", "wizard"];
+  var _bossTypes = ["falcon", "ufo", "wizard"];
 
   BossManager() : super() {
     // Enemies spawn every 2 seconds.
     _falconTimer = Timer(2, callback: spawnBoss, repeat: true);
     _ufoTimer = Timer(5, callback: spawnBoss, repeat: true);
-    _wizardTimer = Timer(6, callback: spawnBoss, repeat: true);
+    _wizardTimer = Timer(4.5, callback: spawnBoss, repeat: true);
   }
 
   /// This spawns enemy objects when the timer triggers.
   void spawnBoss() {
-    if (conditionCount <= _winCondition) {
+    if (conditionCount < _winCondition) {
       _idCount += 1;
       Boss newBoss = _bossFactory.getBossType(_bossTypes[_bossCount], _idCount);
       start(newBoss);
@@ -54,7 +54,11 @@ class BossManager extends BaseComponent
       gameRef.powerUpManager.switchToDefault();
       gameRef.enemyManager.start();
       conditionCount = 0;
-      _bossCount += 1;
+      if (_bossCount < 2) {
+        _bossCount += 1;
+      } else {
+        _bossCount = 0;
+      }
     }
   }
 
@@ -78,6 +82,8 @@ class BossManager extends BaseComponent
   void reset() {
     stop();
     _idCount = 0;
+    _bossCount = 0;
+    conditionCount = 0;
   }
 
   void stop() {
