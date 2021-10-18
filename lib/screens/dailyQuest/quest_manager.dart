@@ -27,9 +27,11 @@ class QuestManager {
     }
 
     //for updating daily quests under the following condition
-    //a player launces the app for the first time in a day/ some days.
+    //a player launches the app for the first time in a day/ some days.
     if (oneDayPassed(DateTime.now())) {
       generateRandomDailyQuests();
+      //if the date changes, a player can watch a reward Ad once a day.
+      _configBox.put("isAdsShown", false);
     }
 
     //reason why updating lastlogin here: Since I could not update lastLogin in constructor of main menu
