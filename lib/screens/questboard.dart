@@ -31,6 +31,9 @@ class _QuestBoardState extends State<QuestBoard> {
     if (QuestManager.oneDayPassed(DateTime.now())) {
       //generate daily quests and register then in user config
       await QuestManager.generateRandomDailyQuests();
+      //update last login
+      _configBox.put("lastLogin", DateTime.now());
+
     }
 
     //notify that _dailyQuests is initialized.
