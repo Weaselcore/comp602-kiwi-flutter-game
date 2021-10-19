@@ -33,6 +33,7 @@ import 'components/boss/boss.dart';
 import 'components/boss/boss_manager.dart';
 import 'components/boss/boss_tracker.dart';
 import 'components/boss/ufo_bullet.dart';
+import 'components/parallax.dart';
 import 'components/tilt_config_component.dart';
 import 'game_size_aware.dart';
 import 'overlay/pause_button.dart';
@@ -96,7 +97,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   bool isNotified = false;
   late bool firstPlay;
 
-
   late ParallaxComponent parallaxComponent;
 
   String kiwiSkin = "kiwi_sprite.png";
@@ -156,16 +156,19 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     audioManager.playBgm('background.mp3');
 
     if (!isAlreadyLoaded) {
-      final parallaxComponent = await loadParallaxComponent([
-        ParallaxImageData('pixbs.png'),
-        ParallaxImageData('side1.png'),
-        ParallaxImageData('pixc.png'),
-      ],
-          baseVelocity: Vector2(0, 50),
-          velocityMultiplierDelta: Vector2(1.8, 1.0),
-          repeat: ImageRepeat.repeatY,
-          fill: LayerFill.width);
-      add(parallaxComponent);
+      // final parallaxComponent = await loadParallaxComponent([
+      //   ParallaxImageData('pixbs.png'),
+      //   ParallaxImageData('smallclouds.png'),
+      //   ParallaxImageData('side1.png'),
+      //   ParallaxImageData('bigclouds.png'),
+      // ],
+      //     baseVelocity: Vector2(0, 5),
+      //     velocityMultiplierDelta: Vector2(0, 2.0),
+      //     repeat: ImageRepeat.repeatY,
+      //     fill: LayerFill.width);
+
+      // add(parallaxComponent);
+      add(Background());
 
       final joystick = JoystickComponent(
         gameRef: this,
@@ -299,7 +302,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       this.overlays.add(TutorialSlides.ID);
       firstPlay = !firstPlay;
     }
-
   }
 
   /// Slows the enemies speed as long as [_slowTimer] is running.
