@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/audio_manager_component.dart';
 import 'package:flutter_game/game/components/boss/wizard_lighting.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_game/game/components/coin/coin.dart';
 import 'package:flutter_game/game/components/coin/coin_manager.dart';
 import 'package:flutter_game/game/components/coin/coin_tracker.dart';
 import 'package:flutter_game/game/components/controls/tilt_controls.dart';
+import 'package:flutter_game/game/components/difficulty_manager.dart';
 import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 import 'package:flutter_game/screens/notification/notification.dart' as notif;
@@ -32,8 +32,9 @@ import 'components/boss/boss.dart';
 import 'components/boss/boss_manager.dart';
 import 'components/boss/boss_tracker.dart';
 import 'components/boss/ufo_bullet.dart';
-import 'components/parallax.dart';
+import 'components/background.dart';
 import 'components/tilt_config_component.dart';
+import 'components/transition.dart';
 import 'game_size_aware.dart';
 import 'overlay/hud.dart';
 import 'overlay/pause_button.dart';
@@ -83,6 +84,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   late BossManager bossManager;
   late BossTracker bossTracker;
 
+  late DifficultyManager difficultyManager;
+
   late JoystickComponent joystick;
 
   late Hud hud;
@@ -95,7 +98,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   bool isNotified = false;
   late bool firstPlay;
 
-  late ParallaxComponent parallaxComponent;
+  late Transition transitionComponent = Transition();
 
   String kiwiSkin = "kiwi_sprite.png";
 
@@ -139,6 +142,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       add(tiltConfigManager);
     }
 
+    difficultyManager = DifficultyManager();
+
     tiltConfigManager.fetchSettings();
     isTiltControls = tiltConfigManager.getConfig();
 
@@ -177,7 +182,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
       hud = Hud(_kiwi);
       add(hud);
-      enemyManager = EnemyManager();
+      enemyManager = EnemyManager(difficultyManager);
       add(enemyManager);
       enemyTracker = EnemyTracker();
       add(enemyTracker);
@@ -199,6 +204,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       bossTracker.registerKiwi(_kiwi);
 
       isAlreadyLoaded = true;
+      add(transitionComponent);
     }
   }
 
@@ -340,16 +346,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     }
   }
 
-  void stopParallax() {
-    final Parallax? parallax = parallaxComponent.parallax;
-    parallax!.baseVelocity = Vector2(0.0, 0.0);
-  }
-
-  void startParallax() {
-    final Parallax? parallax = parallaxComponent.parallax;
-    parallax!.baseVelocity = Vector2(0, 50);
-  }
-
   /// When restarting, it resets managers, timers and position of the kiwi.
   void reset() {
     // Resetting id counts.
@@ -364,6 +360,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     enemyTracker.reset();
     powerUpTracker.reset();
     coinTracker.reset();
+
+    difficultyManager.reset();
 
     _laserTimer.stop();
     _slowTimer.stop();
@@ -447,5 +445,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
         _kiwi.setMoveDirection(Vector2.zero());
         break;
     }
+  }
+
+  void startTransition() {
+    add(transitionComponent);
   }
 }
