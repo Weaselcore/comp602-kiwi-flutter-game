@@ -10,6 +10,7 @@ import 'package:flutter_game/screens/dailyQuest/quest_status.dart';
 import 'package:flutter_game/screens/hive/box_manager.dart';
 import 'package:flutter_game/screens/main_menu.dart';
 import 'package:flutter_game/screens/score_item.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -48,6 +49,7 @@ void main() async {
     "firstPlay": true,
     "dailyQuests": [],
     "lastLogin": DateTime.now(),
+    "isAdsShown": false,
   };
 
   await boxManager.initBox("config", configMap);
@@ -56,6 +58,9 @@ void main() async {
   QuestManager.init();
 
   Flame.device.fullScreen();
+  //initialize ads SDK
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   runApp(MyApp());
 }
 

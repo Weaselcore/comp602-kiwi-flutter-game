@@ -6,12 +6,15 @@ import 'package:flame/game.dart';
 import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/audio_manager_component.dart';
+import 'package:flutter_game/game/components/boss/wizard_lighting.dart';
+import 'package:flutter_game/game/components/boss/wizard_prep_lightning.dart';
 import 'package:flutter_game/game/components/coin/coin.dart';
 import 'package:flutter_game/game/components/coin/coin_manager.dart';
 import 'package:flutter_game/game/components/coin/coin_tracker.dart';
 import 'package:flutter_game/game/components/controls/tilt_controls.dart';
 import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
+import 'package:flutter_game/screens/notification/notification.dart' as notif;
 import 'package:hive/hive.dart';
 
 import 'package:sensors_plus/sensors_plus.dart';
@@ -25,6 +28,11 @@ import 'package:flutter_game/game/components/enemy/enemy_tracker.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
 import 'package:flutter_game/screens/dao/remote_score_dao.dart';
 import 'package:flutter_game/screens/score_item.dart';
+import 'components/boss/boss.dart';
+import 'components/boss/boss_manager.dart';
+import 'components/boss/boss_tracker.dart';
+import 'components/boss/ufo_bullet.dart';
+import 'components/parallax.dart';
 import 'components/tilt_config_component.dart';
 import 'game_size_aware.dart';
 import 'overlay/hud.dart';
@@ -42,6 +50,9 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   bool isRemoteScoreDaoLoaded = false;
   late LocalScoreDao localScoreDao;
   late RemoteScoreDao remoteScoreDao;
+
+  bool isNotificationLoaded = false;
+  late notif.Notification notification;
 
   bool isAudioManagerLoaded = false;
   bool isTiltConfigLoaded = false;
@@ -64,11 +75,13 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   double tiltYVelocity = 0.0;
 
   late EnemyTracker enemyTracker;
-  late EnemyManager _enemyManager;
+  late EnemyManager enemyManager;
   late PowerUpTracker powerUpTracker;
-  late PowerUpManager _powerUpManager;
+  late PowerUpManager powerUpManager;
   late CoinManager _coinManager;
   late CoinTracker coinTracker;
+  late BossManager bossManager;
+  late BossTracker bossTracker;
 
   late Hud hud;
 
@@ -76,7 +89,11 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   late Timer _laserTimer;
 
   late LaserBeam _laserBeam;
+  int highScore = 0;
+  bool isNotified = false;
   late bool firstPlay;
+
+  late ParallaxComponent parallaxComponent;
 
   String kiwiSkin = "kiwi_sprite.png";
 
@@ -92,11 +109,17 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     if (!isLocalScoreDaoLoaded) {
       localScoreDao = LocalScoreDao();
       isLocalScoreDaoLoaded = true;
+      highScore = localScoreDao.getHighestScore();
     }
 
     if (!isRemoteScoreDaoLoaded) {
       remoteScoreDao = RemoteScoreDao();
       isRemoteScoreDaoLoaded = true;
+    }
+
+    if (!isNotificationLoaded) {
+      notification = notif.Notification();
+      isNotificationLoaded = true;
     }
 
     if (!isAudioManagerLoaded) {
@@ -129,21 +152,25 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     audioManager.playBgm('background.mp3');
 
     if (!isAlreadyLoaded) {
-      final parallaxComponent = await loadParallaxComponent([
-        ParallaxImageData('pixbs.png'),
-        ParallaxImageData('side1.png'),
-        ParallaxImageData('pixc.png'),
-      ],
-          baseVelocity: Vector2(0, 50),
-          velocityMultiplierDelta: Vector2(1.8, 1.0),
-          repeat: ImageRepeat.repeatY,
-          fill: LayerFill.width);
-      add(parallaxComponent);
+      // final parallaxComponent = await loadParallaxComponent([
+      //   ParallaxImageData('pixbs.png'),
+      //   ParallaxImageData('smallclouds.png'),
+      //   ParallaxImageData('side1.png'),
+      //   ParallaxImageData('bigclouds.png'),
+      // ],
+      //     baseVelocity: Vector2(0, 5),
+      //     velocityMultiplierDelta: Vector2(0, 2.0),
+      //     repeat: ImageRepeat.repeatY,
+      //     fill: LayerFill.width);
+
+      // add(parallaxComponent);
+      add(Background());
 
       final joystick = JoystickComponent(
         gameRef: this,
         directional: JoystickDirectional(
             size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
+
         actions: [
           JoystickAction(
             actionId: 0,
@@ -164,15 +191,19 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
         });
       }
 
+
       hud = Hud(_kiwi);
       add(hud);
-
-      _enemyManager = EnemyManager();
-      add(_enemyManager);
+      enemyManager = EnemyManager();
+      add(enemyManager);
       enemyTracker = EnemyTracker();
       add(enemyTracker);
-      _powerUpManager = PowerUpManager();
-      add(_powerUpManager);
+      bossManager = BossManager();
+      add(bossManager);
+      bossTracker = BossTracker();
+      add(bossTracker);
+      powerUpManager = PowerUpManager();
+      add(powerUpManager);
       powerUpTracker = PowerUpTracker();
       add(powerUpTracker);
       _coinManager = CoinManager();
@@ -182,6 +213,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
       // Register reference of Kiwi once to improve performance.
       enemyTracker.registerKiwi(_kiwi);
+      bossTracker.registerKiwi(_kiwi);
 
       isAlreadyLoaded = true;
     }
@@ -230,6 +262,13 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     if (isTiltControls) {
       tiltMovement();
+    }
+
+
+    //check if a player beats her/his high score
+    if (highScore != 0 && !isNotified && highScore < score) {
+      isNotified = true;
+      notification.sendNotification();
     }
 
     if (firstPlay) {
@@ -319,15 +358,27 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     }
   }
 
+  void stopParallax() {
+    final Parallax? parallax = parallaxComponent.parallax;
+    parallax!.baseVelocity = Vector2(0.0, 0.0);
+  }
+
+  void startParallax() {
+    final Parallax? parallax = parallaxComponent.parallax;
+    parallax!.baseVelocity = Vector2(0, 50);
+  }
+
   /// When restarting, it resets managers, timers and position of the kiwi.
   void reset() {
     // Resetting id counts.
-    _enemyManager.reset();
-    _powerUpManager.reset();
+    enemyManager.reset();
+    powerUpManager.reset();
+    bossManager.reset();
     _coinManager.reset();
     _kiwi.reset();
 
     // Clearing the entity list.
+    bossTracker.reset();
     enemyTracker.reset();
     powerUpTracker.reset();
     coinTracker.reset();
@@ -337,6 +388,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     score = 0;
     coin = 0;
+    isNotified = false;
+    highScore = localScoreDao.getHighestScore();
     beatenBoss = 0;
     beatenEnemy = 0;
     usedItem = 0;
@@ -351,6 +404,22 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     components.whereType<Coin>().forEach((coin) {
       coin.remove();
+    });
+
+    components.whereType<Boss>().forEach((boss) {
+      boss.remove();
+    });
+
+    components.whereType<UfoBullet>().forEach((bullet) {
+      bullet.remove();
+    });
+
+    components.whereType<WizardLightning>().forEach((lightning) {
+      lightning.remove();
+    });
+
+    components.whereType<PrepLightning>().forEach((lightning) {
+      lightning.remove();
     });
   }
 

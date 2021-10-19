@@ -49,6 +49,18 @@ class LocalScoreDao {
     return scores;
   }
 
+  /**
+   * return highest score.
+   */
+  int getHighestScore() {
+    List<ScoreItem> scores = getAll();
+    if (scores.isEmpty) {
+      return 0;
+    } else {
+      return scores.first.score;
+    }
+  }
+
   //TODO this might be used only for testcode in leaderboard.dart. check if we need to remove it or not.
   void deleteAll() {
     _scoreBox.deleteAll(_scoreBox.keys);
