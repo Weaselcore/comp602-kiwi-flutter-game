@@ -115,9 +115,9 @@ class QuestManager {
     //get daily quests
 
     List<dynamic> dailyQuests = _configBox.get("dailyQuests");
-    for (QuestStatus questSatatus in dailyQuests) {
+    for (QuestStatus questStatus in dailyQuests) {
       //check quest completion only if it is not completed yet.
-      if (!questStatus.isSatisfied) {
+      if (questStatus.isSatisfied) {
         //check conditions corresponding to quest type
         switch (questStatus.quest.questType) {
           case "coin":
