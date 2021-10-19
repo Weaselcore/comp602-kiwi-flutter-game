@@ -113,8 +113,9 @@ class QuestManager {
   static void checkQuestCompletion(int numCoins, int score, int usedItems,
       int numEnemies, int numBosses) async {
     //get daily quests
-    List<QuestStatus> dailyQuests = _configBox.get("dailyQuests");
-    for (QuestStatus questStatus in dailyQuests) {
+
+    List<dynamic> dailyQuests = _configBox.get("dailyQuests");
+    for (QuestStatus questSatatus in dailyQuests) {
       //check quest completion only if it is not completed yet.
       if (!questStatus.isSatisfied) {
         //check conditions corresponding to quest type
