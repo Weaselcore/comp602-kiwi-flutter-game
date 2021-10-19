@@ -112,6 +112,12 @@ class _TutorialSlidesState extends State<TutorialSlides> {
         desc: 'You can use many powerup items!');
     slides.add(sliderModel);
 
+    sliderModel = new SliderModel(
+        title: 'Defeat Bosses',
+        imagePath: 'assets/images/tutorial4.png',
+        desc: 'Use shields and laser beam to defeat bosses!');
+    slides.add(sliderModel);
+
     return slides;
   }
 
