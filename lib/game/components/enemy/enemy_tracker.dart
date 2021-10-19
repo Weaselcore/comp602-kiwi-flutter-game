@@ -44,7 +44,8 @@ class EnemyTracker extends BaseComponent with HasGameRef<KiwiGame> {
         if (!enemy.passedKiwi) {
           if (_kiwi.getYPosition() > enemy.getYPosition()) {
             enemy.passedKiwi = true;
-            gameRef.score += 1;
+            gameRef.score = gameRef.score +
+                (1 * gameRef.difficultyManager.currentScoreMultiplier);
             print("Score: $gameRef.score");
           }
         }

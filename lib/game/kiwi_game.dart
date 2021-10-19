@@ -397,6 +397,10 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     components.whereType<PrepLightning>().forEach((lightning) {
       lightning.remove();
     });
+
+    components.whereType<LaserBeam>().forEach((laserbeam) {
+      laserbeam.remove();
+    });
   }
 
   /// Used to apply movement using the [TiltMoveDirectional] enum from the

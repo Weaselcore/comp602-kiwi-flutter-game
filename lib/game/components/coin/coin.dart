@@ -78,7 +78,8 @@ class Coin extends SpriteAnimationComponent
     super.onCollision(intersectionPoints, other);
     // When colliding with Kiwi, increment score and coins collected.
     if (other is Kiwi) {
-      gameRef.incrementScore(_scoreWorth);
+      gameRef.score = gameRef.score +
+          (1 * gameRef.difficultyManager.currentScoreMultiplier);
       gameRef.coin += 1;
       gameRef.coinTracker.removeCoin(id);
       // Remove from the game.
