@@ -8,7 +8,6 @@ class BossTracker extends BaseComponent with HasGameRef<KiwiGame> {
   // A list to contain enemy objects.
   late List _bossList;
   // A reference to the kiwi object.
-  late Kiwi _kiwi;
 
   BossTracker() {
     // Initialise an empty list that can contain only enemy objects.
@@ -36,7 +35,5 @@ class BossTracker extends BaseComponent with HasGameRef<KiwiGame> {
   }
 
   /// Passes a reference to the kiwi when initialising the [kiwi].
-  void registerKiwi(Kiwi kiwi) {
-    _kiwi = kiwi;
-  }
+  void registerKiwi(Kiwi kiwi) {}
 }

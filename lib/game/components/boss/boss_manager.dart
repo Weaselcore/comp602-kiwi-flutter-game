@@ -52,6 +52,7 @@ class BossManager extends BaseComponent
     } else {
       stop();
       gameRef.powerUpManager.switchToDefault();
+      gameRef.enemyManager.increaseDifficulty();
       gameRef.enemyManager.start();
       conditionCount = 0;
       if (_bossCount < 2) {

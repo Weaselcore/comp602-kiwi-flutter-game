@@ -11,7 +11,7 @@ class CrateEnemy extends Enemy with GameSizeAware {
 
   Random random = Random();
 
-  CrateEnemy(int idCount) : super(id: idCount, enemySpeed: 200);
+  CrateEnemy(int idCount) : super(id: idCount, currentSpeed: 200);
 
   @override
   Future<void> onLoad() async {
@@ -32,7 +32,7 @@ class CrateEnemy extends Enemy with GameSizeAware {
   void update(double dt) {
     super.update(dt);
 
-    this.position += Vector2(0, -1).normalized() * this.enemySpeed * dt;
+    this.position += Vector2(0, -1).normalized() * this.currentSpeed * dt;
   }
 
   Vector2 getPosition() {

@@ -14,9 +14,9 @@ class Enemy extends SpriteComponent
   late int id;
   // A flag to check if the enemy has passed the kiwi so scoring can be tracked.
   late bool passedKiwi = false;
-  late final double originalSpeed;
-  late final double slowSpeed;
-  late double enemySpeed;
+  late double baseSpeed;
+  late double slowSpeed;
+  late double currentSpeed;
 
   // A randomiser object is used to calculate random particles.
   Random _random = Random();
@@ -27,9 +27,8 @@ class Enemy extends SpriteComponent
   // A flag to toggle slow state when the kiwi has picked up the slow powerup.
   bool _isSlowed = false;
 
-  Enemy({required this.id, required this.enemySpeed}) {
-    this.originalSpeed = enemySpeed;
-    slowSpeed = enemySpeed * 0.50;
+  Enemy({required this.id, required this.currentSpeed}) {
+    this.baseSpeed = currentSpeed;
   }
 
   /// This method generates a random vector with its angle
@@ -48,7 +47,7 @@ class Enemy extends SpriteComponent
     super.update(dt);
 
     // Enemies are constantly moving upwards.
-    this.position += Vector2(0, -1).normalized() * enemySpeed * dt;
+    this.position += Vector2(0, -1).normalized() * currentSpeed * dt;
 
     // The enemies get destroyed off screen using their unique ID.
     if (this.position.y < -100) {
@@ -86,14 +85,20 @@ class Enemy extends SpriteComponent
 
   /// Triggers the slow speeds when kiwi picks up slow powerup.
   void halfSpeed() {
-    enemySpeed = slowSpeed;
+    slowSpeed = baseSpeed * 0.50;
+    currentSpeed = slowSpeed;
     _isSlowed = true;
   }
 
   /// Gives back original speed when slow powerup ends.
   void restoreSpeed() {
-    enemySpeed = originalSpeed;
+    currentSpeed = baseSpeed;
     _isSlowed = false;
+  }
+
+  /// Sets a speed using a multiplier from the DifficultyManager.
+  void setSpeed(double multiplier) {
+    currentSpeed = baseSpeed * multiplier;
   }
 
   /// Returns if the enemy object is slowed.
