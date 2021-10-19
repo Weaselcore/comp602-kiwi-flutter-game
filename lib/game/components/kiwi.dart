@@ -124,7 +124,8 @@ class Kiwi extends SpriteComponent
 
     if (other is ShieldPowerUp ||
         other is SlomoPowerUp ||
-        other is LaserPowerUp) {
+        other is LaserPowerUp ||
+        other is BossPowerUp) {
       addPowerUp(other as PowerUp);
       other.remove();
     } else if (other is Enemy && !godMode) {
@@ -163,13 +164,6 @@ class Kiwi extends SpriteComponent
     if (other is WizardLightning && !godMode) {
       // If enemy has not been nullified by shield.
       die();
-    } else if (other is BossPowerUp) {
-      other.remove();
-      // TODO: Add sound effect for spawning boss.
-      // gameRef.audioManager.playSfx('slow_time.wav');
-      gameRef.powerUpManager.switchToShield();
-      gameRef.enemyManager.stop();
-      gameRef.bossManager.spawnBoss();
     }
   }
 
@@ -288,6 +282,8 @@ class Kiwi extends SpriteComponent
       useShield();
     } else if (powerUp is SlomoPowerUp) {
       useSlomo();
+    } else if (powerUp is BossPowerUp) {
+      useBossSpawn();
     }
     powerUpQueue.remove(powerUp);
     gameRef.usedItem += 1;
@@ -308,6 +304,12 @@ class Kiwi extends SpriteComponent
       fireLaser();
       gameRef.audioManager.playSfx('laser.mp3');
     }
+  }
+
+  void useBossSpawn() {
+    gameRef.powerUpManager.switchToShield();
+    gameRef.enemyManager.stop();
+    gameRef.bossManager.spawnBoss();
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 import 'package:flutter_game/game/components/powerup/powerup.dart';
+import 'package:flutter_game/game/components/powerup/powerup_types/boss_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/laser_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/shield_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/slomo_powerup.dart';
@@ -17,6 +18,7 @@ class Hud extends SpriteComponent with HasGameRef<KiwiGame> {
   late Sprite laserSprite;
   late Sprite slomoSprite;
   late Sprite shieldSprite;
+  late Sprite bossSprite;
 
   final Vector2 firstSize = Vector2(50, 50);
   final Vector2 secondSize = Vector2(25, 25);
@@ -63,6 +65,7 @@ class Hud extends SpriteComponent with HasGameRef<KiwiGame> {
     laserSprite = await Sprite.load("laser_powerup_sprite.png");
     slomoSprite = await Sprite.load("slomo_powerup_sprite.png");
     shieldSprite = await Sprite.load("shield_powerup_sprite.png");
+    bossSprite = await Sprite.load("heart.png");
   }
 
   @override
@@ -103,6 +106,8 @@ class Hud extends SpriteComponent with HasGameRef<KiwiGame> {
       return slomoSprite;
     } else if (powerUp is ShieldPowerUp) {
       return shieldSprite;
+    } else if (powerUp is BossPowerUp) {
+      return bossSprite;
     } else {
       throw Error();
     }
