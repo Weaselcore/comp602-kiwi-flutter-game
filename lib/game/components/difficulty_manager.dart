@@ -9,6 +9,7 @@ class DifficultyManager extends BaseComponent {
 
   DifficultyManager() {
     currentDifficulty = baseDifficulty;
+    currentScoreMultiplier = baseScoreMultiplier;
   }
 
   void reset() {
