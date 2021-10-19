@@ -3,10 +3,11 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_game/game/game_size_aware.dart';
 
 import 'boss.dart';
 
-class FalconBoss extends Boss {
+class FalconBoss extends Boss with GameSizeAware {
   late Vector2 startingPosition;
   late Timer _swoopTimer;
   double swoopRightVector = 1.0;
