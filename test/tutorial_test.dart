@@ -35,6 +35,9 @@ void main() {
       await tester.tap(find.text("Next", skipOffstage: false).first);
       await tester.pumpAndSettle();
       //tap a textbuttn to swipe a slide.
+      await tester.tap(find.text("Next", skipOffstage: false).at(1));
+      await tester.pumpAndSettle();
+      //tap a textbutton to swipe a slide
       await tester.tap(find.text("Next", skipOffstage: false).last);
       await tester.pumpAndSettle();
       //tap a textbuttn to finish tutorial.
