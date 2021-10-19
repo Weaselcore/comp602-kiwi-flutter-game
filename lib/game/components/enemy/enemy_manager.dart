@@ -47,7 +47,7 @@ class EnemyManager extends BaseComponent
       int randomEnemy = random.nextInt(enemyType.length);
       // Fabricate new enemy object from the enemy type.
       Enemy enemy = enemyFactory.getEnemyType(enemyType[randomEnemy], _idCount);
-      enemy.setSpeed(difficultyManager.getDifficulty());
+      enemy.setSpeed(difficultyManager.getCurrentDifficulty());
       // Add enemy to the tracker.
       gameRef.enemyTracker.addEnemy(enemy);
       // Add enemy to the game.

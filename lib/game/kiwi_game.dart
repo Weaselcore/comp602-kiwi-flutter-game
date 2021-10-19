@@ -298,7 +298,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
   /// Increment [score] by [scoreToAdd].
   void incrementScore(int scoreToAdd) {
-    score += scoreToAdd;
+    score = scoreToAdd * difficultyManager.getScoreDifficulty();
   }
 
   /// Returns a reference to the kiwi.
