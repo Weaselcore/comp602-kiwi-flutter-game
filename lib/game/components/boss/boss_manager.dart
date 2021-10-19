@@ -30,7 +30,7 @@ class BossManager extends BaseComponent
 
   // A randomiser for the type of enemy to spawn.
   Random random = Random();
-
+  // ,
   int _bossCount = 0;
   var _bossTypes = ["falcon", "ufo", "wizard"];
 

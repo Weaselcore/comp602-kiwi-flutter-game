@@ -83,6 +83,8 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   late BossManager bossManager;
   late BossTracker bossTracker;
 
+  late JoystickComponent joystick;
+
   late Hud hud;
 
   late Timer _slowTimer;
@@ -132,14 +134,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     kiwiSkin = configBox.get("skin");
     firstPlay = configBox.get("firstPlay");
 
-    _kiwi = Kiwi(
-      sprite: await Sprite.load(kiwiSkin),
-      size: Vector2(122, 76),
-      position: Vector2(viewport.canvasSize.x / 2, viewport.canvasSize.y / 3),
-    );
-    _kiwi.anchor = Anchor.center;
-    add(_kiwi);
-
     if (!isTiltConfigLoaded) {
       tiltConfigManager = TiltConfig();
       add(tiltConfigManager);
@@ -151,46 +145,35 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     audioManager.fetchSettings();
     audioManager.playBgm('background.mp3');
 
-    if (!isAlreadyLoaded) {
-      // final parallaxComponent = await loadParallaxComponent([
-      //   ParallaxImageData('pixbs.png'),
-      //   ParallaxImageData('smallclouds.png'),
-      //   ParallaxImageData('side1.png'),
-      //   ParallaxImageData('bigclouds.png'),
-      // ],
-      //     baseVelocity: Vector2(0, 5),
-      //     velocityMultiplierDelta: Vector2(0, 2.0),
-      //     repeat: ImageRepeat.repeatY,
-      //     fill: LayerFill.width);
+    _kiwi = Kiwi(
+      sprite: await Sprite.load(kiwiSkin),
+      size: Vector2(122, 76),
+      position: Vector2(viewport.canvasSize.x / 2, viewport.canvasSize.y / 3),
+    );
+    _kiwi.anchor = Anchor.center;
+    add(_kiwi);
 
-      // add(parallaxComponent);
-      add(Background());
-
-      final joystick = JoystickComponent(
-        gameRef: this,
-        directional: JoystickDirectional(
-            size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
-
-        actions: [
-          JoystickAction(
-            actionId: 0,
-            size: 60,
-            margin: const EdgeInsets.all(
-              50,
-            ),
+    joystick = JoystickComponent(
+      gameRef: this,
+      directional: JoystickDirectional(
+          size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
+      actions: [
+        JoystickAction(
+          actionId: 0,
+          size: 60,
+          margin: const EdgeInsets.all(
+            50,
           ),
-        ],
-      );
+        ),
+      ],
+    );
 
-      if (!isTiltControls && !this.components.contains(joystick)) {
-        joystick.addObserver(_kiwi);
-        add(joystick);
-      } else {
-        components.whereType<JoystickComponent>().forEach((element) {
-          element.remove();
-        });
-      }
+    joystick.addObserver(_kiwi);
+    add(joystick);
+    joystick.priority = 1;
 
+    if (!isAlreadyLoaded) {
+      add(Background());
 
       hud = Hud(_kiwi);
       add(hud);
@@ -263,7 +246,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     if (isTiltControls) {
       tiltMovement();
     }
-
 
     //check if a player beats her/his high score
     if (highScore != 0 && !isNotified && highScore < score) {

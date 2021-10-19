@@ -34,11 +34,11 @@ class CloudEnemy extends Enemy with GameSizeAware {
     double randomPositionMultiplier = random.nextDouble();
 
     Vector2 position =
-    Vector2(randomPositionMultiplier * gameSize.x, gameSize.y + 100);
+        Vector2(randomPositionMultiplier * gameSize.x, gameSize.y + 200);
 
     position.clamp(
       Vector2.zero() + Vector2(150, 0),
-      gameSize + Vector2(150, 0),
+      gameSize + Vector2(150, 150),
     );
 
     print("Spawning thundercloud at $position");
