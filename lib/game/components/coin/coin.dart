@@ -59,13 +59,13 @@ class Coin extends SpriteAnimationComponent
     Vector2 position =
         // The randomised number is multiplied with the screen size so it spawns
         // on screen.
-        Vector2(randomPositionMultiplier * gameSize.x, gameSize.y + 100);
+        Vector2(randomPositionMultiplier * gameSize.x, gameSize.y + 200);
 
     // The coin will be clamped into position if there are plans for moving
     // coins.
     position.clamp(
       Vector2.zero() + Vector2(64, 0),
-      gameSize + Vector2(64, 0),
+      gameSize + Vector2(64, 150),
     );
 
     print("Spawning coin at $position");

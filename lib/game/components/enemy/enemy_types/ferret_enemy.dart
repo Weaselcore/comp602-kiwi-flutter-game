@@ -19,7 +19,7 @@ class FerretEnemy extends Enemy with GameSizeAware {
 
   late Timer _swayTimer;
 
-  FerretEnemy(int idCount) : super(id: idCount, enemySpeed: 70) {
+  FerretEnemy(int idCount) : super(id: idCount, currentSpeed: 70) {
     _swayTimer = Timer(3, callback: _switchHorizontalDirection, repeat: true);
     _swayTimer.start();
     _toMove = _rightMove;
@@ -52,7 +52,7 @@ class FerretEnemy extends Enemy with GameSizeAware {
 
     _swayTimer.update(dt);
     _toMove = !_movingLeft ? _rightMove : _leftMove;
-    this.position += (Vector2(0, 0) + _toMove) * enemySpeed * dt;
+    this.position += (Vector2(0, 0) + _toMove) * currentSpeed * dt;
   }
 
   Vector2 getPosition() {
@@ -61,11 +61,11 @@ class FerretEnemy extends Enemy with GameSizeAware {
     double randomPositionMultiplier = random.nextDouble();
 
     Vector2 position =
-        Vector2(randomPositionMultiplier * gameSize.x, gameSize.y + 100);
+        Vector2(randomPositionMultiplier * gameSize.x, gameSize.y + 200);
 
     position.clamp(
       Vector2.zero() + Vector2(150, 0),
-      gameSize + Vector2(150, 0),
+      gameSize + Vector2(150, 150),
     );
 
     print("Spawning ferret at $position");

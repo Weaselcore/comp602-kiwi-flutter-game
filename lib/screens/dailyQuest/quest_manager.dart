@@ -27,9 +27,11 @@ class QuestManager {
     }
 
     //for updating daily quests under the following condition
-    //a player launces the app for the first time in a day/ some days.
+    //a player launches the app for the first time in a day/ some days.
     if (oneDayPassed(DateTime.now())) {
       generateRandomDailyQuests();
+      //if the date changes, a player can watch a reward Ad once a day.
+      _configBox.put("isAdsShown", false);
     }
 
     //reason why updating lastlogin here: Since I could not update lastLogin in constructor of main menu
@@ -111,35 +113,36 @@ class QuestManager {
   static void checkQuestCompletion(int numCoins, int score, int usedItems,
       int numEnemies, int numBosses) async {
     //get daily quests
+
     List<dynamic> dailyQuests = _configBox.get("dailyQuests");
     for (QuestStatus questSatatus in dailyQuests) {
       //check quest completion only if it is not completed yet.
-      if (!questSatatus.isSatisfied) {
+      if (!questStatus.isSatisfied) {
         //check conditions corresponding to quest type
-        switch (questSatatus.quest.questType) {
+        switch (questStatus.quest.questType) {
           case "coin":
-            if (questSatatus.quest.counter <= numCoins) {
-              _makeStatusComplete(questSatatus);
+            if (questStatus.quest.counter <= numCoins) {
+              _makeStatusComplete(questStatus);
             }
             break;
           case "score":
-            if (questSatatus.quest.counter <= score) {
-              _makeStatusComplete(questSatatus);
+            if (questStatus.quest.counter <= score) {
+              _makeStatusComplete(questStatus);
             }
             break;
           case "item":
-            if (questSatatus.quest.counter <= usedItems) {
-              _makeStatusComplete(questSatatus);
+            if (questStatus.quest.counter <= usedItems) {
+              _makeStatusComplete(questStatus);
             }
             break;
           case "enemy":
-            if (questSatatus.quest.counter <= numEnemies) {
-              _makeStatusComplete(questSatatus);
+            if (questStatus.quest.counter <= numEnemies) {
+              _makeStatusComplete(questStatus);
             }
             break;
           case "boss":
-            if (questSatatus.quest.counter <= numBosses) {
-              _makeStatusComplete(questSatatus);
+            if (questStatus.quest.counter <= numBosses) {
+              _makeStatusComplete(questStatus);
             }
             break;
         }
@@ -160,16 +163,13 @@ class QuestManager {
   static List<Quest> _generateQuestData() {
     List<Quest> quests = [];
 
-    Quest quest0 =
-        new Quest(0, "coin", "Get 10 coins", "coin", 5, 10);
+    Quest quest0 = new Quest(0, "coin", "Get 10 coins", "coin", 5, 10);
     quests.add(quest0);
 
-    Quest quest1 =
-        new Quest(1, "enemy", "Break 5 enemies", "coin", 10, 5);
+    Quest quest1 = new Quest(1, "enemy", "Break 5 enemies", "coin", 10, 5);
     quests.add(quest1);
 
-    Quest quest2 =
-        new Quest(2, "score", "Score 20 points", "coin", 15, 20);
+    Quest quest2 = new Quest(2, "score", "Score 20 points", "coin", 15, 20);
     quests.add(quest2);
 
     Quest quest3 = new Quest(3, "item", "Use 3 items", "coin", 20, 3);

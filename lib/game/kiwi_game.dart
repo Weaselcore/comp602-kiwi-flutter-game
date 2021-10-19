@@ -3,13 +3,15 @@ import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game/game/components/audio_manager_component.dart';
+import 'package:flutter_game/game/components/boss/wizard_lighting.dart';
+import 'package:flutter_game/game/components/boss/wizard_prep_lightning.dart';
 import 'package:flutter_game/game/components/coin/coin.dart';
 import 'package:flutter_game/game/components/coin/coin_manager.dart';
 import 'package:flutter_game/game/components/coin/coin_tracker.dart';
 import 'package:flutter_game/game/components/controls/tilt_controls.dart';
+import 'package:flutter_game/game/components/difficulty_manager.dart';
 import 'package:flutter_game/game/components/enemy/enemy_manager.dart';
 import 'package:flutter_game/game/components/kiwi.dart';
 import 'package:flutter_game/screens/notification/notification.dart' as notif;
@@ -23,12 +25,17 @@ import 'package:flutter_game/game/components/powerup/powerup_tracker.dart';
 import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_manager.dart';
 import 'package:flutter_game/game/components/enemy/enemy_tracker.dart';
-import 'package:flutter_game/game/components/ticker/info_ticker.dart';
 import 'package:flutter_game/screens/dao/local_score_dao.dart';
 import 'package:flutter_game/screens/dao/remote_score_dao.dart';
 import 'package:flutter_game/screens/score_item.dart';
+import 'components/boss/boss.dart';
+import 'components/boss/boss_manager.dart';
+import 'components/boss/boss_tracker.dart';
+import 'components/boss/ufo_bullet.dart';
+import 'components/background.dart';
 import 'components/tilt_config_component.dart';
 import 'game_size_aware.dart';
+import 'overlay/hud.dart';
 import 'overlay/pause_button.dart';
 import 'overlay/pause_menu.dart';
 import 'overlay/tutorial_slides.dart';
@@ -68,17 +75,19 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   double tiltYVelocity = 0.0;
 
   late EnemyTracker enemyTracker;
-  late EnemyManager _enemyManager;
+  late EnemyManager enemyManager;
   late PowerUpTracker powerUpTracker;
-  late PowerUpManager _powerUpManager;
+  late PowerUpManager powerUpManager;
   late CoinManager _coinManager;
   late CoinTracker coinTracker;
+  late BossManager bossManager;
+  late BossTracker bossTracker;
 
-  late TextComponent _scoreTicker;
-  late TextComponent _coinTicker;
-  late TextComponent _shieldTicker;
-  late TextComponent _slowTicker;
-  late TextComponent _laserTicker;
+  late DifficultyManager difficultyManager;
+
+  late JoystickComponent joystick;
+
+  late Hud hud;
 
   late Timer _slowTimer;
   late Timer _laserTimer;
@@ -87,7 +96,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   int highScore = 0;
   bool isNotified = false;
   late bool firstPlay;
-
 
   String kiwiSkin = "kiwi_sprite.png";
 
@@ -126,6 +134,19 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     kiwiSkin = configBox.get("skin");
     firstPlay = configBox.get("firstPlay");
 
+    if (!isTiltConfigLoaded) {
+      tiltConfigManager = TiltConfig();
+      add(tiltConfigManager);
+    }
+
+    difficultyManager = DifficultyManager();
+
+    tiltConfigManager.fetchSettings();
+    isTiltControls = tiltConfigManager.getConfig();
+
+    audioManager.fetchSettings();
+    audioManager.playBgm('background.mp3');
+
     _kiwi = Kiwi(
       sprite: await Sprite.load(kiwiSkin),
       size: Vector2(122, 76),
@@ -134,52 +155,40 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     _kiwi.anchor = Anchor.center;
     add(_kiwi);
 
-    if (!isTiltConfigLoaded) {
-      tiltConfigManager = TiltConfig();
-      add(tiltConfigManager);
-    }
-
-    tiltConfigManager.fetchSettings();
-    isTiltControls = tiltConfigManager.getConfig();
-
-    audioManager.fetchSettings();
-    audioManager.playBgm('background.mp3');
-
-    final joystick = JoystickComponent(
+    joystick = JoystickComponent(
       gameRef: this,
       directional: JoystickDirectional(
           size: 100, margin: EdgeInsets.only(left: 100, bottom: 100)),
+      actions: [
+        JoystickAction(
+          actionId: 0,
+          size: 60,
+          margin: const EdgeInsets.all(
+            50,
+          ),
+        ),
+      ],
     );
 
-    if (!isTiltControls && !this.components.contains(joystick)) {
-      joystick.addObserver(_kiwi);
-      add(joystick);
-    } else {
-      components.whereType<JoystickComponent>().forEach((element) {
-        element.remove();
-      });
-    }
+    joystick.addObserver(_kiwi);
+    add(joystick);
+    joystick.priority = 1;
 
     if (!isAlreadyLoaded) {
-      final parallaxComponent = await loadParallaxComponent([
-        ParallaxImageData('pixbs.png'),
-        ParallaxImageData('side1.png'),
-        ParallaxImageData('pixc.png'),
-      ],
-          baseVelocity: Vector2(0, 50),
-          velocityMultiplierDelta: Vector2(1.8, 1.0),
-          repeat: ImageRepeat.repeatY,
-          fill: LayerFill.width);
-      add(parallaxComponent);
+      add(Background());
 
-      _enemyManager = EnemyManager();
-      add(_enemyManager);
-
+      hud = Hud(_kiwi);
+      add(hud);
+      enemyManager = EnemyManager(difficultyManager);
+      add(enemyManager);
       enemyTracker = EnemyTracker();
       add(enemyTracker);
-
-      _powerUpManager = PowerUpManager();
-      add(_powerUpManager);
+      bossManager = BossManager();
+      add(bossManager);
+      bossTracker = BossTracker();
+      add(bossTracker);
+      powerUpManager = PowerUpManager();
+      add(powerUpManager);
       powerUpTracker = PowerUpTracker();
       add(powerUpTracker);
       _coinManager = CoinManager();
@@ -189,34 +198,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
       // Register reference of Kiwi once to improve performance.
       enemyTracker.registerKiwi(_kiwi);
-
-      // Below are tickers that display information.
-      _scoreTicker =
-          InfoTicker(initialText: 'Score: 0', initialPos: Vector2(10, 10));
-
-      _coinTicker =
-          InfoTicker(initialText: 'Coins: 0', initialPos: Vector2(10, 25));
-
-      _shieldTicker =
-          InfoTicker(initialText: 'Shield: 0', initialPos: Vector2(10, 40));
-
-      _slowTicker =
-          InfoTicker(initialText: 'SlowTimer: 0', initialPos: Vector2(10, 55));
-
-      _laserTicker =
-          InfoTicker(initialText: 'LaserTimer: 0', initialPos: Vector2(10, 70));
-
-      // Set the tickers to HUD components.
-      _scoreTicker.isHud = true;
-      add(_scoreTicker);
-      _coinTicker.isHud = true;
-      add(_coinTicker);
-      _shieldTicker.isHud = true;
-      add(_shieldTicker);
-      _slowTicker.isHud = true;
-      add(_slowTicker);
-      _laserTicker.isHud = true;
-      add(_laserTicker);
+      bossTracker.registerKiwi(_kiwi);
 
       isAlreadyLoaded = true;
     }
@@ -257,6 +239,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     _kiwi.update(dt);
     _slowTimer.update(dt);
     _laserTimer.update(dt);
+    hud.update(dt);
 
     if (_kiwi.hasLaser) {
       _laserBeam.position = _kiwi.position;
@@ -265,12 +248,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
     if (isTiltControls) {
       tiltMovement();
     }
-
-    _scoreTicker.text = 'Score: ' + score.toString();
-    _coinTicker.text = 'Coins: ' + coin.toString();
-    _shieldTicker.text = 'Shield: ' + _kiwi.getShieldCount().toString();
-    _slowTicker.text = 'Slow Timer: ' + _slowTimer.current.toString();
-    _laserTicker.text = 'Laser Timer: ' + _laserTimer.current.toString();
 
     //check if a player beats her/his high score
     if (highScore != 0 && !isNotified && highScore < score) {
@@ -285,7 +262,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       this.overlays.add(TutorialSlides.ID);
       firstPlay = !firstPlay;
     }
-
   }
 
   /// Slows the enemies speed as long as [_slowTimer] is running.
@@ -322,7 +298,7 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
   /// Increment [score] by [scoreToAdd].
   void incrementScore(int scoreToAdd) {
-    score += scoreToAdd;
+    score = scoreToAdd * difficultyManager.getScoreDifficulty();
   }
 
   /// Returns a reference to the kiwi.
@@ -369,15 +345,19 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   /// When restarting, it resets managers, timers and position of the kiwi.
   void reset() {
     // Resetting id counts.
-    _enemyManager.reset();
-    _powerUpManager.reset();
+    enemyManager.reset();
+    powerUpManager.reset();
+    bossManager.reset();
     _coinManager.reset();
     _kiwi.reset();
 
     // Clearing the entity list.
+    bossTracker.reset();
     enemyTracker.reset();
     powerUpTracker.reset();
     coinTracker.reset();
+
+    difficultyManager.reset();
 
     _laserTimer.stop();
     _slowTimer.stop();
@@ -400,6 +380,22 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
 
     components.whereType<Coin>().forEach((coin) {
       coin.remove();
+    });
+
+    components.whereType<Boss>().forEach((boss) {
+      boss.remove();
+    });
+
+    components.whereType<UfoBullet>().forEach((bullet) {
+      bullet.remove();
+    });
+
+    components.whereType<WizardLightning>().forEach((lightning) {
+      lightning.remove();
+    });
+
+    components.whereType<PrepLightning>().forEach((lightning) {
+      lightning.remove();
     });
   }
 

@@ -3,23 +3,23 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/geometry.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
-import 'package:flutter_game/game/components/enemy/enemy.dart';
 
-class CloudEnemy extends Enemy with GameSizeAware {
+class BossPowerUp extends PowerUp with GameSizeAware {
   late Vector2 startingPosition;
 
   Random random = Random();
 
-  CloudEnemy(int idCount) : super(id: idCount, currentSpeed: 150);
+  BossPowerUp(int idCount) : super(idCount);
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load('thunder_cloud_sprite.png');
-    size = Vector2(150, 150);
+    sprite = await Sprite.load('heart.png');
+    size = Vector2(75, 75);
     position = this.getPosition() - size;
 
-    final hitboxShape = HitboxCircle(definition: 0.6);
+    final hitboxShape = HitboxCircle(definition: 0.5);
     addShape(hitboxShape);
   }
 
@@ -34,14 +34,14 @@ class CloudEnemy extends Enemy with GameSizeAware {
     double randomPositionMultiplier = random.nextDouble();
 
     Vector2 position =
-        Vector2(randomPositionMultiplier * gameSize.x, gameSize.y + 200);
+        Vector2(randomPositionMultiplier * gameSize.x, gameSize.y + 150);
 
     position.clamp(
       Vector2.zero() + Vector2(150, 0),
       gameSize + Vector2(150, 150),
     );
 
-    print("Spawning thundercloud at $position");
+    print("Spawning boss power up at $position");
 
     return position;
   }

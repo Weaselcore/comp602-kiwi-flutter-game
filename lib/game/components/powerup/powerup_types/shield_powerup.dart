@@ -38,7 +38,7 @@ class ShieldPowerUp extends PowerUp with GameSizeAware {
 
     position.clamp(
       Vector2.zero() + Vector2(150, 0),
-      gameSize + Vector2(150, 0),
+      gameSize + Vector2(150, 150),
     );
 
     print("Spawning shield power up at $position");
