@@ -94,7 +94,10 @@ class Hud extends SpriteComponent with HasGameRef<KiwiGame> {
         priority == 1 ? firstSpritePosition : secondSpritePosition;
 
     SpriteComponent spriteComponent = SpriteComponent(
-        size: spriteSize, sprite: spriteToUse, position: spritePosition);
+        size: spriteSize,
+        sprite: spriteToUse,
+        position: spritePosition,
+        priority: 1);
 
     addChild(spriteComponent);
   }
