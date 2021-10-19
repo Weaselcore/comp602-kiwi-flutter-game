@@ -55,6 +55,8 @@ class BossManager extends BaseComponent
       gameRef.enemyManager.increaseDifficulty();
       gameRef.enemyManager.start();
       conditionCount = 0;
+      //increment the number of bossed defeated.
+      gameRef.beatenBoss += 1;
       if (_bossCount < 2) {
         _bossCount += 1;
       } else {

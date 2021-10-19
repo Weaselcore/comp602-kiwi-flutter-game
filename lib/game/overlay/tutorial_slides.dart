@@ -115,7 +115,7 @@ class _TutorialSlidesState extends State<TutorialSlides> {
     sliderModel = new SliderModel(
         title: 'Defeat Bosses',
         imagePath: 'assets/images/tutorial4.png',
-        desc: 'Use shields and laser beam to defeat bosses!');
+        desc: 'Use shields to defeat bosses!');
     slides.add(sliderModel);
 
     return slides;
