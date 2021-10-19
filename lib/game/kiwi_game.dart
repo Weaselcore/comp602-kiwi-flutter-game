@@ -34,7 +34,6 @@ import 'components/boss/boss_tracker.dart';
 import 'components/boss/ufo_bullet.dart';
 import 'components/background.dart';
 import 'components/tilt_config_component.dart';
-import 'components/transition.dart';
 import 'game_size_aware.dart';
 import 'overlay/hud.dart';
 import 'overlay/pause_button.dart';
@@ -97,8 +96,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
   int highScore = 0;
   bool isNotified = false;
   late bool firstPlay;
-
-  late Transition transitionComponent = Transition();
 
   String kiwiSkin = "kiwi_sprite.png";
 
@@ -204,7 +201,6 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
       bossTracker.registerKiwi(_kiwi);
 
       isAlreadyLoaded = true;
-      add(transitionComponent);
     }
   }
 
@@ -445,9 +441,5 @@ class KiwiGame extends BaseGame with HasCollidables, HasDraggableComponents {
         _kiwi.setMoveDirection(Vector2.zero());
         break;
     }
-  }
-
-  void startTransition() {
-    add(transitionComponent);
   }
 }
