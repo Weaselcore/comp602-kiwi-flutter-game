@@ -68,21 +68,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Kiwi Fall',
-      home: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/mm.png"), fit: BoxFit.cover
-          )
-        ),
-        child: Scaffold(
-            backgroundColor: Colors.transparent,
-            // appBar: AppBar(
-            //   title: const Text('Kiwi Fall'),
-            // ),
-            body:const MainMenu()
-        ),
-      )
-    );
+        title: 'Kiwi Fall',
+        debugShowCheckedModeBanner: false,
+        home: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/images/mm.png"),
+                  fit: BoxFit.cover)),
+          child: Scaffold(
+              backgroundColor: Colors.transparent,
+              // appBar: AppBar(
+              //   title: const Text('Kiwi Fall'),
+              // ),
+              body: const MainMenu()),
+        ));
   }
 }

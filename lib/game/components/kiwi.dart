@@ -1,8 +1,11 @@
+import 'dart:collection';
+
 import 'package:flame/components.dart';
 import 'package:flame/extensions.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/image_composition.dart';
+import 'package:flutter_game/game/components/powerup/powerup.dart';
 import 'package:flutter_game/game/components/boss/wizard_lighting.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/boss_powerup.dart';
 import 'package:flutter_game/game/components/powerup/powerup_types/laser_powerup.dart';
@@ -13,10 +16,10 @@ import 'package:flutter_game/game/kiwi_game.dart';
 import 'package:flutter_game/game/overlay/end_game_menu.dart';
 import 'package:flutter_game/game/overlay/pause_button.dart';
 
-import 'package:flutter_game/game/components/enemy/enemy.dart';
 import 'package:flutter_game/screens/dailyQuest/quest_manager.dart';
 import 'package:flutter_game/screens/score_item.dart';
 
+import 'enemy/enemy.dart';
 import 'boss/boss.dart';
 import 'boss/ufo_bullet.dart';
 
@@ -37,6 +40,8 @@ class Kiwi extends SpriteComponent
 
   bool hasLaser = false;
   bool godMode = false;
+
+  Queue powerUpQueue = Queue();
 
   late Sprite _kiwiSprite;
   late Sprite _kiwiWeakShieldSprite;
@@ -75,9 +80,6 @@ class Kiwi extends SpriteComponent
   void update(double dt) {
     super.update(dt);
 
-    // this.position +=
-    //     _horizontalMoveDirection.normalized() * _horizontalSpeed * dt;
-
     this.position += _kiwiDirection.normalized() * _kiwiSpeed * dt;
 
     switch (_shieldCount) {
@@ -110,13 +112,22 @@ class Kiwi extends SpriteComponent
 
   void reset() {
     this.position = Vector2(gameSize.x / 2, gameSize.y / 3);
+    resetPowerUp();
+    if (hasLaser) {
+      removeLaser();
+    }
   }
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, Collidable other) {
     super.onCollision(intersectionPoints, other);
 
-    if (other is Enemy && !godMode) {
+    if (other is ShieldPowerUp ||
+        other is SlomoPowerUp ||
+        other is LaserPowerUp) {
+      addPowerUp(other as PowerUp);
+      other.remove();
+    } else if (other is Enemy && !godMode) {
       // If enemy has not been nullified by shield.
       if (other.canDamage()) {
         if (_shieldCount == 0 && other.canDamage()) {
@@ -152,23 +163,6 @@ class Kiwi extends SpriteComponent
     if (other is WizardLightning && !godMode) {
       // If enemy has not been nullified by shield.
       die();
-    } else if (other is ShieldPowerUp) {
-      other.remove();
-      gameRef.audioManager.playSfx('armour.wav');
-      addShield();
-      gameRef.usedItem += 1;
-    } else if (other is SlomoPowerUp) {
-      other.remove();
-      gameRef.audioManager.playSfx('slow_time.wav');
-      gameRef.halfEnemySpeed();
-      gameRef.usedItem += 1;
-    } else if (other is LaserPowerUp) {
-      other.remove();
-      if (!hasLaser) {
-        fireLaser();
-        gameRef.audioManager.playSfx('laser.mp3');
-        gameRef.usedItem += 1;
-      }
     } else if (other is BossPowerUp) {
       other.remove();
       // TODO: Add sound effect for spawning boss.
@@ -214,7 +208,8 @@ class Kiwi extends SpriteComponent
     gameRef.overlays.add(EndGameMenu.ID);
     _shieldCount = 0;
     hasLaser = false;
-    QuestManager.checkQuestCompletion(gameRef.coin, gameRef.score, gameRef.usedItem, gameRef.beatenEnemy, gameRef.beatenBoss);
+    QuestManager.checkQuestCompletion(gameRef.coin, gameRef.score,
+        gameRef.usedItem, gameRef.beatenEnemy, gameRef.beatenBoss);
     gameRef.localScoreDao.register(ScoreItem('user', gameRef.score));
     gameRef.remoteScoreDao.register();
   }
@@ -264,11 +259,55 @@ class Kiwi extends SpriteComponent
 
   @override
   void joystickAction(JoystickActionEvent event) {
-    // TODO: maybe add laser or slow time button?
+    if (powerUpQueue.isNotEmpty && event.event == ActionEvent.down) {
+      removePowerUp();
+    }
   }
 
   void setMoveDirection(Vector2 newKiwiDirection) {
     _kiwiDirection = newKiwiDirection;
+  }
+
+  Queue getPowerUpQueue() => powerUpQueue;
+
+  void resetPowerUp() {
+    powerUpQueue.clear();
+  }
+
+  void addPowerUp(PowerUp powerUp) {
+    if (!(powerUpQueue.length >= 2)) {
+      powerUpQueue.add(powerUp);
+    }
+  }
+
+  void removePowerUp() {
+    PowerUp powerUp = powerUpQueue.first;
+    if (powerUp is LaserPowerUp) {
+      useLaser();
+    } else if (powerUp is ShieldPowerUp) {
+      useShield();
+    } else if (powerUp is SlomoPowerUp) {
+      useSlomo();
+    }
+    powerUpQueue.remove(powerUp);
+    gameRef.usedItem += 1;
+  }
+
+  void useShield() {
+    gameRef.audioManager.playSfx('armour.wav');
+    addShield();
+  }
+
+  void useSlomo() {
+    gameRef.audioManager.playSfx('slow_time.wav');
+    gameRef.halfEnemySpeed();
+  }
+
+  void useLaser() {
+    if (!hasLaser) {
+      fireLaser();
+      gameRef.audioManager.playSfx('laser.mp3');
+    }
   }
 
   @override
