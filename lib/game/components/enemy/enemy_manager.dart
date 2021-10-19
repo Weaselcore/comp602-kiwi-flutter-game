@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:flutter_game/game/components/difficulty_manager.dart';
 import 'package:flutter_game/game/components/enemy/enemy_factory.dart';
 import 'package:flutter_game/game/game_size_aware.dart';
 
@@ -9,6 +10,8 @@ import 'package:flutter_game/game/components/enemy/enemy.dart';
 
 class EnemyManager extends BaseComponent
     with GameSizeAware, HasGameRef<KiwiGame> {
+  // A manager initialised in the KiwiGame that stores difficulty.
+  late DifficultyManager difficultyManager;
   // A factory object to output enemy instances.
   late EnemyFactory enemyFactory;
   // A timer that causes spawns to occur.
@@ -24,7 +27,8 @@ class EnemyManager extends BaseComponent
   // 'CRATE', 'CLOUD', 'FERRET'
   var enemyType = ['CRATE', 'CLOUD', 'FERRET', 'IMAGINARY'];
 
-  EnemyManager() : super() {
+  EnemyManager(DifficultyManager difficultyManager) : super() {
+    this.difficultyManager = difficultyManager;
     // Enemies spawn every 2 seconds.
     _timer = Timer(2, callback: _spawnEnemy, repeat: true);
     // There is a 1 second pause after the game resumes.
@@ -43,6 +47,7 @@ class EnemyManager extends BaseComponent
       int randomEnemy = random.nextInt(enemyType.length);
       // Fabricate new enemy object from the enemy type.
       Enemy enemy = enemyFactory.getEnemyType(enemyType[randomEnemy], _idCount);
+      enemy.setSpeed(difficultyManager.getDifficulty());
       // Add enemy to the tracker.
       gameRef.enemyTracker.addEnemy(enemy);
       // Add enemy to the game.
@@ -92,5 +97,10 @@ class EnemyManager extends BaseComponent
     _timer.stop;
     _freezeTimer.stop;
     _freezeTimer.start();
+  }
+
+  /// Increases difficulty in the difficulty manager.
+  void increaseDifficulty() {
+    difficultyManager.increaseDifficulty();
   }
 }

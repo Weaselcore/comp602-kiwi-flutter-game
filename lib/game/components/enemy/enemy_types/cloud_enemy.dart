@@ -11,7 +11,7 @@ class CloudEnemy extends Enemy with GameSizeAware {
 
   Random random = Random();
 
-  CloudEnemy(int idCount) : super(id: idCount, enemySpeed: 150);
+  CloudEnemy(int idCount) : super(id: idCount, currentSpeed: 150);
 
   @override
   Future<void> onLoad() async {
